@@ -1,0 +1,46 @@
+{
+    "name": "alphasloth",
+    "license": "GPL-3.0",
+    "type": "module",
+    "scripts": {
+        "prettier": "prettier . --write",
+        "lint": "eslint .",
+        "build": "vite build --mode development",
+        "build-release": "vite build --mode release",
+        "watch": "vite build --mode development --watch",
+        "tailwindcss": "npx tailwindcss -i ./src/app.pcss -o ./dist/assets/tailwind.css",
+        "build-ubo": "build/build-ubo.sh $npm_package_config_ublock_ref $npm_package_config_ctrblk_filters_ref_old $npm_package_config_ctrblk_filters_ref_new",
+        "postinstall": "npm run build-ubo"
+    },
+    "config": {
+        "ublock_ref": "0258bd7ac5faaf842c886c280be78737fc2d3fcd",
+        "ctrblk_filters_ref_old": "21f24c03ba85a8c53959f8ab8397da8e3563edfe",
+        "ctrblk_filters_ref_new": "21f24c03ba85a8c53959f8ab8397da8e3563edfe"
+    },
+    "dependencies": {
+        "date-fns": "^3.3.1",
+        "del": "^6.1.0",
+        "detect-browser": "^5.3.0",
+        "punycode.js": "^2.3.1",
+        "semver": "^7.6.0",
+        "vite": "^5.0.7"
+    },
+    "devDependencies": {
+        "@samrum/vite-plugin-web-extension": "^5.1.0",
+        "@sveltejs/adapter-auto": "^3.1.1",
+        "@sveltejs/vite-plugin-svelte": "^3.0.1",
+        "autoprefixer": "^10.4.16",
+        "eslint": "^8.55.0",
+        "eslint-config-google": "^0.14.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.0.1",
+        "fast-glob": "^3.3.2",
+        "flowbite": "^2.2.1",
+        "flowbite-svelte": "^0.44.22",
+        "flowbite-svelte-icons": "^1.3.1",
+        "postcss": "^8.4.32",
+        "postcss-load-config": "^5.0.2",
+        "svelte-preprocess": "^5.1.3",
+        "tailwindcss": "^3.3.6"
+    }
+}

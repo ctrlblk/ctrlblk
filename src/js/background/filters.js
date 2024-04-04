@@ -10,10 +10,10 @@ import {
 import {
     getRulesetDetails,
     enableRulesets,
-    defaultRulesetsFromLanguage,
  } from "/uBOLite/js/ruleset-manager.js";
 
 import { 
+    browser,
     dnr,
     sessionRead,
     sessionWrite,
@@ -28,12 +28,36 @@ import {
 
  const rulesetConfig = {
     version: "",
-    enabledRulesets: ["default"],
+    enabledRulesets: [],
     autoReload: true,
 };
 
 let firstRun = false;
 let wakeupRun = false;
+
+
+async function getDefaultRulesets() {
+    let enabled = ["default", "ctrlblk"];
+
+    let rulesetDetails = await getRulesetDetails();
+
+    // Create a list of unique languages from the accept languages
+    // Note we use i18n.getAcceptLanguages instead of navigator.languages
+    // because it returns all languges not just the ui language, see:
+    // https://github.com/w3c/webextensions/issues/107#issuecomment-1304420718
+    let acceptLanguages = [... new Set(
+        (await browser.i18n.getAcceptLanguages()).map(lang => lang.split("-")[0]))];
+
+    for (let [id, details] of rulesetDetails.entries()) {
+        for (let lang of (details.lang ?? "").split(" ")) {
+            if (acceptLanguages.includes(lang)) {
+                filters.enableFilterlist(id);
+            }
+        }
+    }
+
+    return enabled;
+}
 
 async function loadRulesetConfig() {
     let data = await sessionRead('rulesetConfig');
@@ -44,6 +68,7 @@ async function loadRulesetConfig() {
         wakeupRun = true;
         return;
     }
+
     data = await localRead('rulesetConfig');
     if ( data ) {
         rulesetConfig.version = data.version;
@@ -52,7 +77,8 @@ async function loadRulesetConfig() {
         sessionWrite('rulesetConfig', rulesetConfig);
         return;
     }
-    rulesetConfig.enabledRulesets = await defaultRulesetsFromLanguage();
+
+    rulesetConfig.enabledRulesets = await getDefaultRulesets();
     sessionWrite('rulesetConfig', rulesetConfig);
     localWrite('rulesetConfig', rulesetConfig);
     firstRun = true;

@@ -176,6 +176,13 @@
         let tabInfo;
         try {
             tabInfo = await browser.tabs.get(tabId);
+
+            // Abort if tab doesn't belong to the current window
+            let currentWindow = await browser.windows.getCurrent();
+            if (tabInfo.windowId !== currentWindow.id) {
+                return;
+            }
+
         } catch (e) {
             // tab might have been closed
             return;
@@ -225,7 +232,7 @@
     onMount(async () => {
         exceptions.subscribe(exceptionsChangedHandler);
 
-        let [currentTab] = await browser.tabs.query({active: true});
+        let [currentTab] = await browser.tabs.query({active: true, currentWindow: true});
 
         await tabChangedHandler(currentTab.id);
 

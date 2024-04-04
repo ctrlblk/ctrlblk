@@ -17,7 +17,7 @@ async function getUploadUrl() {
 export async function createAdReportData(image) {
     let config = await filters.getConfiguration();
 
-    let [currentTab] = await browser.tabs.query({active: true});
+    let [currentTab] = await browser.tabs.query({active: true, currentWindow: true});
 
     let data = {
         version: "0.1",

@@ -222,7 +222,9 @@
             state = defaultState;
             intent = defaultIntent;
 
-            tabState.set(previousTabId, { state, intent });
+            if (previousTabId !== undefined) {
+                tabState.set(previousTabId, { state, intent });
+            }
         }
 
         // remember the current tab as the previous tab id
@@ -239,6 +241,8 @@
         browser.tabs.onActivated.addListener(event => tabChangedHandler(event.tabId));
         browser.tabs.onUpdated.addListener(event => tabChangedHandler(event));
         browser.tabs.onCreated.addListener(event => tabChangedHandler(event.id));
+
+        browser.tabs.onRemoved.addListener(event => tabState.delete(event.tabId));
     });
 
     onDestroy(() => {

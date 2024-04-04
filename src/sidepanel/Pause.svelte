@@ -16,7 +16,7 @@
         ThumbsDownOutline,
     } from 'flowbite-svelte-icons';
 
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount } from 'svelte';
 
     import { browser } from "/uBOLite/js/ext.js";
 
@@ -243,12 +243,6 @@
         browser.tabs.onCreated.addListener(event => tabChangedHandler(event.id));
 
         browser.tabs.onRemoved.addListener(event => tabState.delete(event.tabId));
-    });
-
-    onDestroy(() => {
-        browser.tabs.onActivated.removeListener(onActivatedHandler);
-        browser.tabs.onUpdated.removeListener(onUpdatedHandler);
-        browser.tabs.onCreated.removeListener(onCreatedHandler);
     });
 </script>
 

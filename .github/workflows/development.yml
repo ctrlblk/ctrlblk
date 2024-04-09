@@ -1,0 +1,33 @@
+
+
+name: build-ctrlblck-development
+on:
+    push:
+        branches:
+            - '**'
+        tags-ignore:
+            - '**'
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@main
+            - name: Setup node
+              uses: actions/setup-node@v4
+              with:
+                node-version: 21
+            - name: Build extension
+              run: |
+                set -x
+                export CTRLBLOCK_DEPLOY_TOKEN=${{ secrets.CTRLBLOCK_DEPLOY_TOKEN }}
+                export GIT_SHA=$(git rev-parse --short HEAD)
+                npm install -g sass
+                npm install
+                npm run build
+            - name: Upload build
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ctrlblock-development-${{ github.sha }}
+                  path: dist/

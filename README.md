@@ -4,7 +4,7 @@ CtrlBlk is a Mv3 Web Extension to personalize your web experience - Browse the w
 
 ## Installation
 
-To install CtrlBlk head over to [CtrBlk's Chrome Web Store page](https://chromewebstore.google.com)
+To install CtrlBlk head over to [CtrlBlk's Chrome Web Store page](https://chromewebstore.google.com)
 
 ## Build CtrlBlk
 
@@ -17,7 +17,7 @@ To build CtrlBlk:
 
 ```
 $ git clone https://github.com/ctrlblk/ctrlblck.git
-$ cd ctrblk
+$ cd ctrlblk
 $ npm install
 $ npm run build
 ```

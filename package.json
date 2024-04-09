@@ -9,13 +9,13 @@
         "build-release": "vite build --mode release",
         "watch": "vite build --mode development --watch",
         "tailwindcss": "npx tailwindcss -i ./src/app.pcss -o ./dist/assets/tailwind.css",
-        "build-ubo": "build/build-ubo.sh $npm_package_config_ublock_ref $npm_package_config_ctrblk_filters_ref_old $npm_package_config_ctrblk_filters_ref_new",
+        "build-ubo": "build/build-ubo.sh $npm_package_config_ublock_ref $npm_package_config_ctrlblk_filters_ref_old $npm_package_config_ctrlblk_filters_ref_new",
         "postinstall": "npm run build-ubo"
     },
     "config": {
         "ublock_ref": "0258bd7ac5faaf842c886c280be78737fc2d3fcd",
-        "ctrblk_filters_ref_old": "21f24c03ba85a8c53959f8ab8397da8e3563edfe",
-        "ctrblk_filters_ref_new": "21f24c03ba85a8c53959f8ab8397da8e3563edfe"
+        "ctrlblk_filters_ref_old": "21f24c03ba85a8c53959f8ab8397da8e3563edfe",
+        "ctrlblk_filters_ref_new": "21f24c03ba85a8c53959f8ab8397da8e3563edfe"
     },
     "dependencies": {
         "date-fns": "^3.3.1",

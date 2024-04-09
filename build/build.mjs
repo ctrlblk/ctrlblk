@@ -65,7 +65,7 @@ function copyImages() {
     cpSync("ctrlblk-filters/ad-reports.json", "dist/assets/ad-reports.json");
 }
 
-export function buildAlphasloth(mode, manifest) {
+export function buildCtrlBlk(mode, manifest) {
     async function closeBundle() {
         copyUBOLAssets();
         compileCss();
@@ -80,7 +80,7 @@ export function buildAlphasloth(mode, manifest) {
     }
 
     return {
-        name: "buildAlphasloth",
+        name: "buildCtrlBlk",
         buildStart: buildStart,
         closeBundle: closeBundle,
     };

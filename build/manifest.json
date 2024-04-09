@@ -1,7 +1,6 @@
 {
     "manifest_version": 3,
     "version": "0.1.0",
-    "author": "AlphaSloth",
     "name": "#CtrlBlock",
     "background": {
         "service_worker": "/src/js/background/serviceWorker.js",

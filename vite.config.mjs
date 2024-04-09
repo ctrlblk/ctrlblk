@@ -4,7 +4,7 @@ import webExtension from "@samrum/vite-plugin-web-extension";
 
 import {
     generateManifestContents,
-    buildAlphasloth,
+    buildCtrlBlk,
 } from "./build/build.mjs";
 
 export default defineConfig(({mode}) => {
@@ -18,7 +18,7 @@ export default defineConfig(({mode}) => {
                 manifest: manifest,
                 optimizeWebAccessibleResources: false,
             }),
-            buildAlphasloth(mode, manifest),
+            buildCtrlBlk(mode, manifest),
         ],
         build: {
             outDir: "dist/",

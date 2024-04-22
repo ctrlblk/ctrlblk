@@ -4,6 +4,8 @@
 # dependencies
 /node_modules/
 /uBOLite/
+/uBOBits/
+/uAssets
 /ctrlblk-filters/
 
 # hidden files

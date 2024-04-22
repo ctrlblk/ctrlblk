@@ -9,6 +9,9 @@ import fg from "fast-glob";
 
 import semver from "semver";
 
+import { rulesets } from './rulesets/rulesets.js';
+
+
 const manifestTemplate = "build/manifest.json";
 
 const sourceDir = "src/js";
@@ -24,10 +27,14 @@ export function generateManifestContents(mode) {
         readFileSync(`${uBOLiteRoot}/manifest.json`, { encoding: "utf8" }),
     );
 
-    const rules = uBOManifest["declarative_net_request"]["rule_resources"];
-
-    // copy over dnr definition
-    mf["declarative_net_request"] = uBOManifest["declarative_net_request"];
+    let rule_resources = Array.from(rulesets).map(details => {
+        return {
+            "id": details.id,
+            "enabled": details.enabled,
+            "path": `/rulesets/main/${details.id}.json`
+        }
+    });
+    mf["declarative_net_request"] = { rule_resources };
 
     // copy over web accesible ressources definition
     mf["web_accessible_resources"] = uBOManifest["web_accessible_resources"];
@@ -46,14 +53,15 @@ export function generateManifestContents(mode) {
 }
 
 function copyUBOLAssets() {
-    // copy over rulsets
-    cpSync(`${uBOLiteRoot}/rulesets`, "dist/rulesets", { recursive: true });
-
     // copy over web accesible resources
     cpSync(`${uBOLiteRoot}/web_accessible_resources`, "dist/web_accessible_resources", { recursive: true });
 
     // copy over scriptlets
     cpSync(`${uBOLiteRoot}/js/scripting`, "dist/js/scripting", { recursive: true });
+}
+
+function generateRulesets() {
+    execSync("npm run generate-rulesets -- -o dist/");
 }
 
 function compileCss() {
@@ -68,6 +76,7 @@ function copyImages() {
 export function buildCtrlBlk(mode, manifest) {
     async function closeBundle() {
         copyUBOLAssets();
+        generateRulesets();
         compileCss();
         copyImages();
     }

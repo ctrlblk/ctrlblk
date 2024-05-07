@@ -6,6 +6,7 @@ import * as makeScriptlet from '../../uBOBits/make-scriptlets.js';
 import {
     scriptletJsonReplacer,
     writeFile,
+    removeRemoteHostedCodeFilters,
 } from './utils.js';
 
 
@@ -15,6 +16,12 @@ export async function generateCssGeneric(details, filters, exceptions) {
     let selectorList = [];
 
     if (filters) {
+
+        filters = removeRemoteHostedCodeFilters(
+            filters,
+            (key, value) => value
+        )
+
         for (let [hash, selectors] of filters) {
             // Remove exceptions
             if (exceptions) {
@@ -203,6 +210,11 @@ function splitSpecificCosmetic(filters) {
 export async function generateCssSpecific(details, specificCosmetic) {
     let [declarativeCosmetic, proceduralCosmetic] = splitSpecificCosmetic(specificCosmetic);
 
+    declarativeCosmetic = removeRemoteHostedCodeFilters(
+        declarativeCosmetic,
+        (key, value) => key
+    )
+
     let [count, src] = await generateFourPieceScriptlet(
         "uBOBits/scriptlets/css-specific.template.js",
         declarativeCosmetic,
@@ -226,6 +238,11 @@ export async function generateCssDeclarative(details, specificCosmetic) {
         }
     }
 
+    proceduralDeclarative = removeRemoteHostedCodeFilters(
+        proceduralDeclarative,
+        (key, value) => JSON.parse(key).selector
+    )
+
     let [count, src] = await generateFourPieceScriptlet(
         "uBOBits/scriptlets/css-declarative.template.js",
         proceduralDeclarative);
@@ -246,6 +263,11 @@ export async function generateCssProcedural(details, specificCosmetic) {
         }
     }
 
+    proceduralProcedural = removeRemoteHostedCodeFilters(
+        proceduralProcedural,
+        (key, value) => JSON.parse(key).selector
+    )
+
     let [count, src] = await generateFourPieceScriptlet(
         "uBOBits/scriptlets/css-procedural.template.js",
         proceduralProcedural);
@@ -260,6 +282,8 @@ export async function generateScriptlet(details, rulesetDir, rulesetId, mapin) {
         details.scriptlet = 0;
         return 0;
     }
+
+    mapin = removeRemoteHostedCodeFilters(mapin, (key, value) => value.args)
 
     makeScriptlet.init();
 

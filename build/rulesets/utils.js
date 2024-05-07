@@ -88,3 +88,32 @@ export function isRegexSupported({ regex, isCaseSensitive, requireCapturing}) {
         isSupported: true
     }
 }
+
+// Helper function to remove filters that contain a url pointing to a js file
+// Needed to ensure compliance with Chrome's no remote hosted code policy, see:
+// https://developer.chrome.com/docs/extensions/develop/migrate/improve-security#remove-remote-code
+export function removeRemoteHostedCodeFilters(mapin, valuefunc) {
+    const isUrl = /:\/\/.*\/.*\.(\w?js|\w?ts)/;
+
+    for (let [key, value] of mapin) {
+        // entries are different based on what kind of filter they contain
+        // so we ask caller to provide a function that tells us where to
+        // look for urls
+        let entries = valuefunc(key, value);
+
+        // We support single or multiple entries
+        entries = Array.isArray(entries) ? entries : [entries];
+
+        for (let entry of entries) {
+            if (isUrl.test(entry)) {
+                console.log("Found Remote URL", entry, "removing");
+                mapin.delete(key);
+            } else {
+                //console.log(`"${entry}" is fine`);
+            }
+        }
+
+    }
+
+    return mapin;
+}

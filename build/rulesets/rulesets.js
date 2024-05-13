@@ -9,14 +9,7 @@ export const rulesets = [
         enabled: true,
         secret,
         urls: [
-            'uAssets/filters/filters.min.txt',
-            'uAssets/filters/badware.min.txt',
-            'uAssets/filters/privacy.min.txt',
-            'uAssets/filters/unbreak.min.txt',
-            'uAssets/filters/quick-fixes.min.txt',
-            'uAssets/filters/ubol-filters.txt',
-            'uAssets/thirdparties/easylist/easylist.txt',
-            'uAssets/thirdparties/easylist/easyprivacy.txt',
+            "ctrlblk-filters/default.txt",
         ],
         homeURL: 'https://github.com/uBlockOrigin/uAssets',
     },
@@ -37,8 +30,7 @@ export const rulesets = [
         enabled: true,
         secret,
         urls: [
-            'uAssets/thirdparties/easylist/easylist-cookies.txt',
-            'uAssets/filters/annoyances-cookies.txt',
+            'ctrlblk-filters/annoyances-cookies.txt',
         ],
         homeURL: 'https://github.com/easylist/easylist#fanboy-lists',
     },
@@ -49,8 +41,7 @@ export const rulesets = [
         enabled: false,
         secret,
         urls: [
-            'uAssets/thirdparties/easylist/easylist-newsletters.txt',
-            'uAssets/filters/annoyances-others.txt'
+            'ctrlblk-filters/annoyances-overlays.txt',
         ],
         homeURL: 'https://github.com/easylist/easylist#fanboy-lists',
     },
@@ -61,7 +52,7 @@ export const rulesets = [
         enabled: false,
         secret,
         urls: [
-            'uAssets/thirdparties/easylist/easylist-social.txt',
+            'ctrlblk-filters/annoyances-social.txt',
         ],
         homeURL: 'https://github.com/easylist/easylist#fanboy-lists',
     },
@@ -72,7 +63,7 @@ export const rulesets = [
         enabled: false,
         secret,
         urls: [
-            'uAssets/thirdparties/easylist/easylist-chat.txt',
+            'ctrlblk-filters/annoyances-widgets.txt',
         ],
         homeURL: 'https://github.com/easylist/easylist#fanboy-lists',
     },
@@ -83,7 +74,7 @@ export const rulesets = [
         enabled: false,
         secret,
         urls: [
-            'uAssets/thirdparties/easylist/easylist-annoyances.txt'
+            'ctrlblk-filters/annoyances-others.txt',
         ],
         homeURL: 'https://github.com/easylist/easylist#fanboy-lists',
     },

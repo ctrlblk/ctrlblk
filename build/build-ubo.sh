@@ -2,7 +2,6 @@
 
 # Consume command line args
 UBLOCK_REF=$1
-UASSET_REF=$2
 CTRLBLK_FILTERS_REF_OLD=$3
 CTRLBLK_FILTERS_REF_NEW=$4
 
@@ -93,29 +92,16 @@ sed -i.orig -e 's/\.\.\/lib\//\.\/lib\//g' \
 sed -i.orig -e 's/\.\/scriptlets\//\.\/uBOBits\/scriptlets\//g' \
     uBOBits/make-scriptlets.js
 
-# Clone uAssets and export the files from the repo into a seperate folder
-git clone $GITHUB_BASE_URL"/uAssets.git"
-mkdir uAssets_;
-git -C uAssets archive $UASSET_REF | tar -x -C uAssets_;
-cd uAssets_;
-
-# Build uAsset filter lists
-./tools/make-ublock.sh
-
-# return back to temp dir
-cd $TMP;
-
 # Go back to the start, copy the result and cleanup
 cd $START;
 
 # First remove targets from possible previous run
-rm -rf uBOLite ctrlblk-filters uBOBits uAssets;
+rm -rf uBOLite ctrlblk-filters uBOBits;
 
 # Then copy the new results
 ls $TMP/uBOL/dist/build/uBOLite.chromium
 cp -vrf $TMP/uBOL/dist/build/uBOLite.chromium uBOLite;
 cp -vrf $TMP/ctrlblk-filters/dist ctrlblk-filters;
-cp -vrf $TMP/uAssets_ uAssets;
 cp -vrf $TMP/uBOBits uBOBits;
 
 # Finally cleanup

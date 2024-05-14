@@ -32,7 +32,7 @@
                 'Regional',
                 rulesetDetails.filter(([id, ruleset]) => typeof ruleset.lang === 'string'),
             ],
-        ]);
+        ].filter((e) => e[1].length > 0));
     }
 
     onMount(async () => {

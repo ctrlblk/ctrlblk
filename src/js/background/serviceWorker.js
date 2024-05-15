@@ -20,7 +20,7 @@ async function insertCSSHandler(request, sender) {
     const tabId = sender?.tab?.id ?? false;
     const frameId = sender?.frameId ?? false;
 
-    if (tabId && frameId) {
+    if (tabId || frameId) {
         try {
             await browser.scripting.insertCSS({
                 css: css,

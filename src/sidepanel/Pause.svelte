@@ -11,6 +11,7 @@
         PauseSolid,
         CheckOutline,
         CloseOutline,
+        BugOutline,
     } from 'flowbite-svelte-icons';
 
     import { onMount } from 'svelte';
@@ -74,6 +75,13 @@
         browser.tabs.reload(currentTab.id);
 
         currentState = "PlayPause";
+    }
+
+    async function clickReport() {
+        // Create ad report for future use
+        createAdReport();
+
+        currentState = "PreviewReport";
     }
 
     async function clickItHelped() {
@@ -215,9 +223,10 @@
     {/if}
 </Heading>
 
-<div>
+<div class="flex flex-col space-y-2 py-2">
     {#if currentState === "PlayPause" && !currentTabExempt }
-        <p>In case you're experiencing problems (no access, popups or similar), try pausing to see if it helps!</p>
+        <p>Problem with the page (no access, popups or similar)? Try <i>Pause</i> to see if it helps!</p>
+        <p>Ads on the page? Click <i>Bug</i> to send a report!</p>
     {:else if currentState === "PlayPause" && currentTabExempt }
         <p>Blocking is paused. Click <i>Play</i> to restart blocking!</p>
     {:else if currentState === "PreviewReport|ItHelped" }
@@ -237,6 +246,11 @@
         <div class="text-right px-2">
             <Button disabled={disabled} pill={true} outline={true} class="!p-2" on:click={clickPause}>
                 <PauseSolid class="w-10 h-10" />
+            </Button>
+        </div>
+        <div class="px-2">
+            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  on:click={clickReport}>
+                <BugOutline class="w-10 h-10" />
             </Button>
         </div>
     {:else if currentState === "PlayPause" && currentTabExempt }

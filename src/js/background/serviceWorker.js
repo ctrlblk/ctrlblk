@@ -50,18 +50,7 @@ function onMessage(request, sender, sendResponse) {
     throw new Error(`Message handler with what ${what} doesn't exist!`);
 }
 
-async function onInstalledHandler(details) {
-    console.log("onInstalled", details);
-
-    // Collect and assemble data to be sent to the update server
-    let config = await filters.getConfiguration();
-
-    // Retrieve and clear local ad reports
-    let adReportIds = await getLocalAdReportIds();
-    await clearLocalAdReportIds();
-
-    let adReportsFixedResponse = await fetch("assets/ad-reports.json");
-    let adReportsFixed = await adReportsFixedResponse.json();
+export async function getUpdateUrl({ details, config, adReportIds, adReportsFixed }) {
 
     let data = {
         version: "0.1",
@@ -91,12 +80,30 @@ async function onInstalledHandler(details) {
     let response = await fetch(request);
 
     if (response.ok) {
-        let responseData = await response.json();
+        return await response.json();
+    }
 
-        // open update page?
-        if (responseData.open_update_page) {
-            browser.tabs.create({url: responseData.update_url});
-        }
+    return {
+        open_update_page: false,
+    }
+}
+
+async function onInstalledHandler(details) {
+    // Collect and assemble data to be sent to the update server
+    let config = await filters.getConfiguration();
+
+    // Retrieve and clear local ad reports
+    let adReportIds = await getLocalAdReportIds();
+    await clearLocalAdReportIds();
+
+    let adReportsFixedResponse = await fetch("assets/ad-reports.json");
+    let adReportsFixed = await adReportsFixedResponse.json();
+
+    let { open_update_page, update_url } = await getUpdateUrl({ details, config, adReportIds, adReportsFixed });
+
+    // open update page?
+    if (open_update_page) {
+        browser.tabs.create({url: update_url});
     }
 }
 

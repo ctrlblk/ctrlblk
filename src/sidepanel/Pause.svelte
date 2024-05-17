@@ -172,10 +172,10 @@
 
         // Update currentTabExempt & currentState if url has changed
         if (previousTabId === undefined) {
-            currentTabExempt = $exceptions.includes(currentTabHostname);
+            currentTabExempt = $exceptions?.includes(currentTabHostname) || false;
         } else {
             if (previousTabHostname !== currentTabHostname) {
-                currentTabExempt = $exceptions.includes(currentTabHostname);
+                currentTabExempt = $exceptions?.includes(currentTabHostname) || false;
                 currentState = "PlayPause";
             }
         }

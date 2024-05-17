@@ -71,8 +71,8 @@
 
 <Navbar>
     <NavBrand href="/">
-        <img src="/images/logo/128.png" class="me-3 h-6 sm:h-9" alt="CtrlBlk Logo" />
-        <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">CtrlBlk</span>
+        <img src="/images/logo/128.png" class="me-3 h-6 sm:h-9" alt="CtrlBlock Logo" />
+        <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">CtrlBlock</span>
     </NavBrand>
 </Navbar>
 

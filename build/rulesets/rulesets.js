@@ -15,7 +15,7 @@ export const rulesets = [
     },
     {
         id: "ctrlblk",
-        name: "CtrlBlk filters",
+        name: "CtrlBlock filters",
         enabled: true,
         secret,
         urls: [

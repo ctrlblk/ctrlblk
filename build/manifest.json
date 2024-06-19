@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "version": "0.4.3",
     "name": "CtrlBlock",
-    "description": "",
+    "description": "Take control of your browsing experience and browse the web you want, not the one we've got!",
     "background": {
         "service_worker": "/src/js/background/serviceWorker.js",
         "type": "module"

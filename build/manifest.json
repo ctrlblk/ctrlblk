@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "version": "0.4.4",
+    "version": "0.4.5",
     "name": "CtrlBlock",
     "description": "Take control of your browsing experience and browse the web you want, not the one we've got!",
     "background": {

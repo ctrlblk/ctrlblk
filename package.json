@@ -15,8 +15,8 @@
     },
     "config": {
         "ublock_ref": "d803ae92cd0cced316e1d3d4abcdf6e70e121d22",
-        "ctrlblk_filters_ref_old": "45b4351daaae33cb2aa56078127768c50cbe52f3",
-        "ctrlblk_filters_ref_new": "8742558469eef74348627f7109d5d0980f13a20a"
+        "ctrlblk_filters_ref_old": "8742558469eef74348627f7109d5d0980f13a20a",
+        "ctrlblk_filters_ref_new": "a3180fe0299a88e1d8df20fdd2b086c275ea87b3"
     },
     "dependencies": {
         "date-fns": "^3.3.1",

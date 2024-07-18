@@ -36,7 +36,6 @@
     let currentTabExempt = false;
 
     let currentState = "PlayPause";
-    let currentTabId;
 
     let adReport = {};
 
@@ -199,9 +198,7 @@
 
         let [currentTab] = await browser.tabs.query({active: true, currentWindow: true});
 
-        currentTabId = currentTab.id;
-
-        await tabChangedHandler(currentTab.id);
+        await tabChangedHandler(currentTab?.id);
 
         browser.tabs.onActivated.addListener(event => tabChangedHandler(event.tabId));
         browser.tabs.onUpdated.addListener(event => tabChangedHandler(event));

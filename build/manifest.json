@@ -24,6 +24,8 @@
     "side_panel": {
         "default_path": "/src/sidepanel/index.html"
     },
+    "devtools_page": "/src/devtoolspanel/index.html",
     "permissions": ["activeTab", "declarativeNetRequest", "storage", "scripting", "sidePanel", "tabs"],
-    "host_permissions": ["<all_urls>"]
+    "host_permissions": ["<all_urls>"],
+    "optional_permissions": ["declarativeNetRequestFeedback"]
 }

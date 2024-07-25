@@ -35,6 +35,7 @@
     import Exceptions from "./Exceptions.svelte";
     import Filterlists from "./Filterlists.svelte"
     import UpdatePage from './UpdatePage.svelte';
+    import DevTools from './DevTools.svelte';
 
     let exceptions = writable();
 
@@ -90,6 +91,9 @@
     {#if UNPACKED}
         <Card style="max-width:100%;">
             <UpdatePage />
+        </Card>
+        <Card style="max-width:100%;">
+            <DevTools />
         </Card>
     {/if}
 </div>

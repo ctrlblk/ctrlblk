@@ -32,7 +32,7 @@
     </NavBrand>
 </Navbar>
 
-<div class="mx-4 space-y-4" style="height:1234px;">
+<div class="mx-4 space-y-4">
     <FilterHits />
 </div>
 

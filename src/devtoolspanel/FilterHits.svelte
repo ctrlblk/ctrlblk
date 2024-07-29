@@ -1,177 +1,110 @@
 <script>
-
     import {
+        Button,
         TableSearch,
         TableBody,
-        TableBodyCell,
-        TableBodyRow,
         TableHead,
         TableHeadCell,
+        Label,
+        Select,
      } from 'flowbite-svelte';
+
+    import {
+        RefreshOutline,
+    } from 'flowbite-svelte-icons';
 
     import { onMount } from 'svelte';
 
     import { browser } from "/uBOLite/js/ext.js"
 
-    let searchTerm = ''
-    let placeholder = 'Fileriooo'
+    import {
+        getRules,
+        ruleToFilter,
+    } from "./rules.js"
 
-    let data = []
+    import FilterHitRow from "./FilterHitRow.svelte"
+
+    let searchTerm = ''
+    let placeholder = 'Filer'
+
+    let dataAvailable = []
+    let dataVisible = []
     let rules
 
-    async function getRules() {
-        let rules = new Map()
+    let open = []
 
-        let res = await fetch("/rulesets/ruleset-details.json")
-        let resJSON = await res.json()
-
-        for (let { id } of resJSON) {
-            let res = await fetch(`/rulesets/main/${id}.json`)
-            let resJSON = await res.json()
-
-            for (let rule of resJSON) {
-                rules.set(rule.id, rule)
-            }
-        }
-        return rules
-    }
-
-
-    async function getMatches(tabId) {
-        let { rulesMatchedInfo: matches } =
-            await browser.declarativeNetRequest.getMatchedRules({ tabId })
-
-        console.log(matches)
-
-        let result = []
-
-
-        for (let { rule, tabId, timeStamp } of matches) {
-
-            let ruleObj = rules.get(rule.ruleId)
-
-            if (ruleObj.condition.requestDomains?.length > 10) {
-                ruleObj.condition.requestDomains.splice(9)
-                ruleObj.condition.requestDomains.push("...")
-
-            }
-
-            result.push({
-                rule: JSON.stringify(ruleObj),
-                ruleset: rule.rulesetId,
-                time: new Date(timeStamp).toISOString(),
-            })
-        }
-
-        console.log(result)
-
-        return result
-    }
-
-    function ruleToFilter({ action, condition }, requestURL) {
-
-
-        requestURL = new URL(requestURL)
-
-        let parts = []
-
-        if (action.type === "allow") {
-            parts.push("@@")
-        }
-
-        if (condition.urlFilter) {
-            parts.push(condition.urlFilter)
-        }
-
-        for (let requestDomain of condition.requestDomains || []) {
-
-            if (requestURL.hostname === "js.adscale.de") {
-                console.log(requestURL.hostname, requestDomain)
-            }
-            if (requestURL.hostname.endsWith(requestDomain)) {
-                parts.push(`||${requestDomain}^`)
-            }
-        }
-
-        let modifiers = []
-
-        if (condition.resourceTypes) {
-            modifiers.push(condition.resourceTypes.join(','))
-        }
-
-        if (condition.initiatorDomains) {
-            modifiers.push(`domain=${condition.initiatorDomains.join('|')}`)
-        }
-
-        if (condition.domainType) {
-            modifiers.push({
-                thirdParty: "third-party",
-            }[condition.domainType])
-        }
-
-        if (modifiers.length) {
-            parts.push(`\$${modifiers.join(',')}`)
-        }
-
-
-
-        return parts.join("")
-
-    }
+    let tabId
+    let tabs
+    let tabsSelect
 
     async function addMatches({ request, rule }) {
+        if (request.tabId == tabId) {
+            let ruleObj = rules.get(rule.ruleId)
 
+            let filter = ruleToFilter(ruleObj, request.url)
 
-        //if (request.tabId === tabId
+            let bgColor = {
+                block: "bg-red-400", 
+                allow: "bg-green-400",
+                allowAllRequests: "bg-green-400",
+            }[ruleObj.action?.type] || "bg-amber-400"
 
-        let ruleObj = rules.get(rule.ruleId)
+            let tabTitle = request.tabId
+            for (let tab of await browser.tabs.query({ url: "*://*/*" })) {
+                if (tab.id === request.tabId) {
+                    tabTitle = tab.title
+                    break
+                }
+            }
 
-        let filter = ruleToFilter(JSON.parse(JSON.stringify(ruleObj)), request.url)
+            dataAvailable.push({
+                bgColor,
+                filter,
+                ruleId: rule.ruleId,
+                rulesetId: rule.rulesetId,
+                time: new Date().toISOString(),
 
-        /*
-        if (ruleObj.condition.requestDomains?.length > 10) {
-            ruleObj.condition.requestDomains.splice(9)
-            ruleObj.condition.requestDomains.push("...")
+                tabTitle,
+                requestURL: request.url,
+            })
+
+            // XXX: trigger reactivity
+            dataAvailable = dataAvailable
         }
-        */
-
-        let bgColor = {
-            block: "bg-red-400", 
-            allow: "bg-green-400"
-        }[ruleObj.action?.type] || "bg-amber-400"
-
-        data.push({
-            bgColor,
-            filter,
-            rule: JSON.stringify(ruleObj),
-            ruleset: rule.rulesetId,
-            time: new Date().toISOString(),
-
-            requestURL: request.url,
-
-        })
-
-        data = data
-
-
-
-        console.log(request, rule)
-        console.log(data)
-
     }
 
     onMount(async () => {
-
         const urlParams = new URLSearchParams(window.location.search)
-        const tabId = parseInt(urlParams.get('tabId'), 10) || null
+        let requestedTabId = parseInt(urlParams.get('tabId'), 10) || null
+
+
+        tabs = await browser.tabs.query({ url: "*://*/*" })
+
+        for (let tab of tabs) {
+            if (tab.id === requestedTabId) {
+                tabId = tab.id
+                break
+            }
+        }
+
+        tabsSelect = tabs.map((tab) => ({ name: tab.title, value: tab.id}))
+
+        console.log("onMount", tabId, tabsSelect)
 
         rules = await getRules()
 
-
-        //data = await getMatches(tabId)
-
         browser.declarativeNetRequest.onRuleMatchedDebug.addListener(addMatches)
     })
+
+    async function refreshTab() {
+        await browser.tabs.reload(tabId, { bypassCache: true })
+
+        dataAvailable = []
+        dataVisible = []
+    }
+
+    $: dataVisible = dataAvailable.filter((entry) =>
+        JSON.stringify(entry).toLowerCase().includes(searchTerm.toLowerCase()))
 
 </script>
 
@@ -184,7 +117,10 @@
     <div slot="header" class="mt-1 float-right">
         <slot name="headerRight">
             <div class="px-8">
-                <p>Flux</p>
+                <Select class="float-left" items={tabsSelect} bind:value={tabId} />
+                <Button pill={true} outline={true} class="float-right !p-2" on:click={refreshTab}>
+                    <RefreshOutline class="w-6 h-6" />
+                </Button>
             </div>
         </slot>
     </div>
@@ -192,21 +128,12 @@
         <TableHeadCell>Time</TableHeadCell>
         <TableHeadCell>Filter</TableHeadCell>
         <TableHeadCell>Ruleset</TableHeadCell>
+        <TableHeadCell>Tab</TableHeadCell>
         <TableHeadCell>Request URL</TableHeadCell>
     </TableHead>
     <TableBody tableBodyClass="divide-y">
-        {#each data as row }
-            <TableBodyRow class="{row.bgColor}">
-                <TableBodyCell>{row.time}</TableBodyCell>
-                <TableBodyCell>
-                    {row.filter}
-                    <div class="hidden">
-                        {row.rule} 
-                    </div>
-                </TableBodyCell>
-                <TableBodyCell>{row.ruleset}</TableBodyCell>
-                <TableBodyCell>{row.requestURL}</TableBodyCell>
-            </TableBodyRow>
+        {#each dataVisible as row, i }
+            <FilterHitRow row={row} />
         {/each}
     </TableBody>
 </TableSearch>

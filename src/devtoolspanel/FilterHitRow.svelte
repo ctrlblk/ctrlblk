@@ -9,6 +9,7 @@
     import collapse from 'svelte-collapse'
 
     import Flux from "./Flux.svelte"
+    import RuleCheckbox from "./RuleCheckbox.svelte"
 
     export let row
 
@@ -21,6 +22,9 @@
 </script>
 
 <TableBodyRow class="{bgColor}" on:click={() => open = true}>
+    <TableBodyCell class="!p-4">
+        <RuleCheckbox {ruleId} {rulesetId} />
+    </TableBodyCell>
     <TableBodyCell>{time}</TableBodyCell>
     <TableBodyCell>
         {filter}

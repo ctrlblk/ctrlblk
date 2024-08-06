@@ -41,7 +41,13 @@
         if (request.tabId == tabId) {
             let ruleObj = rules.get(rule.ruleId)
 
-            let filter = ruleToFilter(ruleObj, request.url)
+            let filter
+            try {
+                filter = ruleToFilter(ruleObj, request.url)
+            } catch (error) {
+                console.log("error while ruleToFilter", ruleObj, request.url)
+                throw error
+            }
 
             let bgColor = {
                 block: "bg-red-400", 
@@ -125,6 +131,7 @@
         </slot>
     </div>
     <TableHead>
+        <TableHeadCell>Enabled</TableHeadCell>
         <TableHeadCell>Time</TableHeadCell>
         <TableHeadCell>Filter</TableHeadCell>
         <TableHeadCell>Ruleset</TableHeadCell>

@@ -234,7 +234,7 @@ export async function getConfiguration() {
     };
 }
 
-function filtersMessageHandler(request, sender, sendResponse) {
+export function filtersMessageHandler(request, sender, sendResponse) {
     let { key, args } = request;
 
     if (key == undefined) {

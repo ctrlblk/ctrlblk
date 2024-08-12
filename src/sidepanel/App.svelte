@@ -1,8 +1,12 @@
 <script> 
     import {
+        Button,
         Card,
         Navbar,
+        NavUl,
+        NavLi,
         NavBrand,
+        NavHamburger,
         BottomNav,
         BottomNavItem
      } from 'flowbite-svelte';
@@ -10,10 +14,13 @@
     import {
         LinkOutline,
         MailBoxOutline,
+        AdjustmentsHorizontalOutline,
     } from 'flowbite-svelte-icons';
 
     import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
+
+    import { browser } from "/uBOLite/js/ext.js";
 
     import { UNPACKED } from "/src/js/consts.js";
 
@@ -34,7 +41,6 @@
     import Pause from "./Pause.svelte"
     import Exceptions from "./Exceptions.svelte";
     import Filterlists from "./Filterlists.svelte"
-    import DevTools from './DevTools.svelte';
     import UpdatePage from './UpdatePage.svelte';
 
     let exceptions = writable();
@@ -63,6 +69,29 @@
     }
     exceptions.subscribe(exceptionsChangedFilterHandler);
 
+    async function openDevTools () {
+
+        let flux = await browser.permissions.request({
+            permissions: ["declarativeNetRequestFeedback"],
+        })
+
+        console.log(flux)
+
+        let [currentTab] = await browser.tabs.query({active: true, currentWindow: true});
+
+        let query = ''
+        if (currentTab?.id) {
+            let params = new URLSearchParams([["tabId", currentTab.id]])
+            query = params.toString()
+        }
+
+        let windowId = await browser.windows.create({
+            focused: true,
+            url: `/src/devtools/index.html?${query}`
+        })
+
+    }
+
     onMount(async () => {
         exceptions.set(await getExceptions());
 
@@ -75,6 +104,14 @@
         <img src="/images/logo/128.png" class="me-3 h-6 sm:h-9" alt="CtrlBlock Logo" />
         <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">CtrlBlock</span>
     </NavBrand>
+
+    {#if UNPACKED}
+        <div class="flex md:order-2">
+            <Button pill={true} outline={true} class="!p-2" on:click={openDevTools}>
+                <AdjustmentsHorizontalOutline  class="w-6 h-6" />
+            </Button>
+        </div>
+    {/if}
 </Navbar>
 
 <div class="mx-4 space-y-4">
@@ -89,9 +126,6 @@
     </Card>
 
     {#if UNPACKED}
-        <Card style="max-width:100%;">
-            <DevTools />
-        </Card>
         <Card style="max-width:100%;">
             <UpdatePage />
         </Card>

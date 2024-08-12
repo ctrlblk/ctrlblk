@@ -5,7 +5,6 @@
         TableBody,
         TableHead,
         TableHeadCell,
-        Label,
         Select,
      } from 'flowbite-svelte';
 
@@ -20,7 +19,7 @@
     import {
         getRules,
         ruleToFilter,
-    } from "./rules.js"
+    } from "/src/js/rules.js"
 
     import FilterHitRow from "./FilterHitRow.svelte"
 
@@ -33,12 +32,12 @@
 
     let open = []
 
-    let tabId
+    export let tabId
     let tabs
     let tabsSelect
 
     async function addMatches({ request, rule }) {
-        if (request.tabId == tabId) {
+        if (request.tabId == $tabId) {
             let ruleObj = rules.get(rule.ruleId)
 
             let filter
@@ -88,14 +87,14 @@
 
         for (let tab of tabs) {
             if (tab.id === requestedTabId) {
-                tabId = tab.id
+                tabId.set(tab.id)
                 break
             }
         }
 
         tabsSelect = tabs.map((tab) => ({ name: tab.title, value: tab.id}))
 
-        console.log("onMount", tabId, tabsSelect)
+        console.log("onMount", $tabId, tabsSelect)
 
         rules = await getRules()
 
@@ -103,7 +102,7 @@
     })
 
     async function refreshTab() {
-        await browser.tabs.reload(tabId, { bypassCache: true })
+        await browser.tabs.reload($tabId, { bypassCache: true })
 
         dataAvailable = []
         dataVisible = []
@@ -123,7 +122,7 @@
     <div slot="header" class="mt-1 float-right">
         <slot name="headerRight">
             <div class="px-8">
-                <Select class="float-left" items={tabsSelect} bind:value={tabId} />
+                <Select class="float-left" items={tabsSelect} bind:value={$tabId} />
                 <Button pill={true} outline={true} class="float-right !p-2" on:click={refreshTab}>
                     <RefreshOutline class="w-6 h-6" />
                 </Button>
@@ -140,7 +139,7 @@
     </TableHead>
     <TableBody tableBodyClass="divide-y">
         {#each dataVisible as row, i }
-            <FilterHitRow row={row} />
+            <FilterHitRow on:disableRule {row} />
         {/each}
     </TableBody>
 </TableSearch>

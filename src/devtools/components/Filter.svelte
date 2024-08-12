@@ -3,7 +3,7 @@
 
     import { browser } from "/uBOLite/js/ext.js"
 
-    import { getRule } from "./rules.js"
+    import { getRule } from "/src/js/rules.js"
 
     let ruleFormatted
 

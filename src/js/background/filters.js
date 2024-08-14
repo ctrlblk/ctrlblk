@@ -24,6 +24,11 @@ import {
 
  import { registerInjectables } from "/uBOLite/js/scripting-manager.js";
 
+ import {
+    splitSpecificCosmetic,
+    generateFourPieceScriptletInner,
+} from '/build/rulesets/scriptlets.js';
+
  import { detect } from "detect-browser";
 
  const rulesetConfig = {
@@ -234,6 +239,156 @@ export async function getConfiguration() {
     };
 }
 
+/// XXX: this uBOLite/js/ext.js has localRemove but no sessionRemove
+async function sessionRemove(key) {
+    if ( browser.storage instanceof Object === false ) { return; }
+    if ( browser.storage.session instanceof Object === false ) { return; }
+    return browser.storage.session.remove(key);
+}
+
+export async function addSessionScriptingFilters({ genericCosmetic, genericCosmeticExceptions, specificCosmetic }) {
+
+    console.log("addSessionScriptingFilters genericCosmetic", genericCosmetic)
+    console.log("addSessionScriptingFilters genericCosmeticExceptions", genericCosmeticExceptions)
+    console.log("addSessionScriptingFilters specificCosmetic", specificCosmetic)
+
+    if (genericCosmetic) {
+        sessionWrite("scriptingFilters.genericCosmetic", genericCosmetic)
+    } else {
+        sessionRemove("scriptingFilters.genericCosmetic")
+    }
+
+    if (genericCosmeticExceptions) {
+        sessionWrite("scriptingFilters.genericCosmeticExceptions", genericCosmeticExceptions)
+    } else {
+        sessionRemove("scriptingFilters.genericCosmeticExceptions")
+    }
+
+    if (specificCosmetic) {
+        sessionWrite("scriptingFilters.specificCosmetic", specificCosmetic)
+    } else {
+        sessionRemove("scriptingFilters.specificCosmetic")
+    }
+}
+
+export async function getGenericSelectorMap(request, sender) {
+    let dataGenericCosmetic = await sessionRead("scriptingFilters.genericCosmetic");
+    let filters = new Map(dataGenericCosmetic)
+
+
+    let dataGenericCosmeticExceptions = await sessionRead("scriptingFilters.genericCosmeticExceptions");
+    let exceptions = new Set(dataGenericCosmeticExceptions)
+
+    console.log("getGenericSelectorMap filters", filters)
+    console.log("getGenericSelectorMap exceptions", exceptions)
+
+
+    let selectorList = [];
+
+    if (filters) {
+        for (let [hash, selectors] of filters) {
+            // Remove exceptions
+            if (exceptions) {
+                selectors = selectors.filter(v => exceptions.has(v) === false);
+            }
+
+            // Format selectors to be injected into css-generic.js scriptlet below
+            selectorList.push([hash, selectors.join(", ")]);
+        }
+    }
+
+    return {
+        toImport: selectorList,
+    }
+}
+
+export async function getSpecificImports(request, sender) {
+
+    let data = await sessionRead("scriptingFilters.specificCosmetic");
+
+    let specificCosmetic = new Map(data)
+
+    let [declarativeCosmetic, proceduralCosmetic] = splitSpecificCosmetic(specificCosmetic);
+
+    console.log("getSpecificImports declarativeCosmetic", declarativeCosmetic)
+
+    let {argsList, hostnamesMap, entitiesMap, exceptionsMap} = generateFourPieceScriptletInner(declarativeCosmetic, true)
+
+    let response = {
+        argsList,
+        hostnamesMap: Array.from(hostnamesMap.entries()),
+        entitiesMap: Array.from(entitiesMap.entries()),
+        exceptionsMap: Array.from(exceptionsMap.entries()),
+    }
+
+    console.log("getSpecificImports", response)
+    return response
+}
+
+export async function getDeclarativeImports(request, sender) {
+
+    let data = await sessionRead("scriptingFilters.specificCosmetic");
+
+    let specificCosmetic = new Map(data)
+
+    let [declarativeCosmetic, proceduralCosmetic] = splitSpecificCosmetic(specificCosmetic);
+
+    // Strip all not cssable entries
+    let proceduralDeclarative = new Map();
+    for (let [jsonSelector, details] of proceduralCosmetic) {
+        let selector = JSON.parse(jsonSelector);
+        if (selector.cssable) {
+            selector.cssable = undefined;
+            proceduralDeclarative.set(JSON.stringify(selector), details);
+        }
+    }
+
+    console.log("getDeclarativeImports proceduralDeclarative", proceduralDeclarative)
+
+    let {argsList, hostnamesMap, entitiesMap, exceptionsMap} = generateFourPieceScriptletInner(proceduralDeclarative, false)
+
+    let response = {
+        argsList,
+        hostnamesMap: Array.from(hostnamesMap.entries()),
+        entitiesMap: Array.from(entitiesMap.entries()),
+        exceptionsMap: Array.from(exceptionsMap.entries()),
+    }
+
+    console.log("getProceduralImports", response)
+    return response
+}
+
+export async function getProceduralImports(request, sender) {
+
+    let data = await sessionRead("scriptingFilters.specificCosmetic");
+
+    let specificCosmetic = new Map(data)
+
+    let [declarativeCosmetic, proceduralCosmetic] = splitSpecificCosmetic(specificCosmetic);
+
+    let proceduralProcedural = new Map();
+    for (let [jsonSelector, details] of proceduralCosmetic) {
+        let selector = JSON.parse(jsonSelector);
+        if (!selector.cssable) {
+            proceduralProcedural.set(JSON.stringify(selector), details);
+        }
+    }
+
+    console.log("getProceduralImports proceduralProcedural", proceduralProcedural)
+
+    let {argsList, hostnamesMap, entitiesMap, exceptionsMap} = generateFourPieceScriptletInner(proceduralProcedural, false)
+
+    let response = {
+        argsList,
+        hostnamesMap: Array.from(hostnamesMap.entries()),
+        entitiesMap: Array.from(entitiesMap.entries()),
+        exceptionsMap: Array.from(exceptionsMap.entries()),
+    }
+
+    console.log("getProceduralImports", response)
+    return response
+}
+
 export function filtersMessageHandler(request, sender, sendResponse) {
     let { key, args } = request;
 
@@ -264,8 +419,15 @@ const filters = {
     getFilterlistDetails,
     enableFilterlist,
     disableFilterlist,
-    filtersMessageHandler,
     getConfiguration,
+
+    getGenericSelectorMap,
+    addSessionScriptingFilters,
+    getSpecificImports,
+    getDeclarativeImports,
+    getProceduralImports,
+
+    filtersMessageHandler,
 }
 
 export default filters;

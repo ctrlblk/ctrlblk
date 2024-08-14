@@ -13,15 +13,45 @@
         ruleToFilter,
     } from '/src/js/rules.js'
 
+    import {
+        splitSpecificCosmetic,
+        generateFourPieceScriptletInner,
+    } from '/build/rulesets/scriptlets.js';
+
     export let tabId
     let value = ''
     let disableReload = !$tabId
 
+    async function flux({ genericCosmetic, genericCosmeticExceptions, specificCosmetic }) {
+
+
+        /*
+        console.log("flux", specificCosmetic)
+        console.log("flux2", {
+            specificCosmetic: specificCosmetic && Array.from(specificCosmetic.entries()),
+        })
+        */
+
+        await browser.runtime.sendMessage({
+            key: "addSessionScriptingFilters",
+            args: [{
+                genericCosmetic: genericCosmetic && Array.from(genericCosmetic.entries()),
+                genericCosmeticExceptions: genericCosmeticExceptions && Array.from(genericCosmeticExceptions.values()),
+                specificCosmetic: specificCosmetic && Array.from(specificCosmetic.entries()),
+            }],
+        })
+    }
+
     async function applyFilters({ reload }) {
         let sessionRules = await browser.declarativeNetRequest.getSessionRules({})
 
+        // XXX: handle rejected rules like 
+        // abptestpages.org###remove-id {remove: true;}
         let results = await parseRules(value)
         console.log("Apply filters", results)
+
+        await flux(results)
+
         let { network: { ruleset: requestedRules } } = results
 
         let addRules = requestedRules

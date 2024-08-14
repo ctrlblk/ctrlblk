@@ -14,7 +14,7 @@
         "generate-rulesets": "node build/generate-rulesets.js"
     },
     "config": {
-        "ublock_ref": "d803ae92cd0cced316e1d3d4abcdf6e70e121d22",
+        "ublock_ref": "d67f11da453c06c1a6f39b69a6fec59a2096d885",
         "ctrlblk_filters_ref_old": "86643ecd8777ce478019894a8f097be1895fb4c5",
         "ctrlblk_filters_ref_new": "56f703f27cd65692c6072e243a589135c180a958"
     },

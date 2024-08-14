@@ -73,7 +73,7 @@ export async function generateCssGenericHigh(details, selectors, exceptions) {
     return src;
 }
 
-async function generateFourPieceScriptlet(scriptlet, mapin, flatArgsList) {
+export function generateFourPieceScriptletInner(mapin, flatArgsList) {
     let tmpSelectorsByHostnames = new Map();
 
     // Merge selectors used by the same hostnames (matches and excludes) into a single entry
@@ -153,6 +153,18 @@ async function generateFourPieceScriptlet(scriptlet, mapin, flatArgsList) {
         argsList = argsList.map(selectors => selectors.split(',\n'));
     }
 
+    return {
+        argsList,
+        hostnamesMap,
+        entitiesMap,
+        exceptionsMap,
+        selectorsByHostnames,
+    }
+}
+
+async function generateFourPieceScriptlet(scriptlet, mapin, flatArgsList) {
+    let {argsList, hostnamesMap, entitiesMap, exceptionsMap, selectorsByHostnames} = generateFourPieceScriptletInner(mapin, flatArgsList)
+
     let src = '';
 
     if (selectorsByHostnames.length > 0) {
@@ -182,7 +194,7 @@ async function generateFourPieceScriptlet(scriptlet, mapin, flatArgsList) {
     return [selectorsByHostnames.length, src];
 }
 
-function splitSpecificCosmetic(filters) {
+export function splitSpecificCosmetic(filters) {
     const declarativeCosmetic = new Map();
     const proceduralCosmetic = new Map();
 

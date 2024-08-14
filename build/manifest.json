@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "version": "0.4.12",
+    "version": "0.4.13",
     "name": "CtrlBlock",
     "description": "Experience True Web Freedom with CtrlBlock",
     "background": {

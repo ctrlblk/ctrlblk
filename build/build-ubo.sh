@@ -80,6 +80,7 @@ cp uBOL/src/lib/publicsuffixlist/publicsuffixlist.js uBOBits/lib/publicsuffixlis
 
 cp uBOL/platform/mv3/safe-replace.js uBOBits/
 cp uBOL/platform/mv3/make-scriptlets.js uBOBits/
+
 cp uBOL/assets/resources/scriptlets.js uBOBits/
 cp -r uBOL/platform/mv3/scriptlets uBOBits/
 

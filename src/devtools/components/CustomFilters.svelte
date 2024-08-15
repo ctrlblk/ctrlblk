@@ -22,7 +22,7 @@
     let value = ''
     let disableReload = !$tabId
 
-    async function flux({ genericCosmetic, genericCosmeticExceptions, specificCosmetic }) {
+    async function flux({ genericCosmetic, genericCosmeticExceptions, scriptlet, specificCosmetic }) {
 
 
         /*
@@ -37,6 +37,7 @@
             args: [{
                 genericCosmetic: genericCosmetic && Array.from(genericCosmetic.entries()),
                 genericCosmeticExceptions: genericCosmeticExceptions && Array.from(genericCosmeticExceptions.values()),
+                scriptlet: scriptlet && Array.from(scriptlet.entries()),
                 specificCosmetic: specificCosmetic && Array.from(specificCosmetic.entries()),
             }],
         })

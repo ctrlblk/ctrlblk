@@ -17,6 +17,8 @@ const manifestTemplate = "build/manifest.json";
 const sourceDir = "src/js";
 
 const uBOLiteRoot = "uBOLite";
+const uBOBitsRoot = "uBOBits";
+
 
 export function generateManifestContents(mode) {
     // read our and uBOLite's manifest file
@@ -58,6 +60,9 @@ function copyUBOLAssets() {
 
     // copy over scriptlets
     cpSync(`${uBOLiteRoot}/js/scripting`, "dist/js/scripting", { recursive: true });
+
+    // copy over template for scriptlet generation
+    cpSync(`${uBOBitsRoot}/scriptlets/scriptlet.template.js`, "dist/js/scripting/scriptlet.template.js")
 }
 
 function generateRulesets() {

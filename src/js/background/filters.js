@@ -29,6 +29,9 @@ import {
     generateFourPieceScriptletInner,
 } from '/build/rulesets/scriptlets.js';
 
+
+import * as makeScriptlet from '/uBOBits/make-scriptlets.js'
+
  import { detect } from "detect-browser";
 
  const rulesetConfig = {
@@ -246,7 +249,7 @@ async function sessionRemove(key) {
     return browser.storage.session.remove(key);
 }
 
-export async function addSessionScriptingFilters({ genericCosmetic, genericCosmeticExceptions, specificCosmetic }) {
+export async function addSessionScriptingFilters({ genericCosmetic, genericCosmeticExceptions, scriptlet, specificCosmetic }) {
 
     console.log("addSessionScriptingFilters genericCosmetic", genericCosmetic)
     console.log("addSessionScriptingFilters genericCosmeticExceptions", genericCosmeticExceptions)
@@ -262,6 +265,13 @@ export async function addSessionScriptingFilters({ genericCosmetic, genericCosme
         sessionWrite("scriptingFilters.genericCosmeticExceptions", genericCosmeticExceptions)
     } else {
         sessionRemove("scriptingFilters.genericCosmeticExceptions")
+    }
+
+    if (scriptlet) {
+        sessionWrite("scriptingFilters.scriptlet", scriptlet)
+        await getScriptlet()
+    } else {
+        sessionRemove("scriptingFilters.scriptlet")
     }
 
     if (specificCosmetic) {
@@ -387,6 +397,35 @@ export async function getProceduralImports(request, sender) {
 
     console.log("getProceduralImports", response)
     return response
+}
+
+export async function getScriptlet(request, sender) {
+
+    console.log("getScriptlet")
+
+    let data = await sessionRead("scriptingFilters.scriptlet");
+    let scriptlets = new Map(data)
+
+    console.log("getScriptlet", scriptlets)
+
+    makeScriptlet.init();
+
+    for ( const details of scriptlets.values() ) {
+        makeScriptlet.compile(details);
+    }
+
+    function writeFn(fn, content) {
+        console.log("getScriptlet.writeFn", fn, content)
+    }
+
+    let rulesetDir = "/rulesets"
+    let rulesetId = "_session"
+
+    const stats = await makeScriptlet.commit(
+        rulesetId,
+        `${rulesetDir}/scripting/scriptlet`,
+        writeFn
+    );
 }
 
 export function filtersMessageHandler(request, sender, sendResponse) {

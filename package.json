@@ -11,10 +11,12 @@
         "tailwindcss": "npx tailwindcss -i ./src/app.pcss -o ./dist/assets/tailwind.css",
         "build-ubo": "build/build-ubo.sh $npm_package_config_ublock_ref $npm_package_config_ctrlblk_filters_ref_old $npm_package_config_ctrlblk_filters_ref_new",
         "postinstall": "npm run build-ubo",
-        "generate-rulesets": "node build/generate-rulesets.js"
+        "generate-rulesets": "node build/generate-rulesets.js",
+        "generate-dynamic-scriptlets": "node build/generate-dynamic-scriptlets.js"
+
     },
     "config": {
-        "ublock_ref": "d67f11da453c06c1a6f39b69a6fec59a2096d885",
+        "ublock_ref": "d6da0bd1be9ab643864884ffb3f808e0dd48deb7",
         "ctrlblk_filters_ref_old": "86643ecd8777ce478019894a8f097be1895fb4c5",
         "ctrlblk_filters_ref_new": "56f703f27cd65692c6072e243a589135c180a958"
     },

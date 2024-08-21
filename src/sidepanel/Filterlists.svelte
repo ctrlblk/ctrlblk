@@ -13,6 +13,8 @@
     export let rulesetGroups = new Map();
 
     function groupRulesets(rulesetDetails) {
+        console.log("groupRulesets", rulesetDetails)
+        rulesetDetails = rulesetDetails || []
         return new Map([
             [
                 "Default",

@@ -121,8 +121,6 @@ async function start() {
     if ( wakeupRun === false && dnr.setExtensionActionOptions ) {
         dnr.setExtensionActionOptions({ displayActionCountAsBadgeText: true });
     }
-
-    //runtime.openOptionsPage();
 }
 
 try {

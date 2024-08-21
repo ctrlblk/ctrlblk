@@ -172,6 +172,6 @@ async function main({ output }) {
 
 const parser = new ArgumentParser({ description: "Convert easylist style filter list to DNR+ suitable to be used in CtrlBlk"});
 
-parser.add_argument("-o", "--output", { type: String, help: "Output directory aka dist/" });
+parser.add_argument("-o", "--output", { required: true, type: String, help: "Output directory aka dist/" });
 
 await main(parser.parse_args())

@@ -61,12 +61,13 @@ function copyUBOLAssets() {
     // copy over scriptlets
     cpSync(`${uBOLiteRoot}/js/scripting`, "dist/js/scripting", { recursive: true });
 
-    // copy over template for scriptlet generation
+    // copy over template for dynamic scriptlet generation
     cpSync(`${uBOBitsRoot}/scriptlets/scriptlet.template.js`, "dist/js/scripting/scriptlet.template.js")
 }
 
 function generateRulesets() {
     execSync("npm run generate-rulesets -- -o dist/");
+    execSync("npm run generate-dynamic-scriptlets -- -o dist/");
 }
 
 function compileCss() {

@@ -32,6 +32,8 @@
         })
         */
 
+        console.log("flux", scriptlet)
+
         await browser.runtime.sendMessage({
             key: "addSessionScriptingFilters",
             args: [{

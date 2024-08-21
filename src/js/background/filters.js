@@ -269,7 +269,8 @@ export async function addSessionScriptingFilters({ genericCosmetic, genericCosme
 
     if (scriptlet) {
         sessionWrite("scriptingFilters.scriptlet", scriptlet)
-        await getScriptlet()
+
+        await registerDynamicScriptlets(new Map(scriptlet))
     } else {
         sessionRemove("scriptingFilters.scriptlet")
     }
@@ -399,6 +400,46 @@ export async function getProceduralImports(request, sender) {
     return response
 }
 
+export async function getDynamicScriptlets({scriptletName}) {
+    console.log("getDynamicScriptlets", scriptletName)
+
+    // get available scriptlets
+    let response = await fetch("/rulesets/dynamic-scriptlet-details.json")
+    let responseData = await response.json()
+    let availableScriptlets = new Map(responseData.map(({fnName, name}) => ([fnName, name])))
+
+    let scriptletArgsKey = availableScriptlets.get(scriptletName)
+
+    let data = await sessionRead("scriptingFilters.scriptlet");
+    // Key includes scriptlet name + args i.e. '["set-cookie","cookies","off"]'
+    // Since dynamic scriptlets are handled slightly different than ordinary ones
+    // we really only neet the name as the key
+    let scriptletArgs = new Map(data.map(([k, v]) => ([JSON.parse(k)[0], v])))
+
+    console.log("getDynamicScriptlets", scriptletArgs, JSON.stringify(data), availableScriptlets)
+
+    if (scriptletArgs.has(scriptletArgsKey)) {
+        let details = scriptletArgs.get(scriptletArgsKey)
+
+        console.log("getDynamicScriptlets", details)
+
+        return {
+            argsList: [details.args.slice(1)],
+            hostnamesMap: details.matches.map((e) => ([e, 0])),
+            entitiesMap: [],
+            exceptionsMap: [],
+        }
+
+    } else {
+        return {
+            argsList: [],
+            hostnamesMap: [],
+            entitiesMap: [],
+            exceptionsMap: [],
+        } 
+    }
+}
+
 export async function getScriptlet(request, sender) {
 
     console.log("getScriptlet")
@@ -406,7 +447,7 @@ export async function getScriptlet(request, sender) {
     let data = await sessionRead("scriptingFilters.scriptlet");
     let scriptlets = new Map(data)
 
-    console.log("getScriptlet", scriptlets)
+    console.log("getScriptlet", scriptlets, JSON.stringify(data))
 
     makeScriptlet.init();
 
@@ -415,7 +456,7 @@ export async function getScriptlet(request, sender) {
     }
 
     function writeFn(fn, content) {
-        console.log("getScriptlet.writeFn", fn, content)
+        //console.log("getScriptlet.writeFn", fn, content, "...")
     }
 
     let rulesetDir = "/rulesets"
@@ -426,9 +467,13 @@ export async function getScriptlet(request, sender) {
         `${rulesetDir}/scripting/scriptlet`,
         writeFn
     );
+
+    return {
+        src: "Hellow from getScriptlet",
+    }
 }
 
-export function filtersMessageHandler(request, sender, sendResponse) {
+export async function filtersMessageHandler(request, sender, sendResponse) {
     let { key, args } = request;
 
     if (key == undefined) {
@@ -442,10 +487,56 @@ export function filtersMessageHandler(request, sender, sendResponse) {
 
     if (filters.hasOwnProperty(key)) {
         const messageHandler = filters[key];
-        messageHandler(...args).then(sendResponse);
+        //messageHandler(...args).then(sendResponse);
+        let response = await messageHandler(...args)
+        await sendResponse(response)
         return true;
     }
     throw new Error(`Message handler with key ${key} doesn't exist!`);
+}
+
+async function registerDynamicScriptlets(scriptlet) {
+    let response = await fetch("/rulesets/dynamic-scriptlet-details.json")
+    let data = await response.json()
+    let availableScriptlets = new Map(data.map(({name, path}) => ([name, path])))
+
+    let js = []
+
+    for (let {args:[name]} of scriptlet.values()) {
+        let path = availableScriptlets.get(name)
+        if (path) {
+            js.push(path)
+        }
+    }
+
+    let registered = await browser.scripting.getRegisteredContentScripts({ ids: ["session_dynamic"]})
+    if (registered.length) {
+        await browser.scripting.unregisterContentScripts({ ids: ["session_dynamic"]})
+    }
+
+    try {
+        await browser.scripting.registerContentScripts([{
+            id: "session_dynamic",
+            js: js,
+            allFrames: true,
+            matches: ["<all_urls>"],
+            //excludeMatches,
+            runAt: 'document_start',
+            persistAcrossSessions: false,
+        }])
+    } catch (error) {
+        // XXX: For some reason a duplicate script ID error is thrown even if no script
+        // with a corresponding id did exists and script gets registered as expected.
+        // For now we'll double check that the script has registered and move on.
+        if (error.message === "Duplicate script ID 'session_dynamic'") {
+            let registered = await browser.scripting.getRegisteredContentScripts({ ids: ["session_dynamic"]})
+            if (!registered.length) {
+                throw error
+            }
+        }
+    }
+
+    console.log("registerDynamicScriptlets", scriptlet, js)
 }
 
 const filters = {
@@ -465,6 +556,8 @@ const filters = {
     getSpecificImports,
     getDeclarativeImports,
     getProceduralImports,
+    getDynamicScriptlets,
+    getScriptlet,
 
     filtersMessageHandler,
 }

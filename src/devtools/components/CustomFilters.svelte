@@ -18,33 +18,13 @@
         generateFourPieceScriptletInner,
     } from '/build/rulesets/scriptlets.js';
 
+    import filters from "/src/js/filters.js"
+
     export let tabId
     let value = ''
     let disableReload = !$tabId
 
-    async function flux({ genericCosmetic, genericCosmeticExceptions, scriptlet, specificCosmetic }) {
-
-
-        /*
-        console.log("flux", specificCosmetic)
-        console.log("flux2", {
-            specificCosmetic: specificCosmetic && Array.from(specificCosmetic.entries()),
-        })
-        */
-
-        console.log("flux", scriptlet)
-
-        await browser.runtime.sendMessage({
-            key: "addSessionScriptingFilters",
-            args: [{
-                genericCosmetic: genericCosmetic && Array.from(genericCosmetic.entries()),
-                genericCosmeticExceptions: genericCosmeticExceptions && Array.from(genericCosmeticExceptions.values()),
-                scriptlet: scriptlet && Array.from(scriptlet.entries()),
-                specificCosmetic: specificCosmetic && Array.from(specificCosmetic.entries()),
-            }],
-        })
-    }
-
+    // XXX: How to update runtime filters shouldn't live in a component
     async function applyFilters({ reload }) {
         let sessionRules = await browser.declarativeNetRequest.getSessionRules({})
 
@@ -53,7 +33,19 @@
         let results = await parseRules(value)
         console.log("Apply filters", results)
 
-        await flux(results)
+        let {
+            genericCosmetic,
+            genericCosmeticExceptions,
+            scriptlet,
+            specificCosmetic
+        } = results
+
+        await filters.addRuntimeScriptingFilters({
+            genericCosmetic: genericCosmetic && Array.from(genericCosmetic.entries()),
+            genericCosmeticExceptions: genericCosmeticExceptions && Array.from(genericCosmeticExceptions.values()),
+            scriptlet: scriptlet && Array.from(scriptlet.entries()),
+            specificCosmetic: specificCosmetic && Array.from(specificCosmetic.entries()),
+        })
 
         let { network: { ruleset: requestedRules } } = results
 

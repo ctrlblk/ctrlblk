@@ -21,7 +21,9 @@ export async function updateExceptionsFromString(hostnames) {
 }
 
 export async function getFilterlistDetails() {
+    console.log("client getFilterlistDetails")
     let response = await sendMessage({ key: "getFilterlistDetails"});
+    console.log("client getFilterlistDetails", response)
     return response;
 }
 
@@ -37,6 +39,10 @@ export async function getConfiguration(id) {
     return await sendMessage({ key: "getConfiguration"});
 }
 
+export async function addRuntimeScriptingFilters(details) {
+    return await sendMessage({ key: "addRuntimeScriptingFilters", args: [details]});
+}
+
 export default {
     isExempt,
     getExceptions,
@@ -47,4 +53,5 @@ export default {
     enableFilterlist,
     disableFilterlist,
     getConfiguration,
+    addRuntimeScriptingFilters,
 }

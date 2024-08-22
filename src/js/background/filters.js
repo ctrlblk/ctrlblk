@@ -129,6 +129,7 @@ export async function isExempt(hostname) {
 
 export async function getExceptions() {
     let filteringModeDetails = await getFilteringModeDetails();
+    console.log("getExceptions", filteringModeDetails.none)
     return Array.from(filteringModeDetails.none).map(punycode.toUnicode);
 }
 
@@ -176,6 +177,8 @@ export async function updateExceptionsFromString(hostnames) {
 }
 
 export async function getFilterlistDetails() {
+    console.log("background", "getFilterlistDetails")
+
     const rulesetDetails = await getRulesetDetails();
     const enabledRulesets = await dnr.getEnabledRulesets();
 
@@ -186,6 +189,7 @@ export async function getFilterlistDetails() {
             rule.enabled = false;
         }
     }
+    console.log("background", "getFilterlistDetails", rulesetDetails)
 
     return Array.from(rulesetDetails);
 }
@@ -249,40 +253,29 @@ async function sessionRemove(key) {
     return browser.storage.session.remove(key);
 }
 
-export async function addSessionScriptingFilters({ genericCosmetic, genericCosmeticExceptions, scriptlet, specificCosmetic }) {
+export async function addRuntimeScriptingFilters(details) {
+    let keys = [
+        "genericCosmetic",
+        "genericCosmeticExceptions",
+        "scriptlet",
+        "specificCosmetic",
+    ]
+    for (let key of keys ) {
+        let value = details[key]
 
-    console.log("addSessionScriptingFilters genericCosmetic", genericCosmetic)
-    console.log("addSessionScriptingFilters genericCosmeticExceptions", genericCosmeticExceptions)
-    console.log("addSessionScriptingFilters specificCosmetic", specificCosmetic)
+        if (value) {
+            sessionWrite(`scriptingFilters.${key}`, value)
+        } else {
+            sessionRemove(`scriptingFilters.${key}`)
+        }
 
-    if (genericCosmetic) {
-        sessionWrite("scriptingFilters.genericCosmetic", genericCosmetic)
-    } else {
-        sessionRemove("scriptingFilters.genericCosmetic")
-    }
-
-    if (genericCosmeticExceptions) {
-        sessionWrite("scriptingFilters.genericCosmeticExceptions", genericCosmeticExceptions)
-    } else {
-        sessionRemove("scriptingFilters.genericCosmeticExceptions")
-    }
-
-    if (scriptlet) {
-        sessionWrite("scriptingFilters.scriptlet", scriptlet)
-
-        await registerDynamicScriptlets(new Map(scriptlet))
-    } else {
-        sessionRemove("scriptingFilters.scriptlet")
-    }
-
-    if (specificCosmetic) {
-        sessionWrite("scriptingFilters.specificCosmetic", specificCosmetic)
-    } else {
-        sessionRemove("scriptingFilters.specificCosmetic")
+        if (key === "scriptlet") {
+            registerRuntimeScriptletContentScript(new Map(value))
+        }
     }
 }
 
-export async function getGenericSelectorMap(request, sender) {
+export async function getRuntimeScriptingGenericCosmeticFilters(request, sender) {
     let dataGenericCosmetic = await sessionRead("scriptingFilters.genericCosmetic");
     let filters = new Map(dataGenericCosmetic)
 
@@ -313,13 +306,12 @@ export async function getGenericSelectorMap(request, sender) {
     }
 }
 
-export async function getSpecificImports(request, sender) {
-
+export async function getRuntimeScriptingSpecificCosmeticFilters(request, sender) {
     let data = await sessionRead("scriptingFilters.specificCosmetic");
 
     let specificCosmetic = new Map(data)
 
-    let [declarativeCosmetic, proceduralCosmetic] = splitSpecificCosmetic(specificCosmetic);
+    let [declarativeCosmetic, _] = splitSpecificCosmetic(specificCosmetic);
 
     console.log("getSpecificImports declarativeCosmetic", declarativeCosmetic)
 
@@ -336,13 +328,13 @@ export async function getSpecificImports(request, sender) {
     return response
 }
 
-export async function getDeclarativeImports(request, sender) {
+export async function getRuntimeScriptingDeclarativeFilters(request, sender) {
 
     let data = await sessionRead("scriptingFilters.specificCosmetic");
 
     let specificCosmetic = new Map(data)
 
-    let [declarativeCosmetic, proceduralCosmetic] = splitSpecificCosmetic(specificCosmetic);
+    let [_, proceduralCosmetic] = splitSpecificCosmetic(specificCosmetic);
 
     // Strip all not cssable entries
     let proceduralDeclarative = new Map();
@@ -369,7 +361,7 @@ export async function getDeclarativeImports(request, sender) {
     return response
 }
 
-export async function getProceduralImports(request, sender) {
+export async function getRuntimeScriptingProceduralFilters(request, sender) {
 
     let data = await sessionRead("scriptingFilters.specificCosmetic");
 
@@ -400,7 +392,7 @@ export async function getProceduralImports(request, sender) {
     return response
 }
 
-export async function getDynamicScriptlets({scriptletName}) {
+export async function getRuntimeScriptletFilters({scriptletName}) {
     console.log("getDynamicScriptlets", scriptletName)
 
     // get available scriptlets
@@ -440,62 +432,8 @@ export async function getDynamicScriptlets({scriptletName}) {
     }
 }
 
-export async function getScriptlet(request, sender) {
-
-    console.log("getScriptlet")
-
-    let data = await sessionRead("scriptingFilters.scriptlet");
-    let scriptlets = new Map(data)
-
-    console.log("getScriptlet", scriptlets, JSON.stringify(data))
-
-    makeScriptlet.init();
-
-    for ( const details of scriptlets.values() ) {
-        makeScriptlet.compile(details);
-    }
-
-    function writeFn(fn, content) {
-        //console.log("getScriptlet.writeFn", fn, content, "...")
-    }
-
-    let rulesetDir = "/rulesets"
-    let rulesetId = "_session"
-
-    const stats = await makeScriptlet.commit(
-        rulesetId,
-        `${rulesetDir}/scripting/scriptlet`,
-        writeFn
-    );
-
-    return {
-        src: "Hellow from getScriptlet",
-    }
-}
-
-export async function filtersMessageHandler(request, sender, sendResponse) {
-    let { key, args } = request;
-
-    if (key == undefined) {
-        // Message is not for us
-        return false;
-    }
-
-    if (args === undefined) {
-        args = [];
-    }
-
-    if (filters.hasOwnProperty(key)) {
-        const messageHandler = filters[key];
-        //messageHandler(...args).then(sendResponse);
-        let response = await messageHandler(...args)
-        await sendResponse(response)
-        return true;
-    }
-    throw new Error(`Message handler with key ${key} doesn't exist!`);
-}
-
-async function registerDynamicScriptlets(scriptlet) {
+async function registerRuntimeScriptletContentScript(scriptlet) {
+    console.log("registerDynamicScriptlets", scriptlet)
     let response = await fetch("/rulesets/dynamic-scriptlet-details.json")
     let data = await response.json()
     let availableScriptlets = new Map(data.map(({name, path}) => ([name, path])))
@@ -509,34 +447,67 @@ async function registerDynamicScriptlets(scriptlet) {
         }
     }
 
-    let registered = await browser.scripting.getRegisteredContentScripts({ ids: ["session_dynamic"]})
-    if (registered.length) {
-        await browser.scripting.unregisterContentScripts({ ids: ["session_dynamic"]})
-    }
+    // XXX: Test if unregistering works if scriptlet no longer present
 
-    try {
-        await browser.scripting.registerContentScripts([{
-            id: "session_dynamic",
-            js: js,
-            allFrames: true,
-            matches: ["<all_urls>"],
-            //excludeMatches,
-            runAt: 'document_start',
-            persistAcrossSessions: false,
-        }])
-    } catch (error) {
-        // XXX: For some reason a duplicate script ID error is thrown even if no script
-        // with a corresponding id did exists and script gets registered as expected.
-        // For now we'll double check that the script has registered and move on.
-        if (error.message === "Duplicate script ID 'session_dynamic'") {
-            let registered = await browser.scripting.getRegisteredContentScripts({ ids: ["session_dynamic"]})
-            if (!registered.length) {
+    if (js.length) {
+        let registered = await browser.scripting.getRegisteredContentScripts({ ids: ["session_dynamic"]})
+        if (registered.length) {
+            await browser.scripting.unregisterContentScripts({ ids: ["session_dynamic"]})
+        }
+
+        try {
+            await browser.scripting.registerContentScripts([{
+                id: "session_dynamic",
+                js: js,
+                allFrames: true,
+                matches: ["<all_urls>"],
+                //excludeMatches,
+                runAt: 'document_start',
+                persistAcrossSessions: false,
+            }])
+        } catch (error) {
+            // XXX: For some reason a duplicate script ID error is thrown even if no script
+            // with a corresponding id does exists. Even though getRegisteredContentScripts
+            // comes up empty handed the scripts get's registered as expected.
+            // Only occurs on the first try after reloading the extension
+            if (error.message === "Duplicate script ID 'session_dynamic'") {
+                console.info("registerDynamicScriptlets error", error.message)
+            } else {
                 throw error
             }
         }
     }
 
     console.log("registerDynamicScriptlets", scriptlet, js)
+}
+
+export function filtersMessageHandler(request, sender, sendResponse) {
+    let { key, args } = request;
+
+    if (key == undefined) {
+        // Message is not for us
+        return false;
+    }
+
+    if (args === undefined) {
+        args = [];
+    }
+
+    if (filters.hasOwnProperty(key)) {
+        const messageHandler = filters[key];
+        console.log("filtersMessageHandler", key, args)
+
+        messageHandler(...args).then(sendResponse);
+        /*
+        let response = await messageHandler(...args)
+
+        console.log("filtersMessageHandler", key, response)
+
+        await sendResponse(response)
+        */
+        return true;
+    }
+    throw new Error(`Message handler with key ${key} doesn't exist!`);
 }
 
 const filters = {
@@ -551,13 +522,12 @@ const filters = {
     disableFilterlist,
     getConfiguration,
 
-    getGenericSelectorMap,
-    addSessionScriptingFilters,
-    getSpecificImports,
-    getDeclarativeImports,
-    getProceduralImports,
-    getDynamicScriptlets,
-    getScriptlet,
+    addRuntimeScriptingFilters,
+    getRuntimeScriptingGenericCosmeticFilters,
+    getRuntimeScriptingSpecificCosmeticFilters,
+    getRuntimeScriptingDeclarativeFilters,
+    getRuntimeScriptingProceduralFilters,
+    getRuntimeScriptletFilters,
 
     filtersMessageHandler,
 }

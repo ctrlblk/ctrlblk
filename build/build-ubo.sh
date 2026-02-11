@@ -26,8 +26,8 @@ cd ctrlblk-filters
 git checkout -f $CTRLBLK_FILTERS_REF_NEW
 
 # Build ctrlblk-filters list
-npm install
-npm run build
+pnpm install
+pnpm run build
 
 # Parse ad-report uuid from git log
 git log $CTRLBLK_FILTERS_REF_OLD..$CTRLBLK_FILTERS_REF_NEW > ctrlblk-filters-log.txt

@@ -61,11 +61,11 @@ function copyUBOLAssets() {
 }
 
 function generateRulesets() {
-    execSync("npm run generate-rulesets -- -o dist/");
+    execSync("node build/generate-rulesets.js -o dist/");
 }
 
 function compileCss() {
-    execSync("npm run tailwindcss");
+    execSync("pnpm run tailwindcss");
 }
 
 function copyImages() {

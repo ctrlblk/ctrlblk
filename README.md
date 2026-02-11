@@ -11,15 +11,15 @@ To install CtrlBlk head over to [CtrlBlk's Chrome Web Store page](https://chrome
 Prerequisites:
 
 - [nodejs](https://nodejs.org/en) >= v21.2.0
-- [npm](https://www.npmjs.com/) 10.2.4
+- [pnpm](https://pnpm.io/)
 
 To build CtrlBlk:
 
 ```
 $ git clone https://github.com/ctrlblk/ctrlblck.git
 $ cd ctrlblk
-$ npm install
-$ npm run build
+$ pnpm install
+$ pnpm run build
 ```
 
 Then load CtrlBlk as an unpacked extension following this guide:
@@ -28,11 +28,11 @@ Then load CtrlBlk as an unpacked extension following this guide:
 
 For local development there is also a watch process that automatically rebuilds the extension whenever something changes.
 
-`$ npm run watch`
+`$ pnpm run watch`
 
 To build a release version intended to be uploaded to the Chrome Web Store use:
 
-`$ npm run build-release`
+`$ pnpm run build-release`
 
 ## CI Secrets
 
@@ -63,5 +63,5 @@ CtrlBlk makes use of the following open source projects:
 
 - [uBlock Origin Lite](https://github.com/gorhill/uBlock)
 - [nodejs](https://nodejs.org/en)
-- [npm](https://www.npmjs.com/)
+- [pnpm](https://pnpm.io/)
 - Various others, see [package.json](package.json)

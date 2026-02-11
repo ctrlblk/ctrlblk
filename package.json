@@ -2,16 +2,17 @@
     "name": "CtrBlock",
     "license": "GPL-3.0",
     "type": "module",
+    "packageManager": "pnpm@10.28.2",
     "scripts": {
         "prettier": "prettier . --write",
         "lint": "eslint .",
         "build": "vite build --mode development",
         "build-release": "vite build --mode release",
         "watch": "vite build --mode development --watch",
-        "tailwindcss": "npx tailwindcss -i ./src/app.pcss -o ./dist/assets/tailwind.css",
+        "tailwindcss": "tailwindcss -i ./src/app.pcss -o ./dist/assets/tailwind.css",
         "build-ubo": "build/build-ubo.sh $npm_package_config_ublock_ref $npm_package_config_ctrlblk_filters_ref_old $npm_package_config_ctrlblk_filters_ref_new",
-        "postinstall": "npm run build-ubo",
-        "generate-rulesets": "node build/generate-rulesets.js"
+        "generate-rulesets": "node build/generate-rulesets.js",
+        "postinstall": "pnpm run build-ubo"
     },
     "config": {
         "ublock_ref": "1ae958696475dc7e8ce820b562f6dcc4dde9ee6c",
@@ -42,6 +43,7 @@
         "flowbite-svelte-icons": "^1.3.1",
         "postcss": "^8.4.32",
         "postcss-load-config": "^5.0.2",
+        "svelte": "^4.2.20",
         "svelte-preprocess": "^5.1.3",
         "tailwindcss": "^3.3.6"
     }

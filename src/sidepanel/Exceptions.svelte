@@ -10,7 +10,7 @@
     } from "flowbite-svelte";
 
     import {
-        CloseSolid,
+        CloseCircleSolid,
         LinkOutline,
     } from "flowbite-svelte-icons";
 
@@ -84,7 +84,7 @@
                 {/if}
                 <TableBodyCell class="text-right w-5">
                     <Button pill={true} outline={true} class="!p-1" on:click={removeException}>
-                        <CloseSolid />
+                        <CloseCircleSolid />
                     </Button>
                 </TableBodyCell>
             </TableBodyRow>

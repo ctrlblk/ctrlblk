@@ -94,8 +94,8 @@ export async function initRulesetConfig() {
     await loadRulesetConfig();
 
     if (wakeupRun === false) {
-        setFilteringMode('all-urls', MODE_COMPLETE);
-        registerInjectables();
+        await setFilteringMode('all-urls', MODE_COMPLETE);
+        await registerInjectables();
     }
     enableRulesets(rulesetConfig.enabledRulesets);
 

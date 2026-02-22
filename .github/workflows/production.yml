@@ -38,14 +38,30 @@ jobs:
             path: dist/
         - name: Upload to CWS
           run: |
+            set -euo pipefail
             cd dist/; zip -r ctrlblock-${{ github.sha }}.zip ./; cd ..
-            CWS_UPLOAD_TOKEN=$(curl "https://accounts.google.com/o/oauth2/token" \
-            -d "grant_type=refresh_token" \
-            -d "client_id=${{ secrets.CWS_CLIENT_ID }}" \
-            -d "client_secret=${{ secrets.CWS_CLIENT_SECRET }}" \
-            -d "refresh_token=${{ secrets.CWS_REFRESH_TOKEN }}" | \
-            sed -n -r -e 's/.*"access_token": "([^"]+)",$/\1/p')
-            curl \
+
+            # Build a JWT from the service account key and exchange it for an access token
+            SA_EMAIL=$(echo '${{ secrets.CWS_SERVICE_ACCOUNT_KEY }}' | jq -r '.client_email')
+            SA_PRIVATE_KEY=$(echo '${{ secrets.CWS_SERVICE_ACCOUNT_KEY }}' | jq -r '.private_key')
+
+            b64url() { openssl base64 -e -A | tr '/+' '_-' | tr -d '='; }
+
+            HEADER=$(printf '{"alg":"RS256","typ":"JWT"}' | b64url)
+            NOW=$(date +%s)
+            CLAIMS=$(printf '{"iss":"%s","scope":"https://www.googleapis.com/auth/chromewebstore","aud":"https://oauth2.googleapis.com/token","iat":%d,"exp":%d}' \
+              "$SA_EMAIL" "$NOW" "$((NOW + 3600))" | b64url)
+            SIGNATURE=$(printf '%s.%s' "$HEADER" "$CLAIMS" | \
+              openssl dgst -sha256 -sign <(printf '%s' "$SA_PRIVATE_KEY") | b64url)
+
+            JWT="${HEADER}.${CLAIMS}.${SIGNATURE}"
+
+            CWS_UPLOAD_TOKEN=$(curl -sf -X POST https://oauth2.googleapis.com/token \
+              -H "Content-Type: application/x-www-form-urlencoded" \
+              -d "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${JWT}" | \
+              jq -r '.access_token')
+
+            curl -sf \
             -H "Authorization: Bearer $CWS_UPLOAD_TOKEN"  \
             -H "x-goog-api-version: 2" \
             -X PUT \

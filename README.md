@@ -42,13 +42,9 @@ To build a release version intended to be uploaded to the Chrome Web Store use:
 
 ### Chrome Web Store Publish API
 
-To automatically upload builds using the [Chrome Web Store Publish API](https://developer.chrome.com/docs/webstore/using-api)
+To automatically upload builds using the [Chrome Web Store Publish API](https://developer.chrome.com/docs/webstore/using-api) via a [service account](https://developer.chrome.com/docs/webstore/service-accounts):
 
-`CWS_CLIENT_ID` a CWS Oauth Client ID
-
-`CWS_CLIENT_SECRET` a CWS Oauth Client Secret
-
-`CWS_REFRESH_TOKEN` a CWS Oauth token to receive an access token to authenticate API requests
+`CWS_SERVICE_ACCOUNT_KEY` the full JSON key file content for a Google Cloud service account with access to the Chrome Web Store API
 
 `CWS_EXTENSION_ID` the Extension ID
 

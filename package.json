@@ -15,7 +15,7 @@
         "postinstall": "pnpm run build-ubo"
     },
     "config": {
-        "ublock_ref": "9096ec7c06ff4b167a932aa7b7f8b0aecae82835",
+        "ublock_ref": "85e37c9ab74e45ad7da0475fabaf91444562770f",
         "ctrlblk_filters_ref_old": "b3f7ee99d997f1494448e9aa5985adf319c0067d",
         "ctrlblk_filters_ref_new": "54cd5f9a4a8d962152e6a6b84645b44e5d96b986"
     },

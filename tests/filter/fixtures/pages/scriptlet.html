@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Scriptlet Injection Tests</title>
+  <style>
+    .testcase-panel { margin: 1em 0; padding: 1em; border: 1px solid #ccc; }
+    .testcase-area { padding: 0.5em; background: #f9f9f9; }
+    .testcase-examplecontent { padding: 10px; background: #e0ffe0; }
+  </style>
+</head>
+<body>
+  <h1>Scriptlet Injection</h1>
+
+  <section id="abort-on-property-read-section" class="testcase-panel">
+    <h2>abort-on-property-read</h2>
+    <p>Test that accessing a property aborted by a scriptlet throws an error.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(abort-on-property-read, __should_abort)</pre>
+  </section>
+
+  <section id="set-cookie-section" class="testcase-panel">
+    <h2>set-cookie</h2>
+    <p>Test that a set-cookie scriptlet sets the expected cookie.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(set-cookie, e2e_test, true)</pre>
+  </section>
+
+  <section id="abort-on-property-write-section" class="testcase-panel">
+    <h2>abort-on-property-write</h2>
+    <p>Test that writing to a trapped property throws an error.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(abort-on-property-write, __ad_property)</pre>
+  </section>
+
+  <section id="abort-current-script-section" class="testcase-panel">
+    <h2>abort-current-script</h2>
+    <p>Test that a script calling document.getElementById with "ad-marker" is aborted.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(abort-current-script, document.getElementById, ad-marker)</pre>
+  </section>
+
+  <section id="set-constant-section" class="testcase-panel">
+    <h2>set-constant</h2>
+    <p>Test that window.__ad_enabled is set to false by the scriptlet.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(set-constant, __ad_enabled, false)</pre>
+  </section>
+
+  <section id="no-settimeout-if-section" class="testcase-panel">
+    <h2>no-setTimeout-if</h2>
+    <p>Test that setTimeout calls matching "trackAds" are blocked.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(no-setTimeout-if, trackAds)</pre>
+  </section>
+
+  <section id="addeventlistener-defuser-section" class="testcase-panel">
+    <h2>addEventListener-defuser</h2>
+    <p>Test that addEventListener calls matching "click" + "showAd" are defused.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(addEventListener-defuser, click, showAd)</pre>
+  </section>
+
+  <section id="json-prune-section" class="testcase-panel">
+    <h2>json-prune</h2>
+    <p>Test that JSON.parse output has ad_config property pruned.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(json-prune, ad_config)</pre>
+  </section>
+
+  <section id="set-local-storage-item-section" class="testcase-panel">
+    <h2>set-local-storage-item</h2>
+    <p>Test that localStorage item e2e_storage_test is set to "true".</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(set-local-storage-item, e2e_storage_test, true)</pre>
+  </section>
+
+  <section id="remove-attr-section" class="testcase-panel">
+    <h2>remove-attr</h2>
+    <p>Test that the data-ad-loaded attribute is removed from the target element.</p>
+    <div class="testcase-area">
+      <div id="remove-attr-target" class="ad-element" data-ad-loaded="true">This element should have data-ad-loaded removed</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(remove-attr, data-ad-loaded, .ad-element)</pre>
+  </section>
+
+  <section id="remove-class-section" class="testcase-panel">
+    <h2>remove-class</h2>
+    <p>Test that the "ad-injected" class is removed while "content-area" remains.</p>
+    <div class="testcase-area">
+      <div id="remove-class-target" class="content-area ad-injected">This element should lose ad-injected class</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(remove-class, ad-injected, .content-area)</pre>
+  </section>
+
+  <section id="no-setinterval-if-section" class="testcase-panel">
+    <h2>no-setInterval-if</h2>
+    <p>Test that setInterval calls matching "pollAds" are blocked.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(no-setInterval-if, pollAds)</pre>
+  </section>
+
+  <section id="no-window-open-if-section" class="testcase-panel">
+    <h2>no-window-open-if</h2>
+    <p>Test that window.open calls matching "popup-ad" are blocked.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(no-window-open-if, popup-ad)</pre>
+  </section>
+
+  <section id="prevent-fetch-section" class="testcase-panel">
+    <h2>prevent-fetch</h2>
+    <p>Test that fetch calls matching "ad-tracking" are prevented.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(prevent-fetch, ad-tracking)</pre>
+  </section>
+
+  <section id="window-name-defuser-section" class="testcase-panel">
+    <h2>window.name-defuser</h2>
+    <p>Test that window.name is cleared by the scriptlet.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(window.name-defuser)</pre>
+  </section>
+
+  <section id="set-session-storage-item-section" class="testcase-panel">
+    <h2>set-session-storage-item</h2>
+    <p>Test that sessionStorage item e2e_session_test is set to "yes".</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(set-session-storage-item, e2e_session_test, yes)</pre>
+  </section>
+
+  <section id="noeval-if-section" class="testcase-panel">
+    <h2>noeval-if</h2>
+    <p>Test that eval calls matching "adScript" are blocked.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(noeval-if, adScript)</pre>
+  </section>
+
+  <section id="abort-on-stack-trace-section" class="testcase-panel">
+    <h2>abort-on-stack-trace</h2>
+    <p>Test that property access aborts when stack trace matches.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(abort-on-stack-trace, __aost_target, inlineScript)</pre>
+  </section>
+
+  <script>
+    // Define the property before the scriptlet runs to test abort-on-property-read
+    // The scriptlet should intercept reads of window.__should_abort
+    window.__should_abort = "original value";
+  </script>
+
+  <!-- abort-current-script test: this script calls document.getElementById('ad-marker')
+       and should be aborted by the scriptlet before setting __acs_script_ran -->
+  <script>
+    document.getElementById('ad-marker');
+    window.__acs_script_ran = true;
+  </script>
+
+  <script>
+    // no-setTimeout-if test: the scriptlet should prevent this callback from executing
+    function trackAds() {
+      window.__trackAds_ran = true;
+    }
+    setTimeout(trackAds, 100);
+
+    // addEventListener-defuser test: the scriptlet should prevent this listener from being added
+    function showAd() {
+      window.__showAd_ran = true;
+    }
+    document.body.addEventListener('click', showAd);
+
+    // json-prune test: the scriptlet should prune the ad_config key from parsed JSON
+    window.__json_prune_result = JSON.parse('{"ad_config":{"enabled":true},"content":{"title":"article"}}');
+
+    // no-setInterval-if test: the scriptlet should block this interval
+    function pollAds() {
+      window.__pollAds_ran = true;
+    }
+    setInterval(pollAds, 50);
+
+    // no-window-open-if test: the scriptlet should block this popup
+    window.__popup_result = window.open('http://127.0.0.1:9876/popup-ad', '_blank');
+
+    // prevent-fetch test: the scriptlet should prevent this fetch
+    fetch('http://127.0.0.1:9876/ad-tracking/pixel.gif').then(function(r) {
+      window.__fetch_blocked = false;
+    }).catch(function() {
+      window.__fetch_blocked = true;
+    });
+
+    // noeval-if test: the scriptlet should block eval containing "adScript"
+    try {
+      eval('var adScript = true; window.__eval_ran = true;');
+    } catch(e) {
+      // If eval is blocked, this is expected
+    }
+
+    // abort-on-stack-trace test: access from inline script should throw
+    window.__aost_target = 'original';
+  </script>
+</body>
+</html>

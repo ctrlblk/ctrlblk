@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Exception Filter Tests</title>
+  <style>
+    .testcase-panel { margin: 1em 0; padding: 1em; border: 1px solid #ccc; }
+    .testcase-area { padding: 0.5em; background: #f9f9f9; }
+    .testcase-examplecontent { padding: 10px; background: #e0ffe0; }
+  </style>
+</head>
+<body>
+  <h1>Exception Filters</h1>
+
+  <section id="basic-exception-section" class="testcase-panel">
+    <h2>Basic Exception</h2>
+    <p>Test that an @@exception filter overrides a blocking filter.</p>
+    <div id="basic-exception-area" class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filters</h3>
+    <pre>||127.0.0.1:9876/mixed/
+@@||127.0.0.1:9876/mixed/allowed.js</pre>
+  </section>
+
+  <section id="image-exception-section" class="testcase-panel">
+    <h2>$image Exception</h2>
+    <p>Test that an @@exception with $image whitelists a specific image while others remain blocked.</p>
+    <div id="image-exception-area" class="testcase-area">
+      <img id="exception-blocked-img" src="/testfiles/image/exception/blocked.png" data-expectedresult="fail">
+      <img id="exception-allowed-img" src="/testfiles/image/exception/allowed.png" data-expectedresult="pass">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filters</h3>
+    <pre>||127.0.0.1:9876/testfiles/image/exception/$image
+@@||127.0.0.1:9876/testfiles/image/exception/allowed.png$image</pre>
+  </section>
+
+  <!-- blocked.js should be blocked by ||127.0.0.1:9876/mixed/ -->
+  <script src="/mixed/blocked.js"></script>
+  <!-- allowed.js should load thanks to the @@exception filter -->
+  <script src="/mixed/allowed.js"></script>
+</body>
+</html>

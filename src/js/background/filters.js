@@ -5,14 +5,14 @@ import {
     setFilteringMode,
     MODE_NONE,
     MODE_COMPLETE,
-} from '/uBOLite/js/mode-manager.js';
+} from '/src/js/lib/mode-manager.js';
 
 import {
     getRulesetDetails,
     enableRulesets,
- } from "/uBOLite/js/ruleset-manager.js";
+ } from "/src/js/lib/ruleset-manager.js";
 
-import { 
+import {
     browser,
     dnr,
     sessionRead,
@@ -20,9 +20,9 @@ import {
     localRead,
     localWrite,
     runtime,
- } from "/uBOLite/js/ext.js";
+ } from "/src/js/lib/browser-api.js";
 
- import { registerInjectables } from "/uBOLite/js/scripting-manager.js";
+ import { registerInjectables } from "./scripting-manager.js";
 
  import { detect } from "detect-browser";
 
@@ -97,7 +97,7 @@ export async function initRulesetConfig() {
         await setFilteringMode('all-urls', MODE_COMPLETE);
         await registerInjectables();
     }
-    enableRulesets(rulesetConfig.enabledRulesets);
+    await enableRulesets(rulesetConfig.enabledRulesets);
 
     return [firstRun, wakeupRun];
 }

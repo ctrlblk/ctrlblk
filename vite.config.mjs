@@ -6,8 +6,14 @@ import {
     generateManifestContents,
     buildCtrlBlk,
 } from "./build/build.mjs";
+import { addTestRuleset } from "./build/rulesets/rulesets.js";
 
 export default defineConfig(({mode}) => {
+
+    const filterTest = process.argv.includes('--filter-test');
+    if (filterTest) {
+        addTestRuleset();
+    }
 
     let manifest = generateManifestContents(mode);
 
@@ -18,8 +24,11 @@ export default defineConfig(({mode}) => {
                 manifest: manifest,
                 optimizeWebAccessibleResources: false,
             }),
-            buildCtrlBlk(mode, manifest),
+            buildCtrlBlk(mode, manifest, { filterTest }),
         ],
+        define: {
+            __FILTER_TEST__: JSON.stringify(filterTest),
+        },
         build: {
             outDir: "dist/",
             sourcemap: mode == "development" ? true : false,

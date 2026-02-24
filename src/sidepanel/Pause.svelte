@@ -16,7 +16,7 @@
 
     import { onMount } from 'svelte';
 
-    import { browser } from "/uBOLite/js/ext.js";
+    import { browser } from "/src/js/lib/browser-api.js";
 
     // XXX: Non background page using background page code
     import { getAdReportsByDomains } from "/src/js/background/reportAd.js";

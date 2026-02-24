@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Removeparam Tests</title>
+  <style>
+    .testcase-panel { margin: 1em 0; padding: 1em; border: 1px solid #ccc; }
+    .testcase-area { padding: 0.5em; background: #f9f9f9; }
+    .testcase-examplecontent { padding: 10px; background: #e0ffe0; }
+  </style>
+</head>
+<body>
+  <h1>Removeparam Filters</h1>
+
+  <section id="strip-utm-section" class="testcase-panel">
+    <h2>Strip utm_source</h2>
+    <p>Test that a removeparam filter strips the utm_source query parameter.</p>
+    <div class="testcase-area">
+      <div id="removeparam-result">Loading...</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>||127.0.0.1:9876/content/*$removeparam=utm_source</pre>
+  </section>
+
+  <section id="multi-param-section" class="testcase-panel">
+    <h2>Strip Multiple Tracking Params</h2>
+    <p>Test that multiple removeparam filters each strip their target parameter.</p>
+    <div class="testcase-area">
+      <div id="removeparam-multi-result">Loading...</div>
+    </div>
+  </section>
+
+  <section id="no-match-section" class="testcase-panel">
+    <h2>Preserve Non-matching Params</h2>
+    <p>Test that params not matching any removeparam filter are preserved.</p>
+    <div class="testcase-area">
+      <div id="removeparam-nomatch-result">Loading...</div>
+    </div>
+  </section>
+
+  <script>
+    // Fetch a URL with utm_source — the extension should strip it
+    fetch('/content/article?utm_source=test_campaign&page=1')
+      .then(r => r.json())
+      .then(data => {
+        window.__removeparam_result = data.params;
+        document.getElementById('removeparam-result').textContent = JSON.stringify(data.params);
+      })
+      .catch(err => {
+        window.__removeparam_result = { error: err.message };
+        document.getElementById('removeparam-result').textContent = 'Error: ' + err.message;
+      });
+
+    // Multiple tracking params
+    fetch('/content/article?utm_source=google&utm_medium=cpc&fbclid=abc123&page=2&sort=date')
+      .then(r => r.json())
+      .then(data => {
+        window.__removeparam_multi_result = data.params;
+        document.getElementById('removeparam-multi-result').textContent = JSON.stringify(data.params);
+      })
+      .catch(err => {
+        window.__removeparam_multi_result = { error: err.message };
+      });
+
+    // No matching params — all should be preserved
+    fetch('/content/article?category=news&lang=en')
+      .then(r => r.json())
+      .then(data => {
+        window.__removeparam_nomatch_result = data.params;
+        document.getElementById('removeparam-nomatch-result').textContent = JSON.stringify(data.params);
+      })
+      .catch(err => {
+        window.__removeparam_nomatch_result = { error: err.message };
+      });
+  </script>
+</body>
+</html>

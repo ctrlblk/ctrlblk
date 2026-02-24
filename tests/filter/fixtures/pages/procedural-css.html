@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Procedural CSS Tests</title>
+  <style>
+    .testcase-panel { margin: 1em 0; padding: 1em; border: 1px solid #ccc; }
+    .testcase-area { padding: 0.5em; background: #f9f9f9; }
+    .testcase-examplecontent { padding: 10px; background: #e0ffe0; }
+  </style>
+</head>
+<body>
+  <h1>Procedural CSS</h1>
+
+  <section id="has-text-section" class="testcase-panel">
+    <h2>:has-text() literal</h2>
+    <p>Test that :has-text() hides an element containing matching text.</p>
+    <div class="testcase-area">
+      <div class="proc-has-text" data-expectedresult="fail">Sponsored Content</div>
+      <div class="proc-has-text" data-expectedresult="pass">Legitimate Content</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##.proc-has-text:has-text(Sponsored)</pre>
+  </section>
+
+  <section id="has-text-regex-section" class="testcase-panel">
+    <h2>:has-text() regex</h2>
+    <p>Test that :has-text() with regex hides a matching element.</p>
+    <div class="testcase-area">
+      <div class="proc-has-text-regex" data-expectedresult="fail">Ad 42 here</div>
+      <div class="proc-has-text-regex" data-expectedresult="pass">No match here</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##.proc-has-text-regex:has-text(/Ad\s+\d+/)</pre>
+  </section>
+
+  <section id="upward-n-section" class="testcase-panel">
+    <h2>:upward(N)</h2>
+    <p>Test that :upward(1) hides the parent of the matching element.</p>
+    <div class="testcase-area">
+      <div id="proc-upward-n-parent" data-expectedresult="fail">
+        <span class="proc-upward-n">inner target</span>
+      </div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##span.proc-upward-n:upward(1)</pre>
+  </section>
+
+  <section id="upward-sel-section" class="testcase-panel">
+    <h2>:upward(selector)</h2>
+    <p>Test that :upward(selector) hides the ancestor matching the selector.</p>
+    <div class="testcase-area">
+      <div class="proc-upward-wrapper" data-expectedresult="fail">
+        <div>
+          <span class="proc-upward-sel">inner target</span>
+        </div>
+      </div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##span.proc-upward-sel:upward(.proc-upward-wrapper)</pre>
+  </section>
+
+  <section id="matches-attr-section" class="testcase-panel">
+    <h2>:matches-attr()</h2>
+    <p>Test that :matches-attr() hides an element with a matching attribute.</p>
+    <div class="testcase-area">
+      <div class="proc-matches-attr" data-ad-type="banner" data-expectedresult="fail">Has ad attribute</div>
+      <div class="proc-matches-attr" data-expectedresult="pass">No ad attribute</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##div.proc-matches-attr:matches-attr(data-ad-type)</pre>
+  </section>
+
+  <section id="min-text-length-section" class="testcase-panel">
+    <h2>:min-text-length()</h2>
+    <p>Test that :min-text-length() hides elements with text longer than threshold.</p>
+    <div class="testcase-area">
+      <div class="proc-min-text" data-expectedresult="fail">This element has a very long text content that is definitely more than fifty characters long for testing</div>
+      <div class="proc-min-text" data-expectedresult="pass">Short text</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##.proc-min-text:min-text-length(50)</pre>
+  </section>
+
+  <section id="remove-section" class="testcase-panel">
+    <h2>:remove()</h2>
+    <p>Test that :remove() removes the element from the DOM entirely.</p>
+    <div class="testcase-area">
+      <div class="proc-remove-target" data-expectedresult="fail">This should be removed from DOM</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##.proc-remove-target:remove()</pre>
+  </section>
+
+  <section id="remove-attr-section" class="testcase-panel">
+    <h2>:remove-attr()</h2>
+    <p>Test that :remove-attr() removes a specific attribute.</p>
+    <div class="testcase-area">
+      <div class="proc-remove-attr-target" data-tracking="abc123" data-expectedresult="pass">Attribute should be removed</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##.proc-remove-attr-target:remove-attr(data-tracking)</pre>
+  </section>
+
+  <section id="remove-class-section" class="testcase-panel">
+    <h2>:remove-class()</h2>
+    <p>Test that :remove-class() removes a specific class.</p>
+    <div class="testcase-area">
+      <div class="proc-remove-class-target ad-highlight" data-expectedresult="pass">Class should be removed</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##.proc-remove-class-target:remove-class(ad-highlight)</pre>
+  </section>
+
+  <section id="if-section" class="testcase-panel">
+    <h2>:if()</h2>
+    <p>Test that :if() hides an element when a child matches the condition.</p>
+    <div class="testcase-area">
+      <div class="proc-if-container" data-expectedresult="fail">
+        <span class="sponsored-label">Sponsored</span>
+        <span>Ad content here</span>
+      </div>
+      <div class="proc-if-container" data-expectedresult="pass">
+        <span>Legitimate content</span>
+      </div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##.proc-if-container:if(.sponsored-label)</pre>
+  </section>
+
+  <section id="style-section" class="testcase-panel">
+    <h2>:has-text():style()</h2>
+    <p>Test that a chained procedural + style action applies CSS to matching elements.</p>
+    <div class="testcase-area">
+      <div class="proc-style-target" data-expectedresult="fail">Style Me Please</div>
+      <div class="proc-style-target" data-expectedresult="pass">Keep this visible</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##.proc-style-target:has-text(Style Me):style(display: none !important)</pre>
+  </section>
+</body>
+</html>

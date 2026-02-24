@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Negative Tests - Things That Should NOT Be Blocked</title>
+  <style>
+    .testcase-panel { margin: 1em 0; padding: 1em; border: 1px solid #ccc; }
+    .testcase-area { padding: 0.5em; background: #f9f9f9; }
+  </style>
+</head>
+<body>
+  <h1>Negative Tests</h1>
+
+  <section id="safe-image-section" class="testcase-panel">
+    <h2>Non-matching image loads normally</h2>
+    <div class="testcase-area">
+      <img id="safe-img" src="/testfiles/safe/legit.png">
+    </div>
+  </section>
+
+  <section id="safe-script-section" class="testcase-panel">
+    <h2>Non-matching script executes normally</h2>
+    <div class="testcase-area">
+      <div id="safe-script-result">Not loaded</div>
+    </div>
+  </section>
+
+  <section id="domain-scoped-section" class="testcase-panel">
+    <h2>Domain-scoped element hiding does NOT apply on wrong domain</h2>
+    <p>The filter "other-domain.example###negative-test-id" should NOT hide this element on 127.0.0.1.</p>
+    <div class="testcase-area">
+      <div id="negative-test-id" style="padding: 10px; background: #ffe0e0;">
+        This should remain VISIBLE (not hidden by other-domain filter)
+      </div>
+    </div>
+  </section>
+
+  <section id="eh-excepted-section" class="testcase-panel">
+    <h2>Element hiding exception keeps element visible</h2>
+    <p>Both ##.eh-excepted-class and #@#.eh-excepted-class are defined, so the exception wins.</p>
+    <div class="testcase-area">
+      <div class="eh-excepted-class" style="padding: 10px; background: #e0e0ff;">
+        This should remain VISIBLE (exception overrides hiding)
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Safe script test
+    window.__safe_script_loaded = true;
+    document.getElementById('safe-script-result').textContent = 'Loaded';
+  </script>
+</body>
+</html>

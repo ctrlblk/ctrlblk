@@ -10,16 +10,13 @@
         "build-release": "vite build --mode release",
         "watch": "vite build --mode development --watch",
         "tailwindcss": "tailwindcss -i ./src/app.pcss -o ./dist/assets/tailwind.css",
-        "build-ubo": "build/build-ubo.sh $npm_package_config_ublock_ref $npm_package_config_ctrlblk_filters_ref_old $npm_package_config_ctrlblk_filters_ref_new",
         "generate-rulesets": "node build/generate-rulesets.js",
-        "postinstall": "pnpm run build-ubo"
-    },
-    "config": {
-        "ublock_ref": "85e37c9ab74e45ad7da0475fabaf91444562770f",
-        "ctrlblk_filters_ref_old": "b3f7ee99d997f1494448e9aa5985adf319c0067d",
-        "ctrlblk_filters_ref_new": "54cd5f9a4a8d962152e6a6b84645b44e5d96b986"
+        "test:filter": "playwright test --config tests/filter/playwright.config.js",
+        "test:youtube": "playwright test --config tests/youtube/playwright.config.js",
+        "test:scriptlets": "node --test tests/scriptlets/compare.test.js"
     },
     "dependencies": {
+        "@ctrlblk/ctrlblk-filters": "github:ctrlblk/ctrlblk-filters#v1",
         "date-fns": "^3.3.1",
         "del": "^6.1.0",
         "detect-browser": "^5.3.0",
@@ -28,6 +25,7 @@
         "vite": "^5.0.13"
     },
     "devDependencies": {
+        "@playwright/test": "^1.58.2",
         "@samrum/vite-plugin-web-extension": "^5.1.0",
         "@sveltejs/adapter-auto": "^3.1.1",
         "@sveltejs/vite-plugin-svelte": "^3.0.1",
@@ -37,6 +35,7 @@
         "eslint-config-google": "^0.14.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-prettier": "^5.0.1",
+        "express": "^5.2.1",
         "fast-glob": "^3.3.2",
         "flowbite": "^2.2.1",
         "flowbite-svelte": "^0.44.22",

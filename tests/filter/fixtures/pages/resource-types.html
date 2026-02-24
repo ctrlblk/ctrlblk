@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Resource Type Blocking Tests</title>
+  <style>
+    .testcase-panel { margin: 1em 0; padding: 1em; border: 1px solid #ccc; }
+    .testcase-area { padding: 0.5em; background: #f9f9f9; }
+  </style>
+  <!-- This stylesheet should be blocked by $stylesheet filter -->
+  <link id="ad-stylesheet" rel="stylesheet" href="/testfiles/css/ad-styles.css">
+  <!-- This stylesheet should NOT be blocked (negative test) -->
+  <link id="safe-stylesheet" rel="stylesheet" href="/testfiles/safe/legit-style.css">
+</head>
+<body>
+  <h1>Resource Type Blocking</h1>
+
+  <section id="stylesheet-section" class="testcase-panel">
+    <h2>$stylesheet blocking</h2>
+    <p>The ad stylesheet should be blocked; the safe stylesheet should load.</p>
+    <div class="testcase-area">
+      <div id="css-test-el">Test element</div>
+    </div>
+  </section>
+
+  <section id="font-section" class="testcase-panel">
+    <h2>$font blocking</h2>
+    <p>The ad font should be blocked.</p>
+    <div class="testcase-area">
+      <div id="font-test-el">Font test</div>
+    </div>
+  </section>
+
+  <section id="media-section" class="testcase-panel">
+    <h2>$media blocking</h2>
+    <p>The ad video should be blocked.</p>
+    <div class="testcase-area">
+      <video id="ad-video" src="/testfiles/media/ad-video.mp4" preload="auto"></video>
+    </div>
+  </section>
+
+  <style>
+    @font-face {
+      font-family: 'AdFont';
+      src: url('/testfiles/font/ad-font.woff2') format('woff2');
+    }
+    #font-test-el { font-family: 'AdFont', sans-serif; }
+  </style>
+
+  <script>
+    // Stylesheet blocking test: check if the ad CSS custom property was applied
+    window.__ad_css_loaded = getComputedStyle(document.body).getPropertyValue('--ad-css-loaded').trim() === '1';
+
+    // Safe stylesheet test: check if the safe CSS custom property was applied
+    window.__checkSafeCSS = () => {
+      return getComputedStyle(document.querySelector('.safe-style') || document.createElement('div'))
+        .getPropertyValue('--safe-loaded').trim() === '1';
+    };
+
+    // Font blocking test: try to load the font and check if it fails
+    window.__font_result = 'pending';
+    document.fonts.load('16px AdFont').then(fonts => {
+      window.__font_result = fonts.length > 0 ? 'loaded' : 'blocked';
+    }).catch(() => {
+      window.__font_result = 'blocked';
+    });
+
+    // Media blocking test
+    const video = document.getElementById('ad-video');
+    window.__media_result = 'pending';
+    video.addEventListener('loadeddata', () => { window.__media_result = 'loaded'; });
+    video.addEventListener('error', () => { window.__media_result = 'blocked'; });
+  </script>
+</body>
+</html>

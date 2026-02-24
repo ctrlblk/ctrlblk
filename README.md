@@ -12,7 +12,6 @@ Prerequisites:
 
 - [nodejs](https://nodejs.org/en) >= v21.2.0
 - [pnpm](https://pnpm.io/)
-
 To build CtrlBlk:
 
 ```
@@ -36,10 +35,6 @@ To build a release version intended to be uploaded to the Chrome Web Store use:
 
 ## CI Secrets
 
-### CTRLBLOCK_DEPLOY_TOKEN
-
-`CTRLBLOCK_DEPLOY_TOKEN` a GitHub access token to download and build the [uBlock](https://github.com/ctrlblk/uBlock) dependency. Only neccesary in case the uBlock repository isn't public.
-
 ### Chrome Web Store Publish API
 
 To automatically upload builds using the [Chrome Web Store Publish API](https://developer.chrome.com/docs/webstore/using-api) via a [service account](https://developer.chrome.com/docs/webstore/service-accounts):
@@ -57,7 +52,6 @@ To automatically upload builds using the [Chrome Web Store Publish API](https://
 
 CtrlBlk makes use of the following open source projects:
 
-- [uBlock Origin Lite](https://github.com/gorhill/uBlock)
 - [nodejs](https://nodejs.org/en)
 - [pnpm](https://pnpm.io/)
 - Various others, see [package.json](package.json)

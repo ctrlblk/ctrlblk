@@ -1,6 +1,6 @@
 "use strict";
 
-import { browser, runtime, dnr } from "/uBOLite/js/ext.js";
+import { browser, runtime, dnr } from "/src/js/lib/browser-api.js";
 
 import filters from "/src/js/background/filters.js";
 import {
@@ -17,10 +17,10 @@ const messageHandlers = {
 async function insertCSSHandler(request, sender) {
     const { css } = request;
 
-    const tabId = sender?.tab?.id ?? false;
-    const frameId = sender?.frameId ?? false;
+    const tabId = sender?.tab?.id;
+    const frameId = sender?.frameId ?? 0;
 
-    if (tabId || frameId) {
+    if ( typeof tabId === 'number' ) {
         try {
             await browser.scripting.insertCSS({
                 css: css,
@@ -44,13 +44,15 @@ function onMessage(request, sender, sendResponse) {
 
     if (messageHandlers.hasOwnProperty(what)) {
         const messageHandler = messageHandlers[what];
-        messageHandler(request, sender).then(sendResponse);
+        messageHandler(request, sender).then(sendResponse).catch(error => {
+            console.error(`Message handler '${what}' failed:`, error);
+            sendResponse(false);
+        });
         return true;
     }
-    throw new Error(`Message handler with what ${what} doesn't exist!`);
 }
 
-export async function getUpdateUrl({ details, config, adReportIds, adReportsFixed }) {
+export async function getUpdateUrl({ details, config, adReportIds }) {
 
     let data = {
         version: "0.1",
@@ -62,7 +64,6 @@ export async function getUpdateUrl({ details, config, adReportIds, adReportsFixe
 
         ad_reports: {
             ad_reports: adReportIds,
-            ad_reports_fixed: adReportsFixed.uuids,
         },
 
         ...config,
@@ -96,10 +97,7 @@ async function onInstalledHandler(details) {
     let adReportIds = await getLocalAdReportIds();
     await clearLocalAdReportIds();
 
-    let adReportsFixedResponse = await fetch("assets/ad-reports.json");
-    let adReportsFixed = await adReportsFixedResponse.json();
-
-    let { open_update_page, update_url } = await getUpdateUrl({ details, config, adReportIds, adReportsFixed });
+    let { open_update_page, update_url } = await getUpdateUrl({ details, config, adReportIds });
 
     // open update page?
     if (open_update_page) {
@@ -121,12 +119,6 @@ async function start() {
     if ( wakeupRun === false && dnr.setExtensionActionOptions ) {
         dnr.setExtensionActionOptions({ displayActionCountAsBadgeText: true });
     }
-
-    //runtime.openOptionsPage();
 }
 
-try {
-    start();
-} catch (error) {
-    console.trace(error);
-}
+start();

@@ -60,8 +60,12 @@ function copyUBOLAssets() {
     cpSync(`${uBOLiteRoot}/js/scripting`, "dist/js/scripting", { recursive: true });
 }
 
-function generateRulesets() {
-    execSync("node build/generate-rulesets.js -o dist/");
+function generateRulesets({ filterTest = false } = {}) {
+    const args = ['-o', 'dist/'];
+    if (filterTest) {
+        args.push('--filter-test');
+    }
+    execSync(`node build/generate-rulesets.js ${args.join(' ')}`);
 }
 
 function compileCss() {
@@ -73,10 +77,10 @@ function copyImages() {
     cpSync("ctrlblk-filters/ad-reports.json", "dist/assets/ad-reports.json");
 }
 
-export function buildCtrlBlk(mode, manifest) {
+export function buildCtrlBlk(mode, manifest, { filterTest = false } = {}) {
     async function closeBundle() {
         copyUBOLAssets();
-        generateRulesets();
+        generateRulesets({ filterTest });
         compileCss();
         copyImages();
     }

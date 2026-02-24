@@ -468,3 +468,16 @@ export const rulesets = [
         homeURL: "https://abpvn.com/"
     }
 ];
+
+export function addTestRuleset() {
+    rulesets.push({
+        id: 'test',
+        name: 'Filter Test Filters',
+        enabled: true,
+        secret,
+        urls: [
+            'tests/filter/fixtures/filters/test-filters.txt',
+        ],
+        homeURL: '',
+    });
+}

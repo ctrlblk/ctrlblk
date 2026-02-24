@@ -5,7 +5,7 @@ import { ArgumentParser } from 'argparse';
 import { dnrRulesetFromRawLists } from '../uBOBits/static-dnr-filtering.js';
 import redirectResourcesMap from '../uBOBits/redirect-resources.js';
 
-import { rulesets } from './rulesets/rulesets.js';
+import { rulesets, addTestRuleset } from './rulesets/rulesets.js';
 
 import { writeFile } from './rulesets/utils.js';
 
@@ -173,5 +173,12 @@ async function main({ output }) {
 const parser = new ArgumentParser({ description: "Convert easylist style filter list to DNR+ suitable to be used in CtrlBlk"});
 
 parser.add_argument("-o", "--output", { type: String, help: "Output directory aka dist/" });
+parser.add_argument("--filter-test", { action: "store_true", help: "Include filter test ruleset" });
 
-await main(parser.parse_args())
+const args = parser.parse_args();
+
+if (args.filter_test) {
+    addTestRuleset();
+}
+
+await main(args);

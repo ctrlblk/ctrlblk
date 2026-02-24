@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Removeparam Tests</title>
+  <style>
+    .testcase-panel { margin: 1em 0; padding: 1em; border: 1px solid #ccc; }
+    .testcase-area { padding: 0.5em; background: #f9f9f9; }
+    .testcase-examplecontent { padding: 10px; background: #e0ffe0; }
+  </style>
+</head>
+<body>
+  <h1>Removeparam Filters</h1>
+
+  <section id="strip-utm-section" class="testcase-panel">
+    <h2>Strip utm_source</h2>
+    <p>Test that a removeparam filter strips the utm_source query parameter.</p>
+    <div class="testcase-area">
+      <div id="removeparam-result">Loading...</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>||127.0.0.1:9876/content/*$removeparam=utm_source</pre>
+  </section>
+
+  <script>
+    // Fetch a URL with utm_source — the extension should strip it
+    fetch('/content/article?utm_source=test_campaign&page=1')
+      .then(r => r.json())
+      .then(data => {
+        window.__removeparam_result = data.params;
+        document.getElementById('removeparam-result').textContent = JSON.stringify(data.params);
+      })
+      .catch(err => {
+        window.__removeparam_result = { error: err.message };
+        document.getElementById('removeparam-result').textContent = 'Error: ' + err.message;
+      });
+  </script>
+</body>
+</html>

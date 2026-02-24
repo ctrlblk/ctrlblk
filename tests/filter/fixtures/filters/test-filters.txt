@@ -1,0 +1,51 @@
+[CtrlBlk E2E Test Filters]
+! Title: CtrlBlk E2E Test Filters
+! Description: Test filters for the E2E test suite targeting 127.0.0.1:9876
+
+! ===== Network Blocking =====
+||127.0.0.1:9876/ads/full-path.png
+||127.0.0.1:9876/testfiles/blocking/partial-path/
+/testfiles/blocking/wildcard/*/target.png
+||127.0.0.1:9876/ads/tracker.js
+||127.0.0.1:9876/testfiles/image/dynamic/$image
+||127.0.0.1:9876/testfiles/xhr/ad-data$xmlhttprequest
+||127.0.0.1:9876/testfiles/subdocument/$subdocument
+
+! ===== Exception Filters =====
+||127.0.0.1:9876/mixed/
+@@||127.0.0.1:9876/mixed/allowed.js
+||127.0.0.1:9876/testfiles/image/exception/$image
+@@||127.0.0.1:9876/testfiles/image/exception/allowed.png$image
+
+! ===== Element Hiding =====
+127.0.0.1###eh-id
+127.0.0.1##.eh-class
+127.0.0.1##.testcase-area > .eh-descendant
+127.0.0.1##div[data-ad="true"]
+##.ad-banner
+127.0.0.1##.testcase-examplecontent + .eh-sibling
+127.0.0.1##div[data-ad-type^="banner"]
+
+! ===== Inline CSS =====
+127.0.0.1#$#.overlay-ad { visibility: hidden !important }
+127.0.0.1#$#.css-bg-target { background-color: rgb(0, 128, 0) !important }
+127.0.0.1#$#.css-display-target { display: none !important }
+
+! ===== Scriptlet Injection =====
+127.0.0.1##+js(abort-on-property-read, __should_abort)
+127.0.0.1##+js(set-cookie, e2e_test, true)
+127.0.0.1##+js(abort-on-property-write, __ad_property)
+127.0.0.1##+js(abort-current-script, document.getElementById, ad-marker)
+127.0.0.1##+js(set-constant, __ad_enabled, false)
+127.0.0.1##+js(no-setTimeout-if, trackAds)
+127.0.0.1##+js(addEventListener-defuser, click, showAd)
+127.0.0.1##+js(json-prune, ad_config)
+127.0.0.1##+js(set-local-storage-item, e2e_storage_test, true)
+127.0.0.1##+js(remove-attr, data-ad-loaded, .ad-element)
+127.0.0.1##+js(remove-class, ad-injected, .content-area)
+
+! ===== Redirect =====
+||127.0.0.1:9876/ads/redirect-target.js$script,redirect=noop.js
+
+! ===== Removeparam =====
+||127.0.0.1:9876/content/*$removeparam=utm_source

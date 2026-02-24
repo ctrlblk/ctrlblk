@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Subdocument Tests</title>
+  <style>
+    .testcase-panel { margin: 1em 0; padding: 1em; border: 1px solid #ccc; }
+    .testcase-area { padding: 0.5em; background: #f9f9f9; }
+    .testcase-examplecontent { padding: 10px; background: #e0ffe0; }
+  </style>
+</head>
+<body>
+  <h1>Subdocument Blocking</h1>
+
+  <section id="subdocument-section" class="testcase-panel">
+    <h2>$subdocument Filter</h2>
+    <p>Test that a $subdocument filter blocks an iframe from loading.</p>
+    <div class="testcase-area">
+      <iframe id="subdoc-frame" src="/testfiles/subdocument/frame.html" width="300" height="100"></iframe>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>||127.0.0.1:9876/testfiles/subdocument/$subdocument</pre>
+  </section>
+</body>
+</html>

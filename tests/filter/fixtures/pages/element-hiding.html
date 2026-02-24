@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Element Hiding Tests</title>
+  <style>
+    .testcase-panel { margin: 1em 0; padding: 1em; border: 1px solid #ccc; }
+    .testcase-area { padding: 0.5em; background: #f9f9f9; }
+    .testcase-examplecontent { padding: 10px; background: #e0ffe0; }
+  </style>
+</head>
+<body>
+  <h1>Element Hiding</h1>
+
+  <section id="id-selector-section" class="testcase-panel">
+    <h2>ID Selector</h2>
+    <p>Test that an element hiding filter hides an element by ID.</p>
+    <div class="testcase-area">
+      <div id="eh-id" data-expectedresult="fail">This should be hidden (ID selector)</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1###eh-id</pre>
+  </section>
+
+  <section id="class-selector-section" class="testcase-panel">
+    <h2>Class Selector</h2>
+    <p>Test that an element hiding filter hides an element by class.</p>
+    <div class="testcase-area">
+      <div class="eh-class" data-expectedresult="fail">This should be hidden (class selector)</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##.eh-class</pre>
+  </section>
+
+  <section id="descendant-selector-section" class="testcase-panel">
+    <h2>Descendant Selector</h2>
+    <p>Test that an element hiding filter hides a descendant element.</p>
+    <div class="testcase-area">
+      <div class="eh-descendant" data-expectedresult="fail">This should be hidden (descendant selector)</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##.testcase-area > .eh-descendant</pre>
+  </section>
+
+  <section id="attribute-selector-section" class="testcase-panel">
+    <h2>Attribute Selector</h2>
+    <p>Test that an element hiding filter hides an element by attribute.</p>
+    <div class="testcase-area">
+      <div data-ad="true" data-expectedresult="fail">This should be hidden (attribute selector)</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##div[data-ad="true"]</pre>
+  </section>
+
+  <section id="generic-cosmetic-section" class="testcase-panel">
+    <h2>Generic Cosmetic</h2>
+    <p>Test that a generic cosmetic filter hides an element on any domain.</p>
+    <div class="testcase-area">
+      <div class="ad-banner" data-expectedresult="fail">This should be hidden (generic cosmetic)</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>##.ad-banner</pre>
+  </section>
+
+  <section id="sibling-selector-section" class="testcase-panel">
+    <h2>Sibling Selector</h2>
+    <p>Test that a sibling combinator (+) hiding filter hides the adjacent sibling.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+      <div class="eh-sibling" data-expectedresult="fail">This should be hidden (sibling selector)</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##.testcase-examplecontent + .eh-sibling</pre>
+  </section>
+
+  <section id="attr-startswith-section" class="testcase-panel">
+    <h2>Attribute Starts-with Selector</h2>
+    <p>Test that an attribute starts-with (^=) hiding filter hides the element.</p>
+    <div class="testcase-area">
+      <div data-ad-type="banner-top" data-expectedresult="fail">This should be hidden (attr starts-with)</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##div[data-ad-type^="banner"]</pre>
+  </section>
+
+  <section id="dynamic-hiding-section" class="testcase-panel">
+    <h2>Dynamic Element Hiding</h2>
+    <p>Test that a generic cosmetic filter hides a dynamically-created element.</p>
+    <div id="dynamic-hiding-area" class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>##.ad-banner</pre>
+  </section>
+
+  <script>
+    // Create a dynamic element that should be hidden by the generic cosmetic filter ##.ad-banner
+    const dynEl = document.createElement('div');
+    dynEl.id = 'dynamic-ad-banner';
+    dynEl.className = 'ad-banner';
+    dynEl.textContent = 'This dynamic element should be hidden';
+    document.getElementById('dynamic-hiding-area').appendChild(dynEl);
+  </script>
+</body>
+</html>

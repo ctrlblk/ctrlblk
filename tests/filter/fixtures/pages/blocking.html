@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Network Blocking Tests</title>
+  <style>
+    .testcase-panel { margin: 1em 0; padding: 1em; border: 1px solid #ccc; }
+    .testcase-area { padding: 0.5em; background: #f9f9f9; }
+    .testcase-examplecontent { padding: 10px; background: #e0ffe0; }
+  </style>
+</head>
+<body>
+  <h1>Network Blocking</h1>
+
+  <section id="full-path-section" class="testcase-panel">
+    <h2>Full Path</h2>
+    <p>Test that a blocking filter for a full path blocks its target.</p>
+    <div id="full-path-area" class="testcase-area">
+      <img id="full-path-img" src="/ads/full-path.png" data-expectedresult="fail">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>||127.0.0.1:9876/ads/full-path.png</pre>
+  </section>
+
+  <section id="partial-path-section" class="testcase-panel">
+    <h2>Partial Path</h2>
+    <p>Test that a blocking filter with a partial path blocks its target.</p>
+    <div id="partial-path-area" class="testcase-area">
+      <img id="partial-path-img" src="/testfiles/blocking/partial-path/image.png" data-expectedresult="fail">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>/testfiles/blocking/partial-path/</pre>
+  </section>
+
+  <section id="wildcard-section" class="testcase-panel">
+    <h2>Wildcard</h2>
+    <p>Test that a blocking filter with a wildcard blocks matching targets.</p>
+    <div id="wildcard-area" class="testcase-area">
+      <img id="wildcard-img-1" src="/testfiles/blocking/wildcard/dir1/target.png" data-expectedresult="fail">
+      <img id="wildcard-img-2" src="/testfiles/blocking/wildcard/dir2/target.png" data-expectedresult="fail">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>/testfiles/blocking/wildcard/*/target.png</pre>
+  </section>
+
+  <section id="script-blocking-section" class="testcase-panel">
+    <h2>Script Blocking</h2>
+    <p>Test that a blocking filter prevents a script from executing.</p>
+    <div id="script-blocking-area" class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>||127.0.0.1:9876/ads/tracker.js</pre>
+  </section>
+
+  <section id="dynamic-image-section" class="testcase-panel">
+    <h2>Dynamic Image ($image)</h2>
+    <p>Test that a $image filter blocks a dynamically-created image.</p>
+    <div id="dynamic-image-area" class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>||127.0.0.1:9876/testfiles/image/dynamic/$image</pre>
+  </section>
+
+  <section id="xhr-blocking-section" class="testcase-panel">
+    <h2>XHR Blocking ($xmlhttprequest)</h2>
+    <p>Test that a $xmlhttprequest filter blocks a fetch request.</p>
+    <div id="xhr-blocking-area" class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>||127.0.0.1:9876/testfiles/xhr/ad-data$xmlhttprequest</pre>
+  </section>
+
+  <!-- This script should be blocked -->
+  <script src="/ads/tracker.js"></script>
+
+  <script>
+    // Dynamic image test: create an img element via JS
+    const dynImg = document.createElement('img');
+    dynImg.id = 'dynamic-img';
+    dynImg.src = '/testfiles/image/dynamic/dynamic.png';
+    document.getElementById('dynamic-image-area').appendChild(dynImg);
+
+    // XHR blocking test: attempt a fetch request
+    window.__xhr_result = 'pending';
+    fetch('/testfiles/xhr/ad-data')
+      .then(r => r.json())
+      .then(() => { window.__xhr_result = 'loaded'; })
+      .catch(() => { window.__xhr_result = 'blocked'; });
+  </script>
+</body>
+</html>

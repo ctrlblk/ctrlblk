@@ -25,7 +25,25 @@ export default defineConfig(({mode}) => {
                 optimizeWebAccessibleResources: false,
             }),
             buildCtrlBlk(mode, manifest, { filterTest }),
+            {
+                // Fix upstream uBOLite code that crashes in service workers:
+                // `Element` is not defined in ServiceWorkerGlobalScope, and
+                // newer Chrome defines `self.browser` so the && no longer
+                // short-circuits past the `instanceof Element` check.
+                name: 'fix-ubol-service-worker',
+                transform(code, id) {
+                    if (id.includes('uBOLite/js/ext.js')) {
+                        return code.replace(
+                            'self.browser instanceof Element === false',
+                            "(typeof Element === 'undefined' || self.browser instanceof Element === false)"
+                        );
+                    }
+                },
+            },
         ],
+        define: {
+            __FILTER_TEST__: JSON.stringify(filterTest),
+        },
         build: {
             outDir: "dist/",
             sourcemap: mode == "development" ? true : false,

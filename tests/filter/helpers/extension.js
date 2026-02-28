@@ -35,15 +35,16 @@ export async function launchBrowserWithExtension() {
   // - storage populated (setFilteringMode completed)
   // - content scripts registered (registerInjectables completed)
   await serviceWorker.evaluate(async () => {
-    const maxWait = 20000;
-    const interval = 300;
+    const maxWait = 30000;
+    const interval = 500;
     let elapsed = 0;
     while (elapsed < maxWait) {
-      const [storageData, scripts] = await Promise.all([
+      const [localData, sessionData, scripts] = await Promise.all([
         chrome.storage.local.get('filteringModeDetails'),
+        chrome.storage.session.get('filteringModeDetails'),
         chrome.scripting.getRegisteredContentScripts(),
       ]);
-      const hasStorage = !!storageData.filteringModeDetails;
+      const hasStorage = !!(localData.filteringModeDetails || sessionData.filteringModeDetails);
       const hasScripts = scripts.some(s => s.id === 'css-specific' || s.id === 'css-generic');
       if (hasStorage && hasScripts) {
         break;

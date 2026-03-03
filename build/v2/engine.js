@@ -2900,7 +2900,7 @@ function extractPerDomainBadfilter(normalizedLine) {
     const dollarIdx = normalizedLine.lastIndexOf('$');
     if (dollarIdx < 0) return null;
 
-    const patternPart = normalizedLine.slice(0, dollarIdx);
+    let patternPart = normalizedLine.slice(0, dollarIdx);
     const optPart = normalizedLine.slice(dollarIdx + 1);
     const opts = optPart.split(',');
 
@@ -2918,6 +2918,9 @@ function extractPerDomainBadfilter(normalizedLine) {
     const otherOpts = opts.filter(o => !o.startsWith('domain='));
     otherOpts.sort();
 
+    // Normalize pattern: `*` and empty are equivalent in uBO (ANY_TOKEN_HASH)
+    if (patternPart === '*') patternPart = '';
+
     const key = otherOpts.length > 0
         ? `${patternPart}$${otherOpts.join(',')}`
         : patternPart;
@@ -2930,10 +2933,14 @@ function computeBadfilterKey(normalizedLine) {
     const dollarIdx = normalizedLine.lastIndexOf('$');
     if (dollarIdx < 0) return normalizedLine;
 
-    const patternPart = normalizedLine.slice(0, dollarIdx);
+    let patternPart = normalizedLine.slice(0, dollarIdx);
     const optPart = normalizedLine.slice(dollarIdx + 1);
     const otherOpts = optPart.split(',').filter(o => !o.startsWith('domain='));
     otherOpts.sort();
+
+    // Normalize pattern: in uBO, both `*` and empty pattern compile to
+    // ANY_TOKEN_HASH, so `*$popup,3p` and `$popup,3p` are equivalent.
+    if (patternPart === '*') patternPart = '';
 
     return otherOpts.length > 0 ? `${patternPart}$${otherOpts.join(',')}` : patternPart;
 }
@@ -3224,9 +3231,19 @@ export async function processFilterLists(lists, options = {}) {
                 continue;
             }
 
+            // Syntactically bad domains: wildcards in non-entity position
+            // (e.g., "matichon*.com"). uBO's parser sets AST_FLAG_HAS_ERROR,
+            // so the filter is NOT counted, but the filter is still processed
+            // for DNR rules (bad domains are dropped in convertToDNR).
+            const _hasBadDomain = (ds) => ds.some(d =>
+                !d.domain.startsWith('/') &&  // regex domains are valid syntax
+                d.domain.includes('*') && !d.domain.endsWith('.*'));
+            const skipCounting = _hasBadDomain(opts.domains) ||
+                _hasBadDomain(opts.toDomains);
+
             // --- Filter compiles (goes to GOOD in OLD engine) ---
             // Count in filterCount with expansion factor.
-            context.filterCount += expansion;
+            if (!skipCounting) context.filterCount += expansion;
 
             // Cross-list deduplication: in the OLD engine, compiled entries go
             // into a GOOD Set that deduplicates identical entries across lists.
@@ -3240,7 +3257,7 @@ export async function processFilterLists(lists, options = {}) {
             if (!isDuplicate && !opts.genericblock) {
                 context.seenFilterLines.add(dedupKey);
             }
-            if (!isDuplicate) {
+            if (!isDuplicate && !skipCounting) {
                 context.rejectedFilterCount += rejectedByBadfilter;
             }
             // Entry-level dedup: the OLD engine's GOOD Set deduplicates at the
@@ -3248,8 +3265,41 @@ export async function processFilterLists(lists, options = {}) {
             // lines can produce overlapping entries (e.g., ||domain^ shares a
             // typeless entry with ||domain^$all). Count only truly new entries.
             let acceptedExpansion;
-            if (isDuplicate) {
+            if (isDuplicate || skipCounting) {
                 acceptedExpansion = 0;
+            } else if (isJustOriginFilter(pattern, opts)) {
+                // Just-origin filters: in uBO, each (domain, type) pair is a
+                // separate compiled entry keyed by [catBits, tokenHash, domain].
+                // Two filters sharing a domain+type produce the same entry and
+                // are deduplicated in the GOOD Set.
+                // Normalize pattern to token hash category: in uBO, `*`, ``,
+                // and `|http*://` all use ANY_TOKEN_HASH; `|https://` uses
+                // ANY_HTTPS; `|http://` uses ANY_HTTP.
+                let tokenTag;
+                if (pattern === '*' || pattern === '' || pattern.startsWith('|http*')) {
+                    tokenTag = 'ANY';
+                } else if (pattern.startsWith('|https')) {
+                    tokenTag = 'HTTPS';
+                } else {
+                    tokenTag = 'HTTP';
+                }
+                const baseKey = (exception ? '@@' : '') + tokenTag + '\t' +
+                    (opts.firstParty && opts.thirdParty ? 'any'
+                        : opts.firstParty ? '1p'
+                        : opts.thirdParty ? '3p' : 'any');
+                const typeLabels = computeEntryTypeLabels(opts);
+                let newEntryCount = 0;
+                for (const label of typeLabels) {
+                    for (const d of opts.domains) {
+                        if (d.negated) continue;
+                        const entryKey = baseKey + '\tD' + d.domain + '\t' + label;
+                        if (!context.seenEntries.has(entryKey)) {
+                            context.seenEntries.add(entryKey);
+                            newEntryCount++;
+                        }
+                    }
+                }
+                acceptedExpansion = newEntryCount;
             } else {
                 const baseKey = computeEntryBaseKey(exception, pattern, opts);
                 const typeLabels = computeEntryTypeLabels(opts);
@@ -3261,12 +3311,7 @@ export async function processFilterLists(lists, options = {}) {
                         newEntryCount++;
                     }
                 }
-                // For just-origin filters, each domain creates separate entries.
-                // Use post-badfilter domain count.
-                const domainFactor = isJustOriginFilter(pattern, opts)
-                    ? (opts.domains.filter(d => !d.negated).length || 1)
-                    : 1;
-                acceptedExpansion = newEntryCount * domainFactor;
+                acceptedExpansion = newEntryCount;
             }
 
             // $replace (trusted): compiled but no DNR output

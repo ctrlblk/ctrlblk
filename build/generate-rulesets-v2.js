@@ -670,7 +670,7 @@ async function main({ output }) {
 }
 
 const parser = new ArgumentParser({ description: "Convert easylist style filter list to DNR+ (v2 - no uBO dependencies)" });
-parser.add_argument("-o", "--output", { type: String, help: "Output directory aka dist/" });
+parser.add_argument("-o", "--output", { type: String, required: true, help: "Output directory aka dist/" });
 parser.add_argument("--filter-test", { action: "store_true", help: "Include filter test ruleset" });
 
 const args = parser.parse_args();

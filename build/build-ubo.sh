@@ -54,48 +54,16 @@ ls -liah dist/build/mv3-data/
 # return back to temp dir
 cd $TMP;
 
-# Copy uBO bits needed for DNR filter generation
-mkdir uBOBits \
-    uBOBits/lib \
-    uBOBits/lib/regexanalyzer \
-    uBOBits/lib/csstree \
-    uBOBits/lib/publicsuffixlist/;
-
-cp uBOL/src/js/text-utils.js uBOBits/
-cp uBOL/src/js/static-dnr-filtering.js uBOBits/
-cp uBOL/src/js/static-net-filtering.js uBOBits/
-cp uBOL/src/js/tasks.js uBOBits/
-cp uBOL/src/js/biditrie.js uBOBits/
-cp uBOL/src/js/static-filtering-io.js uBOBits/
-cp uBOL/src/js/static-filtering-parser.js uBOBits/
-cp uBOL/src/js/uri-utils.js uBOBits/
-cp uBOL/src/js/hntrie.js uBOBits/
-cp uBOL/src/js/filtering-context.js uBOBits/
-cp uBOL/src/js/static-filtering-io.js uBOBits/
-cp uBOL/src/js/redirect-resources.js uBOBits/
-cp uBOL/src/lib/punycode.js uBOBits/lib/
-cp uBOL/src/lib/regexanalyzer/regex.js uBOBits/lib/regexanalyzer/
-cp uBOL/src/lib/csstree/css-tree.js uBOBits/lib/csstree/
-cp uBOL/src/lib/publicsuffixlist/publicsuffixlist.js uBOBits/lib/publicsuffixlist/
-
-# Tweak paths so we don't have to litter the project root with uBlock paths
-# XXX: We use -i '' to make it work on both Linux and MacOS
-# https://stackoverflow.com/questions/7573368/in-place-edits-with-sed-on-os-x
-sed -i.orig -e 's/\.\.\/lib\//\.\/lib\//g' \
-    uBOBits/static-filtering-parser.js \
-    uBOBits/uri-utils.js
-
 # Go back to the start, copy the result and cleanup
 cd $START;
 
 # First remove targets from possible previous run
-rm -rf uBOLite ctrlblk-filters uBOBits;
+rm -rf uBOLite ctrlblk-filters;
 
 # Then copy the new results
 ls $TMP/uBOL/dist/build/uBOLite.chromium
 cp -vrf $TMP/uBOL/dist/build/uBOLite.chromium uBOLite;
 cp -vrf $TMP/ctrlblk-filters/dist ctrlblk-filters;
-cp -vrf $TMP/uBOBits uBOBits;
 
 # Finally cleanup
 rm -vrf $TMP;

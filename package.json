@@ -13,7 +13,8 @@
         "build-ubo": "build/build-ubo.sh $npm_package_config_ublock_ref $npm_package_config_ctrlblk_filters_ref_old $npm_package_config_ctrlblk_filters_ref_new",
         "generate-rulesets": "node build/generate-rulesets.js",
         "postinstall": "pnpm run build-ubo",
-        "test:filter": "playwright test --config tests/filter/playwright.config.js"
+        "test:filter": "playwright test --config tests/filter/playwright.config.js",
+        "test:scriptlets": "node --test tests/scriptlets/compare.test.js"
     },
     "config": {
         "ublock_ref": "85e37c9ab74e45ad7da0475fabaf91444562770f",

@@ -56,8 +56,8 @@ function copyUBOLAssets() {
     // copy over web accesible resources
     cpSync(`${uBOLiteRoot}/web_accessible_resources`, "dist/web_accessible_resources", { recursive: true });
 
-    // copy over scriptlets
-    cpSync(`${uBOLiteRoot}/js/scripting`, "dist/js/scripting", { recursive: true });
+    // copy over scripting runtime (ctrlblk-owned copies)
+    cpSync("src/js/scripting", "dist/js/scripting", { recursive: true });
 }
 
 function generateRulesets({ filterTest = false } = {}) {

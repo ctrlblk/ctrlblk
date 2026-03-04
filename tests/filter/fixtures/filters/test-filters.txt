@@ -43,6 +43,13 @@
 127.0.0.1##+js(set-local-storage-item, e2e_storage_test, true)
 127.0.0.1##+js(remove-attr, data-ad-loaded, .ad-element)
 127.0.0.1##+js(remove-class, ad-injected, .content-area)
+127.0.0.1##+js(no-setInterval-if, pollAds)
+127.0.0.1##+js(no-window-open-if, popup-ad)
+127.0.0.1##+js(prevent-fetch, ad-tracking)
+127.0.0.1##+js(window.name-defuser)
+127.0.0.1##+js(set-session-storage-item, e2e_session_test, yes)
+127.0.0.1##+js(noeval-if, adScript)
+127.0.0.1##+js(abort-on-stack-trace, __aost_target, inlineScript)
 
 ! ===== Redirect =====
 ||127.0.0.1:9876/ads/redirect-target.js$script,redirect=noop.js

@@ -78,19 +78,12 @@ cp uBOL/src/lib/regexanalyzer/regex.js uBOBits/lib/regexanalyzer/
 cp uBOL/src/lib/csstree/css-tree.js uBOBits/lib/csstree/
 cp uBOL/src/lib/publicsuffixlist/publicsuffixlist.js uBOBits/lib/publicsuffixlist/
 
-cp uBOL/platform/mv3/safe-replace.js uBOBits/
-cp uBOL/platform/mv3/make-scriptlets.js uBOBits/
-cp uBOL/assets/resources/scriptlets.js uBOBits/
-cp -r uBOL/platform/mv3/scriptlets uBOBits/
-
 # Tweak paths so we don't have to litter the project root with uBlock paths
 # XXX: We use -i '' to make it work on both Linux and MacOS
 # https://stackoverflow.com/questions/7573368/in-place-edits-with-sed-on-os-x
 sed -i.orig -e 's/\.\.\/lib\//\.\/lib\//g' \
     uBOBits/static-filtering-parser.js \
     uBOBits/uri-utils.js
-sed -i.orig -e 's/\.\/scriptlets\//\.\/uBOBits\/scriptlets\//g' \
-    uBOBits/make-scriptlets.js
 
 # Go back to the start, copy the result and cleanup
 cd $START;

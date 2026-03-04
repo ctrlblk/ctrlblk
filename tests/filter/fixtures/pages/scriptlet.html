@@ -124,6 +124,76 @@
     <pre>127.0.0.1##+js(remove-class, ad-injected, .content-area)</pre>
   </section>
 
+  <section id="no-setinterval-if-section" class="testcase-panel">
+    <h2>no-setInterval-if</h2>
+    <p>Test that setInterval calls matching "pollAds" are blocked.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(no-setInterval-if, pollAds)</pre>
+  </section>
+
+  <section id="no-window-open-if-section" class="testcase-panel">
+    <h2>no-window-open-if</h2>
+    <p>Test that window.open calls matching "popup-ad" are blocked.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(no-window-open-if, popup-ad)</pre>
+  </section>
+
+  <section id="prevent-fetch-section" class="testcase-panel">
+    <h2>prevent-fetch</h2>
+    <p>Test that fetch calls matching "ad-tracking" are prevented.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(prevent-fetch, ad-tracking)</pre>
+  </section>
+
+  <section id="window-name-defuser-section" class="testcase-panel">
+    <h2>window.name-defuser</h2>
+    <p>Test that window.name is cleared by the scriptlet.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(window.name-defuser)</pre>
+  </section>
+
+  <section id="set-session-storage-item-section" class="testcase-panel">
+    <h2>set-session-storage-item</h2>
+    <p>Test that sessionStorage item e2e_session_test is set to "yes".</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(set-session-storage-item, e2e_session_test, yes)</pre>
+  </section>
+
+  <section id="noeval-if-section" class="testcase-panel">
+    <h2>noeval-if</h2>
+    <p>Test that eval calls matching "adScript" are blocked.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(noeval-if, adScript)</pre>
+  </section>
+
+  <section id="abort-on-stack-trace-section" class="testcase-panel">
+    <h2>abort-on-stack-trace</h2>
+    <p>Test that property access aborts when stack trace matches.</p>
+    <div class="testcase-area">
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1##+js(abort-on-stack-trace, __aost_target, inlineScript)</pre>
+  </section>
+
   <script>
     // Define the property before the scriptlet runs to test abort-on-property-read
     // The scriptlet should intercept reads of window.__should_abort
@@ -152,6 +222,32 @@
 
     // json-prune test: the scriptlet should prune the ad_config key from parsed JSON
     window.__json_prune_result = JSON.parse('{"ad_config":{"enabled":true},"content":{"title":"article"}}');
+
+    // no-setInterval-if test: the scriptlet should block this interval
+    function pollAds() {
+      window.__pollAds_ran = true;
+    }
+    setInterval(pollAds, 50);
+
+    // no-window-open-if test: the scriptlet should block this popup
+    window.__popup_result = window.open('http://127.0.0.1:9876/popup-ad', '_blank');
+
+    // prevent-fetch test: the scriptlet should prevent this fetch
+    fetch('http://127.0.0.1:9876/ad-tracking/pixel.gif').then(function(r) {
+      window.__fetch_blocked = false;
+    }).catch(function() {
+      window.__fetch_blocked = true;
+    });
+
+    // noeval-if test: the scriptlet should block eval containing "adScript"
+    try {
+      eval('var adScript = true; window.__eval_ran = true;');
+    } catch(e) {
+      // If eval is blocked, this is expected
+    }
+
+    // abort-on-stack-trace test: access from inline script should throw
+    window.__aost_target = 'original';
   </script>
 </body>
 </html>

@@ -6,10 +6,10 @@ import { ArgumentParser } from 'argparse';
 
 import { rulesets, addTestRuleset } from './rulesets/rulesets.js';
 import { processFilterLists } from './v2/engine.js';
-import { builtinScriptlets } from '../uBOBits/scriptlets.js';
+import { builtinScriptlets } from '../src/scriptlets/index.js';
 
 // ============================================================================
-// Utility functions (reimplemented from build/rulesets/utils.js)
+// Utility functions
 // ============================================================================
 
 function toJSONRuleset(ruleset) {
@@ -153,7 +153,7 @@ function generateDNR(ruleset, rulesetId) {
 }
 
 // ============================================================================
-// Cosmetic output generation (reimplemented from build/rulesets/scriptlets.js)
+// Cosmetic output generation
 // ============================================================================
 
 async function generateCssGeneric(details, filters, exceptions) {
@@ -174,7 +174,7 @@ async function generateCssGeneric(details, filters, exceptions) {
     }
 
     if (totalSelectorCount > 0) {
-        src = await fs.readFile(`uBOBits/scriptlets/css-generic.template.js`, "utf8");
+        src = await fs.readFile(`src/scriptlets/templates/css-generic.template.js`, "utf8");
         src = safeReplace(src,
             /\bself\.\$genericSelectorMap\$/,
             `${JSON.stringify(selectorList, scriptletJsonReplacer)}`
@@ -194,7 +194,7 @@ async function generateCssGenericHigh(details, selectors, exceptions) {
             selectors = selectors.filter(v => exceptions.has(v) === false);
         }
         if (selectors.length > 0) {
-            src = await fs.readFile(`uBOBits/scriptlets/css-generichigh.template.css`, "utf8");
+            src = await fs.readFile(`src/scriptlets/templates/css-generichigh.template.css`, "utf8");
             src = safeReplace(src, /\$selectorList\$/, selectors.join(',\n'));
         }
         details.css.genericHigh = selectors.length;
@@ -318,7 +318,7 @@ async function generateCssSpecific(details, specificCosmetic) {
     );
 
     let [count, src] = await generateFourPieceScriptlet(
-        "uBOBits/scriptlets/css-specific.template.js",
+        "src/scriptlets/templates/css-specific.template.js",
         declarativeCosmetic,
         true);
 
@@ -344,7 +344,7 @@ async function generateCssDeclarative(details, specificCosmetic) {
     );
 
     let [count, src] = await generateFourPieceScriptlet(
-        "uBOBits/scriptlets/css-declarative.template.js",
+        "src/scriptlets/templates/css-declarative.template.js",
         proceduralDeclarative);
 
     details.css.declarative = count;
@@ -368,7 +368,7 @@ async function generateCssProcedural(details, specificCosmetic) {
     );
 
     let [count, src] = await generateFourPieceScriptlet(
-        "uBOBits/scriptlets/css-procedural.template.js",
+        "src/scriptlets/templates/css-procedural.template.js",
         proceduralProcedural);
 
     details.css.procedural = count;
@@ -376,8 +376,8 @@ async function generateCssProcedural(details, specificCosmetic) {
 }
 
 // ============================================================================
-// Scriptlet compilation (reimplemented from uBOBits/make-scriptlets.js)
-// Uses builtinScriptlets from uBOBits/scriptlets.js for function bodies only
+// Scriptlet compilation
+// Uses builtinScriptlets from src/scriptlets/index.js for function bodies
 // ============================================================================
 
 const resourceDetails = new Map();
@@ -489,7 +489,7 @@ function compileScriptlet(details) {
 
 async function commitScriptlets(rulesetId, dirPath) {
     const scriptletTemplate = await fs.readFile(
-        './uBOBits/scriptlets/scriptlet.template.js',
+        './src/scriptlets/templates/scriptlet.template.js',
         { encoding: 'utf8' }
     );
     const patchHnMap = hnmap => {

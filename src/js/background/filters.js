@@ -22,7 +22,7 @@ import {
     runtime,
  } from "/uBOLite/js/ext.js";
 
- import { registerInjectables } from "/uBOLite/js/scripting-manager.js";
+ import { registerInjectables } from "./scripting-manager.js";
 
  import { detect } from "detect-browser";
 

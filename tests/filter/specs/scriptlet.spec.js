@@ -111,4 +111,74 @@ test.describe('Scriptlet Injection', () => {
     const hasContentArea = await target.evaluate(el => el.classList.contains('content-area'));
     expect(hasContentArea).toBe(true);
   });
+
+  test('no-setInterval-if blocks matching setInterval', async ({ extensionPage: page }) => {
+    await page.goto('http://127.0.0.1:9876/scriptlet.html');
+
+    // Wait long enough for the setInterval(pollAds, 50) to have fired if not blocked
+    await page.waitForTimeout(300);
+    const ran = await page.evaluate(() => window.__pollAds_ran);
+    expect(ran).toBeUndefined();
+  });
+
+  test('no-window-open-if blocks matching window.open', async ({ extensionPage: page }) => {
+    await page.goto('http://127.0.0.1:9876/scriptlet.html');
+
+    // The scriptlet returns a fake window object (not a real popup)
+    const isFakeWindow = await page.evaluate(() => {
+      const w = window.__popup_result;
+      // A fake window has a close method but no real document
+      return w !== null && typeof w === 'object' && typeof w.close === 'function';
+    });
+    expect(isFakeWindow).toBe(true);
+  });
+
+  test('prevent-fetch returns fake response for matching URL', async ({ extensionPage: page }) => {
+    await page.goto('http://127.0.0.1:9876/scriptlet.html');
+
+    // The scriptlet returns a fake 200 response (doesn't throw), so fetch_blocked is false
+    // meaning the fetch "succeeded" but with a fake response, not the real server
+    await expect.poll(
+      () => page.evaluate(() => window.__fetch_blocked),
+      { timeout: 5000 }
+    ).toBe(false);
+  });
+
+  test('window.name-defuser clears window.name', async ({ extensionPage: page }) => {
+    await page.goto('http://127.0.0.1:9876/scriptlet.html');
+
+    const name = await page.evaluate(() => window.name);
+    expect(name).toBe('');
+  });
+
+  test('set-session-storage-item sets sessionStorage value', async ({ extensionPage: page }) => {
+    await page.goto('http://127.0.0.1:9876/scriptlet.html');
+
+    await expect.poll(
+      () => page.evaluate(() => sessionStorage.getItem('e2e_session_test')),
+      { timeout: 5000 }
+    ).toBe('yes');
+  });
+
+  test('noeval-if blocks eval containing matching string', async ({ extensionPage: page }) => {
+    await page.goto('http://127.0.0.1:9876/scriptlet.html');
+
+    const ran = await page.evaluate(() => window.__eval_ran);
+    expect(ran).toBeUndefined();
+  });
+
+  test('abort-on-stack-trace throws when stack matches', async ({ extensionPage: page }) => {
+    await page.goto('http://127.0.0.1:9876/scriptlet.html');
+
+    const threw = await page.evaluate(() => {
+      try {
+        void window.__aost_target;
+        return false;
+      } catch (e) {
+        return true;
+      }
+    });
+    expect(threw).toBe(true);
+  });
+
 });

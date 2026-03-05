@@ -95,6 +95,6 @@ export const broadcastMessage = message => {
     bc.postMessage(message);
 };
 
-export const ubolLog = (...args) => {
+export const log = (...args) => {
     console.info('[ctrlblk]', ...args);
 };

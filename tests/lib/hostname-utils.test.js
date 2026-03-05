@@ -3,7 +3,7 @@
 //
 // These are pure functions so we test them directly by evaluating the
 // module source in a controlled context (no browser APIs needed except
-// for broadcastMessage and ubolLog which we skip in unit tests).
+// for broadcastMessage and log which we skip in unit tests).
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
@@ -40,7 +40,7 @@ async function loadModule() {
             matchesFromHostnames,
             hostnamesFromMatches,
             broadcastMessage,
-            ubolLog,
+            log,
         };
     })()`;
     return vm.runInContext(wrapped, context);

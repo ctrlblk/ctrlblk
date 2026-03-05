@@ -5,7 +5,7 @@
 
 import { browser, dnr, i18n } from './browser-api.js';
 import { fetchJSON } from './fetch-json.js';
-import { ubolLog } from './hostname-utils.js';
+import { log } from './hostname-utils.js';
 
 const RULE_REALM_SIZE = 1000000;
 const REGEXES_REALM_START = 1000000;
@@ -34,8 +34,8 @@ function getDynamicRules() {
     }
     getDynamicRules.promise = dnr.getDynamicRules().then(rules => {
         const rulesMap = new Map(rules.map(rule => [ rule.id, rule ]));
-        ubolLog(`Dynamic rule count: ${rulesMap.size}`);
-        ubolLog(`Available dynamic rule count: ${dnr.MAX_NUMBER_OF_DYNAMIC_AND_SESSION_RULES - rulesMap.size}`);
+        log(`Dynamic rule count: ${rulesMap.size}`);
+        log(`Available dynamic rule count: ${dnr.MAX_NUMBER_OF_DYNAMIC_AND_SESSION_RULES - rulesMap.size}`);
         return rulesMap;
     });
     return getDynamicRules.promise;
@@ -78,7 +78,7 @@ async function pruneInvalidRegexRules(realm, rulesIn) {
     const isValid = await Promise.all(toCheck);
 
     if ( rejectedRegexRules.length !== 0 ) {
-        ubolLog(
+        log(
             `${realm} realm: rejected regexes:\n`,
             rejectedRegexRules.join('\n')
         );
@@ -148,10 +148,10 @@ async function updateRealmRules(realmStart, realmEnd, realmName, ruleKey, fetchS
     if ( addRules.length === 0 && removeRuleIds.length === 0 ) { return; }
 
     if ( removeRuleIds.length !== 0 ) {
-        ubolLog(`Remove ${removeRuleIds.length} DNR ${realmName} rules`);
+        log(`Remove ${removeRuleIds.length} DNR ${realmName} rules`);
     }
     if ( addRules.length !== 0 ) {
-        ubolLog(`Add ${addRules.length} DNR ${realmName} rules`);
+        log(`Add ${addRules.length} DNR ${realmName} rules`);
     }
 
     return dnr.updateDynamicRules({ addRules, removeRuleIds }).catch(reason => {
@@ -243,10 +243,10 @@ async function enableRulesets(ids) {
     const disableRulesetIds = Array.from(disableRulesetSet);
 
     if ( enableRulesetIds.length !== 0 ) {
-        ubolLog(`Enable rulesets: ${enableRulesetIds}`);
+        log(`Enable rulesets: ${enableRulesetIds}`);
     }
     if ( disableRulesetIds.length !== 0 ) {
-        ubolLog(`Disable ruleset: ${disableRulesetIds}`);
+        log(`Disable ruleset: ${disableRulesetIds}`);
     }
     await dnr.updateEnabledRulesets({ enableRulesetIds, disableRulesetIds });
 

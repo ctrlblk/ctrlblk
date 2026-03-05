@@ -21,8 +21,8 @@ import * as ut from '/src/js/lib/hostname-utils.js';
 /******************************************************************************/
 
 const log = (...args) => {
-    if ( typeof ut.ubolLog === 'function' ) {
-        ut.ubolLog(...args);
+    if ( typeof ut.log === 'function' ) {
+        ut.log(...args);
     }
 };
 

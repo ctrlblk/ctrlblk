@@ -1,9 +1,8 @@
 #!/bin/sh -ex
 
 # Consume command line args
-UBLOCK_REF=$1
-CTRLBLK_FILTERS_REF_OLD=$2
-CTRLBLK_FILTERS_REF_NEW=$3
+CTRLBLK_FILTERS_REF_OLD=$1
+CTRLBLK_FILTERS_REF_NEW=$2
 
 if [ ! -z $CTRLBLOCK_DEPLOY_TOKEN ]; then
     export GITHUB_TOKEN=$CTRLBLOCK_DEPLOY_TOKEN@;
@@ -36,33 +35,13 @@ node $START/build/parse-ctrlblk-filters-log.mjs --input ctrlblk-filters-log.txt 
 # return back to temp dir
 cd $TMP
 
-# Clone uBO and export the files from the repo into a seperate folder
-git clone $GITHUB_BASE_URL"/uBlock.git"
-mkdir uBOL;
-git -C uBlock archive $UBLOCK_REF | tar -x -C uBOL;
-cd uBOL;
-
-# TODO: use ctrlblk-filters from above
-mkdir -p dist/build/mv3-data
-cp $TMP/ctrlblk-filters/dist/ctrlblk-filters.txt dist/build/mv3-data/filters.ctrlblk.dev_ctrlblk-filters.txt
-ls -liah dist/build/mv3-data/filters.ctrlblk.dev_ctrlblk-filters.txt
-
-# Make uBO
-make mv3-chromium;
-ls -liah dist/build/mv3-data/
-
-# return back to temp dir
-cd $TMP;
-
 # Go back to the start, copy the result and cleanup
 cd $START;
 
 # First remove targets from possible previous run
-rm -rf uBOLite ctrlblk-filters;
+rm -rf ctrlblk-filters;
 
 # Then copy the new results
-ls $TMP/uBOL/dist/build/uBOLite.chromium
-cp -vrf $TMP/uBOL/dist/build/uBOLite.chromium uBOLite;
 cp -vrf $TMP/ctrlblk-filters/dist ctrlblk-filters;
 
 # Finally cleanup

@@ -16,15 +16,9 @@ const manifestTemplate = "build/manifest.json";
 
 const sourceDir = "src/js";
 
-const uBOLiteRoot = "uBOLite";
-
 export function generateManifestContents(mode) {
-    // read our and uBOLite's manifest file
     const mf = JSON.parse(
         readFileSync(manifestTemplate, { encoding: "utf8" }),
-    );
-    const uBOManifest = JSON.parse(
-        readFileSync(`${uBOLiteRoot}/manifest.json`, { encoding: "utf8" }),
     );
 
     let rule_resources = Array.from(rulesets).map(details => {
@@ -35,9 +29,6 @@ export function generateManifestContents(mode) {
         }
     });
     mf["declarative_net_request"] = { rule_resources };
-
-    // copy over web accesible ressources definition
-    mf["web_accessible_resources"] = uBOManifest["web_accessible_resources"];
 
     if (mode == "development") {
         mf["version_name"] = semver.clean(mf["version"] + "-development");
@@ -52,9 +43,9 @@ export function generateManifestContents(mode) {
     return mf;
 }
 
-function copyUBOLAssets() {
-    // copy over web accesible resources
-    cpSync(`${uBOLiteRoot}/web_accessible_resources`, "dist/web_accessible_resources", { recursive: true });
+function copyAssets() {
+    // copy over web accessible resources
+    cpSync("src/web_accessible_resources", "dist/web_accessible_resources", { recursive: true });
 
     // copy over scripting runtime (ctrlblk-owned copies)
     cpSync("src/js/scripting", "dist/js/scripting", { recursive: true });
@@ -79,7 +70,7 @@ function copyImages() {
 
 export function buildCtrlBlk(mode, manifest, { filterTest = false } = {}) {
     async function closeBundle() {
-        copyUBOLAssets();
+        copyAssets();
         generateRulesets({ filterTest });
         compileCss();
         copyImages();

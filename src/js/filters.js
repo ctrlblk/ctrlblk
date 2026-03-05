@@ -1,4 +1,4 @@
-import { sendMessage } from "/uBOLite/js/ext.js";
+import { sendMessage } from "/src/js/lib/browser-api.js";
 
 export async function isExempt(hostname) {
     return await sendMessage({ key: "isExempt", args: [hostname] });

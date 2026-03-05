@@ -1,4 +1,4 @@
-import { browser } from "/uBOLite/js/ext.js";
+import { browser } from "/src/js/lib/browser-api.js";
 
 import { adReportUrl } from "/src/js/consts.js";
 

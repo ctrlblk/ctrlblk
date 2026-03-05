@@ -1,6 +1,6 @@
 import filters from "/src/js/filters.js";
 
-import { browser } from '/uBOLite/js/ext.js';
+import { browser } from '/src/js/lib/browser-api.js';
 
 // XXX: Code from background page
 import { refreshAdReportsCache } from '/src/js/background/reportAd.js';

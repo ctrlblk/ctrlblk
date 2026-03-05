@@ -1,6 +1,6 @@
 "use strict";
 
-import { browser, runtime, dnr } from "/uBOLite/js/ext.js";
+import { browser, runtime, dnr } from "/src/js/lib/browser-api.js";
 
 import filters from "/src/js/background/filters.js";
 import {

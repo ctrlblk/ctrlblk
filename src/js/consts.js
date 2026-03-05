@@ -1,6 +1,6 @@
 import semver from "semver";
 
-import { runtime } from "/uBOLite/js/ext.js";
+import { runtime } from "/src/js/lib/browser-api.js";
 
 const DEVELOPMENT = semver.parse(runtime.getManifest().version_name).prerelease[0] === "development"
 

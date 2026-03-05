@@ -11,12 +11,12 @@
 
 /******************************************************************************/
 
-import { browser } from '/uBOLite/js/ext.js';
-import { fetchJSON } from '/uBOLite/js/fetch.js';
-import { getFilteringModeDetails } from '/uBOLite/js/mode-manager.js';
-import { getEnabledRulesetsDetails } from '/uBOLite/js/ruleset-manager.js';
+import { browser } from '/src/js/lib/browser-api.js';
+import { fetchJSON } from '/src/js/lib/fetch-json.js';
+import { getFilteringModeDetails } from '/src/js/lib/mode-manager.js';
+import { getEnabledRulesetsDetails } from '/src/js/lib/ruleset-manager.js';
 
-import * as ut from '/uBOLite/js/utils.js';
+import * as ut from '/src/js/lib/hostname-utils.js';
 
 /******************************************************************************/
 

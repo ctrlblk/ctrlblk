@@ -10,9 +10,7 @@
         "build-release": "vite build --mode release",
         "watch": "vite build --mode development --watch",
         "tailwindcss": "tailwindcss -i ./src/app.pcss -o ./dist/assets/tailwind.css",
-        "build-ubo": "build/build-ubo.sh $npm_package_config_ctrlblk_filters_ref_old $npm_package_config_ctrlblk_filters_ref_new",
         "generate-rulesets": "node build/generate-rulesets.js",
-        "postinstall": "pnpm run build-ubo",
         "test:filter": "playwright test --config tests/filter/playwright.config.js",
         "test:scriptlets": "node --test tests/scriptlets/compare.test.js"
     },

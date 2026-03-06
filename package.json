@@ -14,11 +14,8 @@
         "test:filter": "playwright test --config tests/filter/playwright.config.js",
         "test:scriptlets": "node --test tests/scriptlets/compare.test.js"
     },
-    "config": {
-        "ctrlblk_filters_ref_old": "54cd5f9a4a8d962152e6a6b84645b44e5d96b986",
-        "ctrlblk_filters_ref_new": "45b44379a9b61245d4f312755a12239eec37077a"
-    },
     "dependencies": {
+        "@ctrlblk/ctrlblk-filters": "github:ctrlblk/ctrlblk-filters",
         "date-fns": "^3.3.1",
         "del": "^6.1.0",
         "detect-browser": "^5.3.0",

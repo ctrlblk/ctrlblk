@@ -1,4 +1,9 @@
 import { createHash, randomBytes } from 'crypto';
+import { createRequire } from 'module';
+import path from 'path';
+
+const require = createRequire(import.meta.url);
+const filtersDir = path.dirname(require.resolve('@ctrlblk/ctrlblk-filters/dist/default.txt'));
 
 const secret = createHash('sha256').update(randomBytes(16)).digest('hex').slice(0,16);
 
@@ -9,7 +14,7 @@ export const rulesets = [
         enabled: true,
         secret,
         urls: [
-            "ctrlblk-filters/default.txt",
+            `${filtersDir}/default.txt`,
         ],
         homeURL: 'https://github.com/uBlockOrigin/uAssets',
     },
@@ -19,7 +24,7 @@ export const rulesets = [
         enabled: true,
         secret,
         urls: [
-            'ctrlblk-filters/ctrlblk-filters.txt',
+            `${filtersDir}/ctrlblk-filters.txt`,
         ],
         homeURL: 'https://github.com/ctrlblk/ctrlblk-filters#readme',
     },
@@ -30,7 +35,7 @@ export const rulesets = [
         enabled: true,
         secret,
         urls: [
-            'ctrlblk-filters/annoyances-cookies.txt',
+            `${filtersDir}/annoyances-cookies.txt`,
         ],
         homeURL: 'https://github.com/easylist/easylist#fanboy-lists',
     },
@@ -41,7 +46,7 @@ export const rulesets = [
         enabled: false,
         secret,
         urls: [
-            'ctrlblk-filters/annoyances-overlays.txt',
+            `${filtersDir}/annoyances-overlays.txt`,
         ],
         homeURL: 'https://github.com/easylist/easylist#fanboy-lists',
     },
@@ -52,7 +57,7 @@ export const rulesets = [
         enabled: false,
         secret,
         urls: [
-            'ctrlblk-filters/annoyances-social.txt',
+            `${filtersDir}/annoyances-social.txt`,
         ],
         homeURL: 'https://github.com/easylist/easylist#fanboy-lists',
     },
@@ -63,7 +68,7 @@ export const rulesets = [
         enabled: false,
         secret,
         urls: [
-            'ctrlblk-filters/annoyances-widgets.txt',
+            `${filtersDir}/annoyances-widgets.txt`,
         ],
         homeURL: 'https://github.com/easylist/easylist#fanboy-lists',
     },
@@ -74,7 +79,7 @@ export const rulesets = [
         enabled: false,
         secret,
         urls: [
-            'ctrlblk-filters/annoyances-others.txt',
+            `${filtersDir}/annoyances-others.txt`,
         ],
         homeURL: 'https://github.com/easylist/easylist#fanboy-lists',
     },
@@ -85,7 +90,7 @@ export const rulesets = [
         lang: "sq",
         enabled: false,
         urls: [
-            "ctrlblk-filters/alb-0.txt",
+            `${filtersDir}/alb-0.txt`,
         ],
         homeURL: "https://github.com/AnXh3L0/blocklist"
     },
@@ -96,7 +101,7 @@ export const rulesets = [
         lang: "ar",
         enabled: false,
         urls: [
-            "ctrlblk-filters/ara-0.txt",
+            `${filtersDir}/ara-0.txt`,
         ],
         homeURL: "https://forums.lanik.us/viewforum.php?f=98"
     },
@@ -107,7 +112,7 @@ export const rulesets = [
         lang: "bg mk",
         enabled: false,
         urls: [
-            "ctrlblk-filters/bgr-0.txt",
+            `${filtersDir}/bgr-0.txt`,
         ],
         homeURL: "https://stanev.org/abp/"
     },
@@ -118,7 +123,7 @@ export const rulesets = [
         lang: "ug zh",
         enabled: false,
         urls: [
-            "ctrlblk-filters/chn-0.txt",
+            `${filtersDir}/chn-0.txt`,
         ],
         homeURL: "https://github.com/AdguardTeam/AdguardFilters#adguard-filters"
     },
@@ -129,7 +134,7 @@ export const rulesets = [
         lang: "cs sk",
         enabled: false,
         urls: [
-            "ctrlblk-filters/cze-0.txt",
+            `${filtersDir}/cze-0.txt`,
         ],
         homeURL: "https://github.com/tomasko126/easylistczechandslovak"
     },
@@ -140,7 +145,7 @@ export const rulesets = [
         lang: "de dsb hsb lb rm",
         enabled: false,
         urls: [
-            "ctrlblk-filters/deu-0.txt",
+            `${filtersDir}/deu-0.txt`,
 
         ],
         homeURL: "https://forums.lanik.us/viewforum.php?f=90"
@@ -152,7 +157,7 @@ export const rulesets = [
         lang: "et",
         enabled: false,
         urls: [
-            "ctrlblk-filters/est-0.txt",
+            `${filtersDir}/est-0.txt`,
         ],
         homeURL: "https://adblock.ee/"
     },
@@ -163,7 +168,7 @@ export const rulesets = [
         lang: "fi",
         enabled: false,
         urls: [
-            "ctrlblk-filters/fin-0.txt",
+            `${filtersDir}/fin-0.txt`,
         ],
         homeURL: "https://github.com/finnish-easylist-addition/finnish-easylist-addition"
     },
@@ -174,7 +179,7 @@ export const rulesets = [
         lang: "ar br ff fr lb oc son",
         enabled: false,
         urls: [
-            "ctrlblk-filters/fra-0.txt",
+            `${filtersDir}/fra-0.txt`,
         ],
         homeURL: "https://github.com/AdguardTeam/AdguardFilters#adguard-filters"
     },
@@ -185,7 +190,7 @@ export const rulesets = [
         lang: "el",
         enabled: false,
         urls: [
-            "ctrlblk-filters/grc-0.txt",
+            `${filtersDir}/grc-0.txt`,
         ],
         homeURL: "https://github.com/kargig/greek-adblockplus-filter"
     },
@@ -196,7 +201,7 @@ export const rulesets = [
         lang: "hr sr",
         enabled: false,
         urls: [
-            "ctrlblk-filters/hrv-0.txt",
+            `${filtersDir}/hrv-0.txt`,
         ],
         homeURL: "https://github.com/DandelionSprout/adfilt#readme"
     },
@@ -207,7 +212,7 @@ export const rulesets = [
         lang: "hu",
         enabled: false,
         urls: [
-            "ctrlblk-filters/hun-0.txt",
+            `${filtersDir}/hun-0.txt`,
         ],
         homeURL: "https://github.com/hufilter/hufilter"
     },
@@ -218,7 +223,7 @@ export const rulesets = [
         lang: "id ms",
         enabled: false,
         urls: [
-            "ctrlblk-filters/idn-0.txt",
+            `${filtersDir}/idn-0.txt`,
         ],
         homeURL: "https://github.com/ABPindo/indonesianadblockrules"
     },
@@ -229,7 +234,7 @@ export const rulesets = [
         lang: "as bn gu hi kn ml mr ne pa si ta te",
         enabled: false,
         urls: [
-            "ctrlblk-filters/ind-0.txt",
+            `${filtersDir}/ind-0.txt`,
         ],
         homeURL: "https://github.com/mediumkreation/IndianList"
     },
@@ -240,7 +245,7 @@ export const rulesets = [
         lang: "fa ps tg",
         enabled: false,
         urls: [
-            "ctrlblk-filters/irn-0.txt",
+            `${filtersDir}/irn-0.txt`,
 
         ],
         homeURL: "https://github.com/MasterKia/PersianBlocker"
@@ -252,7 +257,7 @@ export const rulesets = [
         lang: "is",
         enabled: false,
         urls: [
-            "ctrlblk-filters/isl-0.txt",
+            `${filtersDir}/isl-0.txt`,
         ],
         homeURL: "https://adblock.gardar.net/"
     },
@@ -263,7 +268,7 @@ export const rulesets = [
         lang: "he",
         enabled: false,
         urls: [
-            "ctrlblk-filters/isr-0.txt",
+            `${filtersDir}/isr-0.txt`,
         ],
         homeURL: "https://github.com/easylist/EasyListHebrew"
     },
@@ -274,7 +279,7 @@ export const rulesets = [
         lang: "it lij",
         enabled: false,
         urls: [
-            "ctrlblk-filters/ita-0.txt",
+            `${filtersDir}/ita-0.txt`,
         ],
         homeURL: "https://forums.lanik.us/viewforum.php?f=96"
     },
@@ -285,7 +290,7 @@ export const rulesets = [
         lang: "ja",
         enabled: false,
         urls: [
-            "ctrlblk-filters/jpn-1.txt",
+            `${filtersDir}/jpn-1.txt`,
         ],
         homeURL: "https://github.com/AdguardTeam/AdguardFilters#adguard-filters"
     },
@@ -296,7 +301,7 @@ export const rulesets = [
         lang: "ko",
         enabled: false,
         urls: [
-            "ctrlblk-filters/kor-1.txt",
+            `${filtersDir}/kor-1.txt`,
         ],
         homeURL: "https://github.com/List-KR/List-KR#readme"
     },
@@ -307,7 +312,7 @@ export const rulesets = [
         lang: "lt",
         enabled: false,
         urls: [
-            "ctrlblk-filters/ltu-0.txt",
+            `${filtersDir}/ltu-0.txt`,
         ],
         homeURL: "https://github.com/EasyList-Lithuania/easylist_lithuania"
     },
@@ -318,7 +323,7 @@ export const rulesets = [
         lang: "lv",
         enabled: false,
         urls: [
-            "ctrlblk-filters/lva-0.txt",
+            `${filtersDir}/lva-0.txt`,
         ],
         homeURL: "https://github.com/Latvian-List/adblock-latvian"
     },
@@ -329,7 +334,7 @@ export const rulesets = [
         lang: "mk",
         enabled: false,
         urls: [
-            "ctrlblk-filters/mkd-0.txt",
+            `${filtersDir}/mkd-0.txt`,
         ],
         homeURL: "https://github.com/DeepSpaceHarbor/Macedonian-adBlock-Filters"
     },
@@ -340,7 +345,7 @@ export const rulesets = [
         lang: "af fy nl",
         enabled: false,
         urls: [
-            "ctrlblk-filters/nld-0.txt",
+            `${filtersDir}/nld-0.txt`,
         ],
         homeURL: "https://github.com/EasyDutch-uBO/EasyDutch/"
     },
@@ -351,7 +356,7 @@ export const rulesets = [
         lang: "nb nn no da is",
         enabled: false,
         urls: [
-            "ctrlblk-filters/nor-0.txt",
+            `${filtersDir}/nor-0.txt`,
 
         ],
         homeURL: "https://github.com/DandelionSprout/adfilt"
@@ -363,8 +368,8 @@ export const rulesets = [
         lang: "szl pl",
         enabled: false,
         urls: [
-            "ctrlblk-filters/pol-0.txt",
-            "ctrlblk-filters/pol-2.txt"
+            `${filtersDir}/pol-0.txt`,
+            `${filtersDir}/pol-2.txt`
         ],
         homeURL: "https://github.com/MajkiIT/polish-ads-filter/issues"
     },
@@ -375,7 +380,7 @@ export const rulesets = [
         lang: "ro",
         enabled: false,
         urls: [
-            "ctrlblk-filters/rou-1.txt",
+            `${filtersDir}/rou-1.txt`,
         ],
         homeURL: "https://github.com/tcptomato/ROad-Block"
     },
@@ -386,7 +391,7 @@ export const rulesets = [
         lang: "be kk tt ru uk uz",
         enabled: false,
         urls: [
-            "ctrlblk-filters/rus-0.txt",
+            `${filtersDir}/rus-0.txt`,
         ],
         homeURL: "https://forums.lanik.us/viewforum.php?f=102"
     },
@@ -397,7 +402,7 @@ export const rulesets = [
         lang: "an ast ca cak es eu gl gn trs quz",
         enabled: false,
         urls: [
-            "ctrlblk-filters/spa-0.txt",
+            `${filtersDir}/spa-0.txt`,
         ],
         homeURL: "https://forums.lanik.us/viewforum.php?f=103"
     },
@@ -408,7 +413,7 @@ export const rulesets = [
         lang: "an ast ca cak es eu gl gn trs pt quz",
         enabled: false,
         urls: [
-            "ctrlblk-filters/spa-1.txt",
+            `${filtersDir}/spa-1.txt`,
         ],
         homeURL: "https://github.com/AdguardTeam/AdguardFilters#adguard-filters"
     },
@@ -419,7 +424,7 @@ export const rulesets = [
         lang: "sl",
         enabled: false,
         urls: [
-            "ctrlblk-filters/svn-0.txt",
+            `${filtersDir}/svn-0.txt`,
         ],
         homeURL: "https://github.com/betterwebleon/slovenian-list"
     },
@@ -430,7 +435,7 @@ export const rulesets = [
         lang: "sv",
         enabled: false,
         urls: [
-            "ctrlblk-filters/swe-1.txt",
+            `${filtersDir}/swe-1.txt`,
         ],
         homeURL: "https://github.com/lassekongo83/Frellwits-filter-lists"
     },
@@ -441,7 +446,7 @@ export const rulesets = [
         lang: "th",
         enabled: false,
         urls: [
-            "ctrlblk-filters/tha-0.txt",
+            `${filtersDir}/tha-0.txt`,
         ],
         homeURL: "https://github.com/easylist-thailand/easylist-thailand"
     },
@@ -452,7 +457,7 @@ export const rulesets = [
         lang: "tr",
         enabled: false,
         urls: [
-            "ctrlblk-filters/tur-0.txt",
+            `${filtersDir}/tur-0.txt`,
         ],
         homeURL: "https://github.com/AdguardTeam/AdguardFilters#adguard-filters"
     },
@@ -463,7 +468,7 @@ export const rulesets = [
         lang: "vi",
         enabled: false,
         urls: [
-            "ctrlblk-filters/vie-1.txt",
+            `${filtersDir}/vie-1.txt`,
         ],
         homeURL: "https://abpvn.com/"
     }

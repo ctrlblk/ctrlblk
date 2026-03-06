@@ -65,7 +65,6 @@ function compileCss() {
 
 function copyImages() {
     cpSync(`images/`, "dist/images", { recursive: true });
-    cpSync("ctrlblk-filters/ad-reports.json", "dist/assets/ad-reports.json");
 }
 
 export function buildCtrlBlk(mode, manifest, { filterTest = false } = {}) {

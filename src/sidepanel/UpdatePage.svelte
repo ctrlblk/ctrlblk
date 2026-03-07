@@ -18,7 +18,7 @@
     import {
         browser,
         runtime,
-    } from "/uBOLite/js/ext.js";
+    } from "/src/js/lib/browser-api.js";
 
     let adReportId = mockAdReportId;
     let version = "";

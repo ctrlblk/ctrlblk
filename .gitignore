@@ -1,10 +1,9 @@
 # generated files
 /dist/
+/playwright-report/
 
 # dependencies
 /node_modules/
-/uBOLite/
-/uBOBits/
 /uAssets
 /ctrlblk-filters/
 

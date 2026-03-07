@@ -1,0 +1,13 @@
+/*******************************************************************************
+
+    CtrlBlk - MV3 content blocker
+    Template structure derived from uBlock Origin Lite by Raymond Hill (GPLv3).
+    Scriptlet implementations independently authored.
+
+*/
+
+/* $rulesetId$ */
+
+$selectorList$ {
+    display: none !important;
+}

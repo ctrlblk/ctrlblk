@@ -1,6 +1,6 @@
 "use strict";
 
-import { browser, runtime, dnr } from "/uBOLite/js/ext.js";
+import { browser, runtime, dnr } from "/src/js/lib/browser-api.js";
 
 import filters from "/src/js/background/filters.js";
 import {
@@ -50,7 +50,7 @@ function onMessage(request, sender, sendResponse) {
     throw new Error(`Message handler with what ${what} doesn't exist!`);
 }
 
-export async function getUpdateUrl({ details, config, adReportIds, adReportsFixed }) {
+export async function getUpdateUrl({ details, config, adReportIds }) {
 
     let data = {
         version: "0.1",
@@ -62,7 +62,6 @@ export async function getUpdateUrl({ details, config, adReportIds, adReportsFixe
 
         ad_reports: {
             ad_reports: adReportIds,
-            ad_reports_fixed: adReportsFixed.uuids,
         },
 
         ...config,
@@ -96,10 +95,7 @@ async function onInstalledHandler(details) {
     let adReportIds = await getLocalAdReportIds();
     await clearLocalAdReportIds();
 
-    let adReportsFixedResponse = await fetch("assets/ad-reports.json");
-    let adReportsFixed = await adReportsFixedResponse.json();
-
-    let { open_update_page, update_url } = await getUpdateUrl({ details, config, adReportIds, adReportsFixed });
+    let { open_update_page, update_url } = await getUpdateUrl({ details, config, adReportIds });
 
     // open update page?
     if (open_update_page) {
@@ -121,12 +117,6 @@ async function start() {
     if ( wakeupRun === false && dnr.setExtensionActionOptions ) {
         dnr.setExtensionActionOptions({ displayActionCountAsBadgeText: true });
     }
-
-    //runtime.openOptionsPage();
 }
 
-try {
-    start();
-} catch (error) {
-    console.trace(error);
-}
+start();

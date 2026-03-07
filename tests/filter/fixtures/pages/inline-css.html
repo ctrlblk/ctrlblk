@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Inline CSS Tests</title>
+  <style>
+    .testcase-panel { margin: 1em 0; padding: 1em; border: 1px solid #ccc; }
+    .testcase-area { padding: 0.5em; background: #f9f9f9; }
+    .testcase-examplecontent { padding: 10px; background: #e0ffe0; }
+    .overlay-ad { padding: 20px; background: #ff0000; color: white; }
+  </style>
+</head>
+<body>
+  <h1>Inline CSS Injection</h1>
+
+  <section id="visibility-hidden-section" class="testcase-panel">
+    <h2>Visibility Hidden</h2>
+    <p>Test that a declarative CSS filter sets visibility to hidden.</p>
+    <div class="testcase-area">
+      <div class="overlay-ad" data-expectedresult="fail">This should be visibility:hidden</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1#$#.overlay-ad { visibility: hidden !important }</pre>
+  </section>
+
+  <section id="bg-color-section" class="testcase-panel">
+    <h2>Background Color Override</h2>
+    <p>Test that a declarative CSS filter overrides the background-color.</p>
+    <div class="testcase-area">
+      <div class="css-bg-target" style="background-color: rgb(255, 0, 0); padding: 20px;" data-expectedresult="pass">Background should be green, not red</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1#$#.css-bg-target { background-color: rgb(0, 128, 0) !important }</pre>
+  </section>
+
+  <section id="display-none-section" class="testcase-panel">
+    <h2>Display None</h2>
+    <p>Test that a declarative CSS filter sets display to none.</p>
+    <div class="testcase-area">
+      <div class="css-display-target" style="display: block;" data-expectedresult="fail">This should be display:none</div>
+      <div class="testcase-examplecontent" data-expectedresult="pass">Example Content</div>
+    </div>
+    <h3>Filter</h3>
+    <pre>127.0.0.1#$#.css-display-target { display: none !important }</pre>
+  </section>
+</body>
+</html>

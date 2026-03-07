@@ -14,14 +14,22 @@ function parsePropertiesToMatch(propsToMatch, implicit = '') {
     }
     const pairs = propsToMatch.split(/\s+/);
     for ( const pair of pairs ) {
-        const colonIdx = pair.indexOf(':');
         let prop, rawPattern;
-        if ( colonIdx === -1 ) {
+        // If the pair is a regex pattern (starts and ends with /), treat it
+        // as a bare pattern with the implicit property. This avoids splitting
+        // on colons that appear inside regex groups like (?:...).
+        if ( /^\/(.+)\/([gimsu]*)$/.test(pair) ) {
             prop = implicit;
             rawPattern = pair;
         } else {
-            prop = pair.slice(0, colonIdx);
-            rawPattern = pair.slice(colonIdx + 1);
+            const colonIdx = pair.indexOf(':');
+            if ( colonIdx === -1 ) {
+                prop = implicit;
+                rawPattern = pair;
+            } else {
+                prop = pair.slice(0, colonIdx);
+                rawPattern = pair.slice(colonIdx + 1);
+            }
         }
         if ( prop === '' ) { continue; }
         needles.set(prop, safe.initPattern(rawPattern, { canNegate: true }));

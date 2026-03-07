@@ -15,7 +15,7 @@ function trustedReplaceXhrResponse(pattern = '', replacement = '', propsToMatch 
     const extraArgs = safe.getExtraArgs(Array.from(arguments), 3);
     const logAll = pattern === '' && replacement === '';
 
-    const parsedProps = parsePropertiesToMatch(propsToMatch, 'xhr');
+    const parsedProps = parsePropertiesToMatch(propsToMatch, 'url');
     const patternRe = safe.patternToRegex(pattern, 'gms');
 
     // Process replacement: support includes directive

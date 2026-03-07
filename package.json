@@ -12,6 +12,7 @@
         "tailwindcss": "tailwindcss -i ./src/app.pcss -o ./dist/assets/tailwind.css",
         "generate-rulesets": "node build/generate-rulesets.js",
         "test:filter": "playwright test --config tests/filter/playwright.config.js",
+        "test:youtube": "playwright test --config tests/youtube/playwright.config.js",
         "test:scriptlets": "node --test tests/scriptlets/compare.test.js"
     },
     "dependencies": {

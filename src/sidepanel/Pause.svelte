@@ -28,16 +28,16 @@
 
     import AdReport from "./AdReport.svelte";
 
-    export let exceptions;
+    let { exceptions } = $props();
 
-    let disabled = false;
+    let disabled = $state(false);
 
-    let currentTabHostname = "";
-    let currentTabExempt = false;
+    let currentTabHostname = $state("");
+    let currentTabExempt = $state(false);
 
-    let currentState = "PlayPause";
+    let currentState = $state("PlayPause");
 
-    let adReport = {};
+    let adReport = $state({});
 
     async function createAdReport() {
         let image = await browser.tabs.captureVisibleTab();

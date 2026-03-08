@@ -13,7 +13,8 @@
         "generate-rulesets": "node build/generate-rulesets.js",
         "test:filter": "playwright test --config tests/filter/playwright.config.js",
         "test:youtube": "playwright test --config tests/youtube/playwright.config.js",
-        "test:scriptlets": "node --test tests/scriptlets/compare.test.js"
+        "test:scriptlets": "node --test tests/scriptlets/compare.test.js",
+        "test:components": "vitest run"
     },
     "dependencies": {
         "@ctrlblk/ctrlblk-filters": "github:ctrlblk/ctrlblk-filters#v1",
@@ -22,13 +23,14 @@
         "detect-browser": "^5.3.0",
         "punycode.js": "^2.3.1",
         "semver": "^7.6.0",
-        "vite": "^5.0.13"
+        "vite": "^6.4.1"
     },
     "devDependencies": {
         "@playwright/test": "^1.58.2",
         "@samrum/vite-plugin-web-extension": "^5.1.0",
-        "@sveltejs/adapter-auto": "^3.1.1",
-        "@sveltejs/vite-plugin-svelte": "^3.0.1",
+        "@sveltejs/vite-plugin-svelte": "^5.1.1",
+        "@testing-library/jest-dom": "^6.9.1",
+        "@testing-library/svelte": "^5.3.1",
         "argparse": "^2.0.1",
         "autoprefixer": "^10.4.16",
         "eslint": "^8.55.0",
@@ -38,12 +40,13 @@
         "express": "^5.2.1",
         "fast-glob": "^3.3.2",
         "flowbite": "^2.2.1",
-        "flowbite-svelte": "^0.44.22",
-        "flowbite-svelte-icons": "^1.3.1",
+        "flowbite-svelte": "^0.46.23",
+        "flowbite-svelte-icons": "^2.3.0",
+        "jsdom": "^28.1.0",
         "postcss": "^8.4.32",
         "postcss-load-config": "^5.0.2",
-        "svelte": "^4.2.20",
-        "svelte-preprocess": "^5.1.3",
-        "tailwindcss": "^3.3.6"
+        "svelte": "^5.53.7",
+        "tailwindcss": "^3.3.6",
+        "vitest": "^4.0.18"
     }
 }

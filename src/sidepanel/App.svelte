@@ -95,10 +95,10 @@
 </div>
 
 <BottomNav position="sticky" classInner="max-w-sm grid-cols-2">
-    <BottomNavItem btnName="Website" href="{ctrlblkHomepageUrl}" target="_blank">
+    <BottomNavItem btnName="Website" href={ctrlblkHomepageUrl} target="_blank">
         <LinkOutline class="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" />
     </BottomNavItem>
-    <BottomNavItem btnName="Contact" href="{ctrlblkContactUrl}" target="_blank">
+    <BottomNavItem btnName="Contact" href={ctrlblkContactUrl} target="_blank">
         <MailBoxOutline class="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" />
     </BottomNavItem>
 </BottomNav>

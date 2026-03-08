@@ -10,7 +10,7 @@
 
     import filters from "/src/js/filters.js";
 
-    export let rulesetGroups = new Map();
+    let rulesetGroups = $state(new Map());
 
     function groupRulesets(rulesetDetails) {
         return new Map([
@@ -41,16 +41,16 @@
 
     });
 
-    const updateRuleset = (e) => {        
-        let { value, checked } = e.target;
-
-        if (checked) {
-            filters.enableFilterlist(value);
+    function updateRuleset(id, rule) {
+        rule.enabled = !rule.enabled;
+        if (rule.enabled) {
+            filters.enableFilterlist(id);
         } else {
-            filters.disableFilterlist(value);
-
+            filters.disableFilterlist(id);
         }
-    };
+        // Reassign to trigger Svelte 5 reactivity for the accordion headers
+        rulesetGroups = new Map(rulesetGroups);
+    }
 </script>
 
 
@@ -74,7 +74,7 @@
 
             {#each rulesetDetails as [id, rule]}
                 <div class="px-4">
-                    <Checkbox value={id} bind:checked={rule.enabled} on:click={updateRuleset} class="font-light">
+                    <Checkbox checked={rule.enabled} on:click={() => updateRuleset(id, rule)} class="font-light">
                         {rule.name}
                     </Checkbox>
                 </div>

@@ -20,13 +20,13 @@
         runtime,
     } from "/src/js/lib/browser-api.js";
 
-    let adReportId = mockAdReportId;
-    let version = "";
-    let previousVersion = "";
+    let adReportId = $state(mockAdReportId);
+    let version = $state("");
+    let previousVersion = $state("");
 
-    let openUpdatePage;
-    let updateUrl = "";
-    let updateReasons = "";
+    let openUpdatePage = $state();
+    let updateUrl = $state("");
+    let updateReasons = $state("");
 
     onMount(() => {
 

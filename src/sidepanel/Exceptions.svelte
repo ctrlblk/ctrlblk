@@ -17,11 +17,11 @@
     // XXX: Code from background page
     import { getAdReportsByDomains } from "/src/js/background/reportAd.js";
 
-    export let exceptions;
+    let { exceptions } = $props();
     let adReports = new Map();
 
-    let filteredExceptions = [];
-    let searchTerm = "";
+    let filteredExceptions = $state([]);
+    let searchTerm = $state("");
 
     function removeException(event) {
         let exception = event.target.closest("tr").querySelector("td").textContent;
@@ -36,22 +36,25 @@
             );
     }
 
-    exceptions.subscribe(async value => {
-        // abort if exceptions hasn't been inititialized yet
-        if (value === undefined) {
-            return;
-        }
+    $effect(() => {
+        const unsubscribe = exceptions.subscribe(async value => {
+            // abort if exceptions hasn't been inititialized yet
+            if (value === undefined) {
+                return;
+            }
 
-        adReports = await getAdReportsByDomains(value);
+            adReports = await getAdReportsByDomains(value);
 
-        filteredExceptions = filterAndMapExceptions(value, searchTerm);
+            filteredExceptions = filterAndMapExceptions(value, searchTerm);
+        });
+        return unsubscribe;
     });
 
-    $: {
+    $effect(() => {
         if ($exceptions !== undefined) {
             filteredExceptions = filterAndMapExceptions($exceptions, searchTerm);
         }
-    }
+    });
 </script>
 
 
@@ -74,7 +77,7 @@
                     <TableBodyCell class="text-right whitespace-nowrap">
                         { adReports.length > 1 ? "(" : ""}
                         {#each adReports as adReport, index}
-                            <A href="{adReport.github.url}" target="_blank" class="text-gray-700">
+                            <A href={adReport.github.url} target="_blank" class="text-gray-700">
                                 #{adReport.github.number}
                                 <LinkOutline class="w-4 h-4" />
                             </A>{ index == adReports.length-1 ? "" : ", "}

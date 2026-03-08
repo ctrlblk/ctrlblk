@@ -19,10 +19,17 @@
 
     import Expandable from './Expandable.svelte';
 
-    export let tableData = [];
-    export let adReport = {};
+    let { adReport = {} } = $props();
 
-    let adReportView;
+    let adReportView = $derived(adReportViewFromAdReport(adReport));
+
+    let tableData = $derived.by(() => {
+        let adReportDataCloned = JSON.parse(JSON.stringify(adReport.data));
+        adReportDataCloned.screenshot = adReportDataCloned.screenshot.split(",")[0] + "...";
+        let result = [];
+        flattenObjectTree(adReportDataCloned, result);
+        return result;
+    });
 
     function flattenObjectTree(obj, output, parents = []) {
         for (let [key, value] of Object.entries(obj)) {
@@ -61,18 +68,6 @@
         return formatDistanceToNow(date, { addSuffix: true });
     }
 
-    $: {
-        console.log("AdReport", adReport);
-        adReportView = adReportViewFromAdReport(adReport);
-        let adReportDataCloned = JSON.parse(JSON.stringify(adReport.data));
-        adReportDataCloned.screenshot = adReportDataCloned.screenshot.split(",")[0] + "...";
-        flattenObjectTree(adReportDataCloned, tableData);
-
-        // XXX: This is a hack to trigger svelte reactiveness
-        // to get the table to update because updating the tableData
-        // in flattenObjectTree doesn't trigger a re-render
-        tableData = tableData;
-    }
 
 </script>
 
@@ -94,27 +89,31 @@
 
     <div>
         <Expandable>
-            <span slot="label" class="my-3">Show all data</span>
-            <Table slot="content" class="text-xs">
-                <TableHead>
-                    <TableHeadCell class="px-3 py-2">Key</TableHeadCell>
-                    <TableHeadCell class="px-3 py-2">Value</TableHeadCell>
-                </TableHead>
-                <TableBody class="divide-y">
-                {#each tableData as [key, value]}
-                    <TableBodyRow>
-                        <TableBodyCell class="px-3 py-2">{key}</TableBodyCell>
-                        <TableBodyCell class="px-3 py-2">{value}</TableBodyCell>
-                    </TableBodyRow>
-                {/each}
-                </TableBody>
-            </Table>
+            {#snippet label()}
+                <span class="my-3">Show all data</span>
+            {/snippet}
+            {#snippet content()}
+                <Table class="text-xs">
+                    <TableHead>
+                        <TableHeadCell class="px-3 py-2">Key</TableHeadCell>
+                        <TableHeadCell class="px-3 py-2">Value</TableHeadCell>
+                    </TableHead>
+                    <TableBody class="divide-y">
+                    {#each tableData as [key, value]}
+                        <TableBodyRow>
+                            <TableBodyCell class="px-3 py-2">{key}</TableBodyCell>
+                            <TableBodyCell class="px-3 py-2">{value}</TableBodyCell>
+                        </TableBodyRow>
+                    {/each}
+                    </TableBody>
+                </Table>
+            {/snippet}
         </Expandable>
     </div>
 
     {#if adReportView.issueLink}
         <div class="mt-3">
-            <A href="{adReportView.issueLink}" target="_blank" class="float-right text-gray-700">{adReportView.issueSlug}</A>
+            <A href={adReportView.issueLink} target="_blank" class="float-right text-gray-700">{adReportView.issueSlug}</A>
         </div>
     {/if}
 </Card>

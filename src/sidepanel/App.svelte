@@ -1,16 +1,6 @@
 <script> 
-    import {
-        Card,
-        Navbar,
-        NavBrand,
-        BottomNav,
-        BottomNavItem
-     } from 'flowbite-svelte';
-
-    import {
-        LinkOutline,
-        MailBoxOutline,
-    } from 'flowbite-svelte-icons';
+    import Card from "/src/lib/ui/Card.svelte";
+    import { ExternalLink, Mail } from 'lucide-svelte';
 
     import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
@@ -69,12 +59,12 @@
     });
 </script>
 
-<Navbar>
-    <NavBrand href="/">
+<nav class="border-b border-gray-200 bg-white px-4 py-2.5 dark:border-gray-700 dark:bg-gray-800">
+    <a href="/" class="flex items-center">
         <img src="/images/logo/128.png" class="me-3 h-6 sm:h-9" alt="CtrlBlock Logo" />
         <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">CtrlBlock</span>
-    </NavBrand>
-</Navbar>
+    </a>
+</nav>
 
 <div class="mx-4 space-y-4">
     <Card style="max-width:100%;">
@@ -94,11 +84,15 @@
     {/if}
 </div>
 
-<BottomNav position="sticky" classInner="max-w-sm grid-cols-2">
-    <BottomNavItem btnName="Website" href={ctrlblkHomepageUrl} target="_blank">
-        <LinkOutline class="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" />
-    </BottomNavItem>
-    <BottomNavItem btnName="Contact" href={ctrlblkContactUrl} target="_blank">
-        <MailBoxOutline class="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" />
-    </BottomNavItem>
-</BottomNav>
+<div class="fixed bottom-0 left-0 z-50 h-16 w-full border-t border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-700">
+    <div class="mx-auto grid h-full max-w-sm grid-cols-2">
+        <a href={ctrlblkHomepageUrl} target="_blank" class="group inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800">
+            <ExternalLink class="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" />
+            <span class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500">Website</span>
+        </a>
+        <a href={ctrlblkContactUrl} target="_blank" class="group inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800">
+            <Mail class="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" />
+            <span class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500">Contact</span>
+        </a>
+    </div>
+</div>

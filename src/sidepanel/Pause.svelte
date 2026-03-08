@@ -1,18 +1,7 @@
 <script>
-    import {
-        Button,
-        Heading,
-        Secondary,
-        Spinner,
-    } from 'flowbite-svelte';
-
-    import {
-        PlaySolid,
-        PauseSolid,
-        CheckOutline,
-        CloseOutline,
-        BugOutline,
-    } from 'flowbite-svelte-icons';
+    import Button from "/src/lib/ui/Button.svelte";
+    import Spinner from "/src/lib/ui/Spinner.svelte";
+    import { Play, Pause as PauseIcon, Check, X, Bug } from 'lucide-svelte';
 
     import { onMount } from 'svelte';
 
@@ -206,19 +195,19 @@
     });
 </script>
 
-<Heading tag="h4">
+<h4 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
     {#if currentState === "PlayPause" && !currentTabExempt }
-        Pause blocking on <Secondary class="ms-2">{currentTabHostname}</Secondary>?
+        Pause blocking on <span class="ms-2 text-gray-500 dark:text-gray-400">{currentTabHostname}</span>?
     {:else if currentState === "PlayPause" && currentTabExempt }
-        Restart blocking on <Secondary class="ms-2">{currentTabHostname}</Secondary>?
+        Restart blocking on <span class="ms-2 text-gray-500 dark:text-gray-400">{currentTabHostname}</span>?
     {:else if currentState.split("|")[0] === "PreviewReport" }
-        Send AdReport for <Secondary class="ms-2">{currentTabHostname}</Secondary>?
+        Send AdReport for <span class="ms-2 text-gray-500 dark:text-gray-400">{currentTabHostname}</span>?
     {:else if currentState === "SendingReport" }
-        Uploading AdReport for <Secondary class="ms-2">{currentTabHostname}</Secondary>
+        Uploading AdReport for <span class="ms-2 text-gray-500 dark:text-gray-400">{currentTabHostname}</span>
     {:else if currentState === "Ask" }
         Did it help?
     {/if}
-</Heading>
+</h4>
 
 <div class="flex flex-col space-y-2 py-2">
     {#if currentState === "PlayPause" && !currentTabExempt }
@@ -241,42 +230,42 @@
     {#if currentState === "PlayPause" && !currentTabExempt }
 
         <div class="text-right px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2" on:click={clickPause}>
-                <PauseSolid class="w-10 h-10" />
+            <Button disabled={disabled} pill={true} outline={true} class="!p-2" onclick={clickPause}>
+                <PauseIcon class="w-10 h-10" />
             </Button>
         </div>
         <div class="px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  on:click={clickReport}>
-                <BugOutline class="w-10 h-10" />
+            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  onclick={clickReport}>
+                <Bug class="w-10 h-10" />
             </Button>
         </div>
     {:else if currentState === "PlayPause" && currentTabExempt }
 
         <div class="text-right px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2" on:click={clickPlay}>
-                <PlaySolid class="w-10 h-10" />
+            <Button disabled={disabled} pill={true} outline={true} class="!p-2" onclick={clickPlay}>
+                <Play class="w-10 h-10" />
             </Button>
         </div>
     {:else if currentState === "Ask" }
         <div class="text-right px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  on:click={clickItHelped}>
-                <CheckOutline class="w-10 h-10" />
+            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  onclick={clickItHelped}>
+                <Check class="w-10 h-10" />
             </Button>
         </div>
         <div class="px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  on:click={clickDidntHelp}>
-                <CloseOutline class="w-10 h-10" />
+            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  onclick={clickDidntHelp}>
+                <X class="w-10 h-10" />
             </Button>
         </div>
     {:else if currentState.split("|")[0] === "PreviewReport" }
         <div class="text-right px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  on:click={clickSend}>
-                <CheckOutline class="w-10 h-10" />
+            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  onclick={clickSend}>
+                <Check class="w-10 h-10" />
             </Button>
         </div>
         <div class="px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  on:click={clickNoSend}>
-                <CloseOutline class="w-10 h-10" />
+            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  onclick={clickNoSend}>
+                <X class="w-10 h-10" />
             </Button>
         </div>
     {:else if currentState === "SendingReport" }

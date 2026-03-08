@@ -1,10 +1,7 @@
 <script>
-    import {
-        AccordionItem,
-        Accordion,
-        Checkbox,
-        Heading,
-     } from 'flowbite-svelte';
+    import Accordion from "/src/lib/ui/Accordion.svelte";
+    import AccordionItem from "/src/lib/ui/AccordionItem.svelte";
+    import Checkbox from "/src/lib/ui/Checkbox.svelte";
 
     import { onMount } from "svelte";
 
@@ -54,12 +51,12 @@
 </script>
 
 
-<Heading tag="h4">Filter lists</Heading>
+<h4 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Filter lists</h4>
 
 <Accordion flush>
     {#each rulesetGroups as [groupName, rulesetDetails]}
         <AccordionItem>
-            <span slot="header">
+            {#snippet header()}
                 {groupName}
 
                 {#if rulesetDetails.filter(([id, rule]) => rule.enabled).length > 0}
@@ -70,11 +67,11 @@
                     {/each})
                 </span>
                 {/if}
-            </span>
+            {/snippet}
 
             {#each rulesetDetails as [id, rule]}
                 <div class="px-4">
-                    <Checkbox checked={rule.enabled} on:click={() => updateRuleset(id, rule)} class="font-light">
+                    <Checkbox checked={rule.enabled} onclick={() => updateRuleset(id, rule)} class="font-light">
                         {rule.name}
                     </Checkbox>
                 </div>

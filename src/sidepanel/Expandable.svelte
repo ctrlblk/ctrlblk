@@ -1,11 +1,6 @@
 <script>
     import { slide } from 'svelte/transition';
-    import { A } from 'flowbite-svelte';
-
-    import {
-        AngleDownOutline,
-        AngleUpOutline,
-    } from 'flowbite-svelte-icons';
+    import { ChevronDown, ChevronUp } from 'lucide-svelte';
 
     let { state = $bindable("closed"), label, content } = $props();
 
@@ -14,14 +9,14 @@
     }
 </script>
 
-<A on:click={toggle}>
+<a href="#!" onclick={toggle} class="inline-flex items-center gap-1 text-primary-600 hover:underline dark:text-primary-500">
     {@render label()}
     {#if state === "closed"}
-        <AngleDownOutline />
+        <ChevronDown class="h-3 w-3" />
     {:else}
-        <AngleUpOutline />
+        <ChevronUp class="h-3 w-3" />
     {/if}
-</A>
+</a>
 
 {#if state === "open"}
     <div transition:slide>

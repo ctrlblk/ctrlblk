@@ -1,19 +1,12 @@
 <script>
-    import {
-        A,
-        Card,
-        Heading,
-        Table,
-        TableBody,
-        TableBodyCell,
-        TableBodyRow,
-        TableHead,
-        TableHeadCell,
-    } from 'flowbite-svelte';
-
-    import {
-        LinkOutline,
-    } from 'flowbite-svelte-icons';
+    import Card from "/src/lib/ui/Card.svelte";
+    import Table from "/src/lib/ui/Table.svelte";
+    import TableBody from "/src/lib/ui/TableBody.svelte";
+    import TableBodyCell from "/src/lib/ui/TableBodyCell.svelte";
+    import TableBodyRow from "/src/lib/ui/TableBodyRow.svelte";
+    import TableHead from "/src/lib/ui/TableHead.svelte";
+    import TableHeadCell from "/src/lib/ui/TableHeadCell.svelte";
+    import { ExternalLink } from 'lucide-svelte';
 
     import { formatDistanceToNow } from 'date-fns';
 
@@ -74,8 +67,8 @@
 <Card style="max-width:100%;">
     <div class="mb-3">
         <a href="{adReportView.pageLink}" target="_blank" class="flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 hover:underline">
-            <Heading tag="h4">{adReportView.pageSlug}</Heading>
-            <LinkOutline size="xs" class="ml-2 -mr-1" />
+            <h4 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{adReportView.pageSlug}</h4>
+            <ExternalLink class="ml-2 -mr-1 w-3 h-3" />
         </a>
     </div>
 
@@ -113,7 +106,7 @@
 
     {#if adReportView.issueLink}
         <div class="mt-3">
-            <A href={adReportView.issueLink} target="_blank" class="float-right text-gray-700">{adReportView.issueSlug}</A>
+            <a href={adReportView.issueLink} target="_blank" class="float-right text-gray-700 hover:underline">{adReportView.issueSlug}</a>
         </div>
     {/if}
 </Card>

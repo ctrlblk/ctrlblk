@@ -1,12 +1,9 @@
 <script>
     import semver from "semver";
 
-    import { 
-        Button,
-        Heading,
-        Input,
-        Label,
-    } from 'flowbite-svelte';
+    import Button from "/src/lib/ui/Button.svelte";
+    import Input from "/src/lib/ui/Input.svelte";
+    import Label from "/src/lib/ui/Label.svelte";
 
     import { onMount } from 'svelte';
 
@@ -74,7 +71,7 @@
     }
 </script>
 
-<Heading tag="h4">Update Page</Heading>
+<h4 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Update Page</h4>
 
 <form>
     <div class="grid grid-cols-3 py-2">
@@ -117,6 +114,6 @@
     </div>
 
     <div class="text-right">
-        <Button size="sm" on:click={clickUpdatePage}>Open update page</Button>
+        <Button size="sm" onclick={clickUpdatePage}>Open update page</Button>
     </div>
 </form>

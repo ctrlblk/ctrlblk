@@ -1,18 +1,10 @@
 <script>
-    import {
-        A,
-        Button,
-        Heading,
-        TableSearch,
-        TableBody,
-        TableBodyRow,
-        TableBodyCell,
-    } from "flowbite-svelte";
-
-    import {
-        CloseCircleSolid,
-        LinkOutline,
-    } from "flowbite-svelte-icons";
+    import Button from "/src/lib/ui/Button.svelte";
+    import TableSearch from "/src/lib/ui/TableSearch.svelte";
+    import TableBody from "/src/lib/ui/TableBody.svelte";
+    import TableBodyRow from "/src/lib/ui/TableBodyRow.svelte";
+    import TableBodyCell from "/src/lib/ui/TableBodyCell.svelte";
+    import { XCircle, ExternalLink } from "lucide-svelte";
 
     // XXX: Code from background page
     import { getAdReportsByDomains } from "/src/js/background/reportAd.js";
@@ -58,7 +50,7 @@
 </script>
 
 
-<Heading tag="h4">Exceptions</Heading>
+<h4 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Exceptions</h4>
 
 
 <TableSearch placeholder="Search by domain" hoverable={true} bind:inputValue={searchTerm}>
@@ -77,17 +69,17 @@
                     <TableBodyCell class="text-right whitespace-nowrap">
                         { adReports.length > 1 ? "(" : ""}
                         {#each adReports as adReport, index}
-                            <A href={adReport.github.url} target="_blank" class="text-gray-700">
+                            <a href={adReport.github.url} target="_blank" class="inline-flex items-center gap-1 text-gray-700 hover:underline">
                                 #{adReport.github.number}
-                                <LinkOutline class="w-4 h-4" />
-                            </A>{ index == adReports.length-1 ? "" : ", "}
+                                <ExternalLink class="w-4 h-4" />
+                            </a>{ index == adReports.length-1 ? "" : ", "}
                         {/each}
                         { adReports.length > 1 ? ")" : ""}
                     </TableBodyCell>
                 {/if}
                 <TableBodyCell class="text-right w-5">
-                    <Button pill={true} outline={true} class="!p-1" on:click={removeException}>
-                        <CloseCircleSolid />
+                    <Button pill={true} outline={true} class="!p-1" onclick={removeException}>
+                        <XCircle class="w-5 h-5" />
                     </Button>
                 </TableBodyCell>
             </TableBodyRow>

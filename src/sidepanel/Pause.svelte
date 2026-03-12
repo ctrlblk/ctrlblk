@@ -195,88 +195,69 @@
     });
 </script>
 
-<h4 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+<h3 class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
     {#if currentState === "PlayPause" && !currentTabExempt }
-        Pause blocking on <span class="ms-2 text-gray-500 dark:text-gray-400">{currentTabHostname}</span>?
+        Pause blocking on <span class="font-normal text-zinc-400">{currentTabHostname}</span>
     {:else if currentState === "PlayPause" && currentTabExempt }
-        Restart blocking on <span class="ms-2 text-gray-500 dark:text-gray-400">{currentTabHostname}</span>?
+        Resume blocking on <span class="font-normal text-zinc-400">{currentTabHostname}</span>
     {:else if currentState.split("|")[0] === "PreviewReport" }
-        Send AdReport for <span class="ms-2 text-gray-500 dark:text-gray-400">{currentTabHostname}</span>?
+        Send report for <span class="font-normal text-zinc-400">{currentTabHostname}</span>?
     {:else if currentState === "SendingReport" }
-        Uploading AdReport for <span class="ms-2 text-gray-500 dark:text-gray-400">{currentTabHostname}</span>
+        Uploading report&hellip;
     {:else if currentState === "Ask" }
-        Did it help?
+        Did pausing help?
     {/if}
-</h4>
+</h3>
 
-<div class="flex flex-col space-y-2 py-2">
+<div class="mt-2 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
     {#if currentState === "PlayPause" && !currentTabExempt }
-        <p>Problem with the page (no access, popups or similar)? Try <i>Pause</i> to see if it helps!</p>
-        <p>Ads on the page? Click <i>Bug</i> to send a report!</p>
+        <p>Page broken? Try pausing. Seeing ads? Send a report.</p>
     {:else if currentState === "PlayPause" && currentTabExempt }
-        <p>Blocking is paused. Click <i>Play</i> to restart blocking!</p>
+        <p>Blocking is paused on this site.</p>
     {:else if currentState === "PreviewReport|ItHelped" }
-        <p>Great, let's keep the exception for now!</p>
-        <p>You can send a report! If you do we'll fix the problem for you and you'll be able to continue blocking on this page!</p>
+        <p>We'll keep the exception. Send a report and we'll fix the underlying issue for you.</p>
     {:else if currentState === "PreviewReport|DidntHelp" }
-        <p>Too bad, we've removed the exception again!</p>
-        <p>You can send a report! If you do we'll investigate and fix the problem for you!</p>
+        <p>Exception removed. Send a report and we'll investigate.</p>
     {:else if currentState === "Ask" }
-        <p>If it did (or if you want to disable blocking on this page) we'll keep this exception. Otherwhise we'll remove it again to make sure you remain protected on this page.</p>
+        <p>We'll keep the exception if it helped, or remove it to keep you protected.</p>
     {/if}
 </div>
 
-<div class="grid grid-cols-2 py-4 space-x-2">
+<div class="mt-4 flex items-center gap-3">
     {#if currentState === "PlayPause" && !currentTabExempt }
-
-        <div class="text-right px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2" onclick={clickPause}>
-                <PauseIcon class="w-10 h-10" />
-            </Button>
-        </div>
-        <div class="px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  onclick={clickReport}>
-                <Bug class="w-10 h-10" />
-            </Button>
-        </div>
+        <Button disabled={disabled} pill outline class="!p-2.5" onclick={clickPause} title="Pause blocking">
+            <PauseIcon class="h-5 w-5" />
+        </Button>
+        <Button disabled={disabled} pill outline class="!p-2.5" onclick={clickReport} title="Report an issue">
+            <Bug class="h-5 w-5" />
+        </Button>
     {:else if currentState === "PlayPause" && currentTabExempt }
-
-        <div class="text-right px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2" onclick={clickPlay}>
-                <Play class="w-10 h-10" />
-            </Button>
-        </div>
+        <Button disabled={disabled} pill outline class="!p-2.5" onclick={clickPlay} title="Resume blocking">
+            <Play class="h-5 w-5" />
+        </Button>
     {:else if currentState === "Ask" }
-        <div class="text-right px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  onclick={clickItHelped}>
-                <Check class="w-10 h-10" />
-            </Button>
-        </div>
-        <div class="px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  onclick={clickDidntHelp}>
-                <X class="w-10 h-10" />
-            </Button>
-        </div>
+        <Button disabled={disabled} pill outline class="!p-2.5" onclick={clickItHelped} title="Yes, it helped">
+            <Check class="h-5 w-5" />
+        </Button>
+        <Button disabled={disabled} pill outline class="!p-2.5" onclick={clickDidntHelp} title="No, it didn't help">
+            <X class="h-5 w-5" />
+        </Button>
     {:else if currentState.split("|")[0] === "PreviewReport" }
-        <div class="text-right px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  onclick={clickSend}>
-                <Check class="w-10 h-10" />
-            </Button>
-        </div>
-        <div class="px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  onclick={clickNoSend}>
-                <X class="w-10 h-10" />
-            </Button>
-        </div>
+        <Button disabled={disabled} pill outline class="!p-2.5" onclick={clickSend} title="Send report">
+            <Check class="h-5 w-5" />
+        </Button>
+        <Button disabled={disabled} pill outline class="!p-2.5" onclick={clickNoSend} title="Cancel">
+            <X class="h-5 w-5" />
+        </Button>
     {:else if currentState === "SendingReport" }
-        <div class="text-right px-2">
-            <Spinner size={12} />
-        </div>
+        <Spinner size={6} />
     {/if}
 </div>
 
 {#if currentState.split("|")[0] === "PreviewReport" }
     {#if adReport.data}
-        <AdReport {adReport} />
+        <div class="mt-4">
+            <AdReport {adReport} />
+        </div>
     {/if}
 {/if}

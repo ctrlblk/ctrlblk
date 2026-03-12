@@ -66,7 +66,7 @@ describe('Pause', () => {
         exceptions = writable(['example.com']);
         render(Pause, { exceptions });
         await waitFor(() => {
-            expect(screen.getByText(/Restart blocking on/)).toBeInTheDocument();
+            expect(screen.getByText(/Resume blocking on/)).toBeInTheDocument();
         });
     });
 
@@ -80,7 +80,7 @@ describe('Pause', () => {
         await fireEvent.click(buttons[0]);
 
         await waitFor(() => {
-            expect(screen.getByText('Did it help?')).toBeInTheDocument();
+            expect(screen.getByText('Did pausing help?')).toBeInTheDocument();
         });
     });
 
@@ -88,7 +88,7 @@ describe('Pause', () => {
         exceptions = writable(['example.com']);
         render(Pause, { exceptions });
         await waitFor(() => {
-            expect(screen.getByText(/Restart blocking on/)).toBeInTheDocument();
+            expect(screen.getByText(/Resume blocking on/)).toBeInTheDocument();
         });
 
         const buttons = screen.getAllByRole('button');

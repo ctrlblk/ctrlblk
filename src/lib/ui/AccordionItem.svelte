@@ -18,7 +18,7 @@
             onclick={toggle}
             aria-expanded={open}
         >
-            <span>{@render header()}</span>
+            <span class="text-left">{@render header()}</span>
             <ChevronDown class={cn("h-3 w-3 shrink-0 transition-transform", open && "rotate-180")} />
         </button>
     </h2>

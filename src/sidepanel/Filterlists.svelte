@@ -50,32 +50,29 @@
     }
 </script>
 
+<h3 class="text-sm font-medium text-zinc-900 dark:text-zinc-100">Filter lists</h3>
 
-<h4 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Filter lists</h4>
+<div class="mt-2">
+    <Accordion flush>
+        {#each rulesetGroups as [groupName, rulesetDetails]}
+            <AccordionItem>
+                {#snippet header()}
+                    {groupName}
+                    {#if rulesetDetails.filter(([id, rule]) => rule.enabled).length > 0}
+                    <span class="ml-1 text-xs font-normal text-zinc-400 dark:text-zinc-500">
+                        {rulesetDetails.filter(([id, rule]) => rule.enabled).map(([id, rule]) => rule.name).join(', ')}
+                    </span>
+                    {/if}
+                {/snippet}
 
-<Accordion flush>
-    {#each rulesetGroups as [groupName, rulesetDetails]}
-        <AccordionItem>
-            {#snippet header()}
-                {groupName}
-
-                {#if rulesetDetails.filter(([id, rule]) => rule.enabled).length > 0}
-                <span class="font-light">
-                    ({#each rulesetDetails.filter(([id, rule]) => rule.enabled) as [id, rule], index}
-                        {rule.name}
-                        {index < rulesetDetails.filter(([id, rule]) => rule.enabled).length - 1 ? "| " : ""}
-                    {/each})
-                </span>
-                {/if}
-            {/snippet}
-
-            {#each rulesetDetails as [id, rule]}
-                <div class="px-4">
-                    <Checkbox checked={rule.enabled} onclick={() => updateRuleset(id, rule)} class="font-light">
-                        {rule.name}
-                    </Checkbox>
-                </div>
-            {/each}
-        </AccordionItem>
-    {/each}
-</Accordion>
+                {#each rulesetDetails as [id, rule]}
+                    <div class="py-0.5">
+                        <Checkbox checked={rule.enabled} onclick={() => updateRuleset(id, rule)} class="font-light">
+                            {rule.name}
+                        </Checkbox>
+                    </div>
+                {/each}
+            </AccordionItem>
+        {/each}
+    </Accordion>
+</div>

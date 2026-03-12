@@ -71,49 +71,47 @@
     }
 </script>
 
-<h4 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Update Page</h4>
+<h3 class="text-sm font-medium text-zinc-900 dark:text-zinc-100">Update Page</h3>
 
-<form>
-    <div class="grid grid-cols-3 py-2">
-        <div class="flex items-center"><Label for="adRreportId">AdReport ID</Label></div>
+<form class="mt-3 space-y-3">
+    <div class="grid grid-cols-3 items-center gap-2">
+        <Label for="adRreportId">AdReport ID</Label>
         <div class="col-span-2"><Input type="text" id="adReportId" bind:value="{adReportId}" required /></div>
     </div>
 
-    <div class="grid grid-cols-3 py-2">
-        <div class="flex items-center"><Label for="version">Version</Label></div>
+    <div class="grid grid-cols-3 items-center gap-2">
+        <Label for="version">Version</Label>
         <div class="col-span-2"><Input type="text" id="version" bind:value="{version}" required /></div>
     </div>
 
-    <div class="grid grid-cols-3 py-2">
-        <div class="flex items-center"><Label for="version">Previous Version</Label></div>
+    <div class="grid grid-cols-3 items-center gap-2">
+        <Label for="version">Previous Version</Label>
         <div class="col-span-2"><Input type="text" id="previousVersion" bind:value="{previousVersion}" required /></div>
     </div>
 
-    <div class="grid grid-cols-3 py-2">
-        <div class="flex items-center"><Label>Open</Label></div>
-        <div class="col-span-2">
-            <span>
-                {#if openUpdatePage === undefined}
-                    N/A
-                {:else if openUpdatePage === true}
-                    Yes ({updateReasons})
-                {:else}
-                    No
-                {/if}
-            </span>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-3 py-2">
-        <div class="flex items-center"><Label>Update URL</Label></div>
-        <div class="col-span-2">
-            {#if updateUrl }
-                <a href="{updateUrl}">{updateUrl}</a>
+    <div class="grid grid-cols-3 items-center gap-2">
+        <Label>Open</Label>
+        <div class="col-span-2 text-sm text-zinc-600 dark:text-zinc-400">
+            {#if openUpdatePage === undefined}
+                N/A
+            {:else if openUpdatePage === true}
+                Yes ({updateReasons})
+            {:else}
+                No
             {/if}
         </div>
     </div>
 
-    <div class="text-right">
+    <div class="grid grid-cols-3 items-center gap-2">
+        <Label>Update URL</Label>
+        <div class="col-span-2 truncate text-sm">
+            {#if updateUrl }
+                <a href="{updateUrl}" class="text-zinc-600 hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-200">{updateUrl}</a>
+            {/if}
+        </div>
+    </div>
+
+    <div class="pt-1 text-right">
         <Button size="sm" onclick={clickUpdatePage}>Open update page</Button>
     </div>
 </form>

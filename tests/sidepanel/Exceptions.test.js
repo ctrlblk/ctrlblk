@@ -43,7 +43,7 @@ describe('Exceptions', () => {
             expect(screen.getByText('example.com')).toBeInTheDocument();
         });
 
-        const row = screen.getByText('example.com').closest('tr');
+        const row = screen.getByText('example.com').closest('li');
         const removeBtn = within(row).getByRole('button');
         await fireEvent.click(removeBtn);
 
@@ -59,7 +59,7 @@ describe('Exceptions', () => {
             expect(screen.getByText('example.com')).toBeInTheDocument();
         });
 
-        const searchInput = screen.getByPlaceholderText('Search by domain');
+        const searchInput = screen.getByPlaceholderText('Search domains...');
         searchInput.value = 'test';
         await fireEvent.input(searchInput);
 

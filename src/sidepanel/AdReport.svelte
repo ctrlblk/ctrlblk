@@ -1,5 +1,4 @@
 <script>
-    import Card from "/src/lib/ui/Card.svelte";
     import Table from "/src/lib/ui/Table.svelte";
     import TableBody from "/src/lib/ui/TableBody.svelte";
     import TableBodyCell from "/src/lib/ui/TableBodyCell.svelte";
@@ -60,30 +59,26 @@
         const date = new Date(dateString);
         return formatDistanceToNow(date, { addSuffix: true });
     }
-
-
 </script>
 
-<Card style="max-width:100%;">
+<div class="rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
     <div class="mb-3">
-        <a href="{adReportView.pageLink}" target="_blank" class="flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 hover:underline">
-            <h4 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{adReportView.pageSlug}</h4>
-            <ExternalLink class="ml-2 -mr-1 w-3 h-3" />
+        <a href="{adReportView.pageLink}" target="_blank" class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 transition-colors hover:text-zinc-600 dark:text-zinc-100 dark:hover:text-zinc-300">
+            {adReportView.pageSlug}
+            <ExternalLink class="h-3 w-3 text-zinc-400" />
         </a>
     </div>
 
-    <div class="my-3">
-        <p class="float-left font-normal text-gray-700 leading-tight" title="{adReportView.datetime}">{formatDate(adReportView.datetime)}</p>
+    <p class="text-xs text-zinc-400 dark:text-zinc-500" title="{adReportView.datetime}">{formatDate(adReportView.datetime)}</p>
+
+    <div class="mt-3 h-36 overflow-hidden rounded">
+        <img src="{adReportView.screenshot}" alt="Screenshot of {adReportView.pageSlug}" class="h-full w-full object-cover" />
     </div>
 
-    <div class="h-40 overflow-hidden relative">
-        <img src="{adReportView.screenshot}" alt="Screenshot of {adReportView.pageSlug}" class="absolute inset-0 w-full h-full object-cover" />
-    </div>
-
-    <div>
+    <div class="mt-3">
         <Expandable>
             {#snippet label()}
-                <span class="my-3">Show all data</span>
+                <span class="text-xs">Show all data</span>
             {/snippet}
             {#snippet content()}
                 <Table class="text-xs">
@@ -105,8 +100,8 @@
     </div>
 
     {#if adReportView.issueLink}
-        <div class="mt-3">
-            <a href={adReportView.issueLink} target="_blank" class="float-right text-gray-700 hover:underline">{adReportView.issueSlug}</a>
+        <div class="mt-3 text-right">
+            <a href={adReportView.issueLink} target="_blank" class="text-xs text-zinc-500 transition-colors hover:text-zinc-700 dark:hover:text-zinc-300">{adReportView.issueSlug}</a>
         </div>
     {/if}
-</Card>
+</div>

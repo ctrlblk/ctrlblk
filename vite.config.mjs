@@ -2,15 +2,11 @@ import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import webExtension from "@samrum/vite-plugin-web-extension";
 
-import {
-    generateManifestContents,
-    buildCtrlBlk,
-} from "./build/build.mjs";
+import { generateManifestContents, buildCtrlBlk } from "./build/build.mjs";
 import { addTestRuleset } from "./build/rulesets/rulesets.js";
 
-export default defineConfig(({mode}) => {
-
-    const filterTest = process.argv.includes('--filter-test');
+export default defineConfig(({ mode }) => {
+    const filterTest = process.argv.includes("--filter-test");
     if (filterTest) {
         addTestRuleset();
     }

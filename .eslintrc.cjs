@@ -3,8 +3,16 @@ module.exports = {
         browser: true,
         es2021: true,
         node: true,
+        webextensions: true,
     },
-    extends: ["google", "plugin:prettier/recommended"],
+    ignorePatterns: [
+        "build/",
+        "src/scriptlets/",
+        "src/js/scripting/",
+        "src/web_accessible_resources/",
+        "dist/",
+    ],
+    extends: ["eslint:recommended", "plugin:prettier/recommended"],
     overrides: [
         {
             env: {
@@ -20,8 +28,6 @@ module.exports = {
         ecmaVersion: "latest",
         sourceType: "module",
     },
-    rules: {
-        indent: ["error", 4],
-    },
+    rules: {},
     plugins: ["prettier"],
 };

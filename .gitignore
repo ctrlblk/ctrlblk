@@ -9,3 +9,4 @@
 
 # hidden files
 .*
+!.eslintrc.cjs

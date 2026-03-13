@@ -2,7 +2,9 @@ import semver from "semver";
 
 import { runtime } from "/src/js/lib/browser-api.js";
 
-const DEVELOPMENT = semver.parse(runtime.getManifest().version_name).prerelease[0] === "development"
+const DEVELOPMENT =
+    semver.parse(runtime.getManifest().version_name).prerelease[0] ===
+    "development";
 
 const baseUrl = new Map([
     [true, "ctrlblk.dev"],
@@ -13,11 +15,9 @@ const baseUrl = new Map([
 export const getUploadUrlUrl = `https://api.${baseUrl}/adreports/sign`;
 //export const getUploadUrlUrl = `http://localhost:8787/adreports/sign`;
 
-
 // Url for getting the ad reports
 export const adReportUrl = `https://api.${baseUrl}/adreports`;
 //export const adReportUrl = `http://localhost:8787/adreports`;
-
 
 // Url for getting the update page
 export const updateUrl = `https://api.${baseUrl}/updatePageUrl`;
@@ -30,7 +30,8 @@ export const ctrlblkHomepageUrl = `https://${baseUrl}/`;
 export const ctrlblkContactUrl = `https://${baseUrl}/contact`;
 
 // Whether or not extension has been loaded using developer mode/unpacked
-export const UNPACKED = chrome.runtime.getManifest().update_url === undefined ? true : false;
+export const UNPACKED =
+    chrome.runtime.getManifest().update_url === undefined ? true : false;
 
 // AdReport ID used for mocking AdReport functionality
 export const mockAdReportId = "00000000-0000-4000-b000-000000000000";
@@ -42,5 +43,5 @@ export default {
     ctrlblkHomepageUrl,
     ctrlblkContactUrl,
     UNPACKED,
-    mockAdReportId
-}
+    mockAdReportId,
+};

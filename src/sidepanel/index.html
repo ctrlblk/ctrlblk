@@ -8,16 +8,19 @@
 
         <link rel="stylesheet" href="/assets/tailwind.css" />
 
-
         <script type="module" src="./index.js"></script>
     </head>
 
     <body>
         <script>
             // Apply saved theme or system preference before render to prevent flash
-            const saved = localStorage.getItem('theme');
-            if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
+            const saved = localStorage.getItem("theme");
+            if (
+                saved === "dark" ||
+                (!saved &&
+                    window.matchMedia("(prefers-color-scheme: dark)").matches)
+            ) {
+                document.documentElement.classList.add("dark");
             }
         </script>
     </body>

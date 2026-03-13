@@ -5,12 +5,12 @@ import {
     setFilteringMode,
     MODE_NONE,
     MODE_COMPLETE,
-} from '/src/js/lib/mode-manager.js';
+} from "/src/js/lib/mode-manager.js";
 
 import {
     getRulesetDetails,
     enableRulesets,
- } from "/src/js/lib/ruleset-manager.js";
+} from "/src/js/lib/ruleset-manager.js";
 
 import {
     browser,
@@ -20,13 +20,13 @@ import {
     localRead,
     localWrite,
     runtime,
- } from "/src/js/lib/browser-api.js";
+} from "/src/js/lib/browser-api.js";
 
- import { registerInjectables } from "./scripting-manager.js";
+import { registerInjectables } from "./scripting-manager.js";
 
- import { detect } from "detect-browser";
+import { detect } from "detect-browser";
 
- const rulesetConfig = {
+const rulesetConfig = {
     version: "",
     enabledRulesets: [],
     autoReload: true,
@@ -34,7 +34,6 @@ import {
 
 let firstRun = false;
 let wakeupRun = false;
-
 
 async function getDefaultRulesets() {
     let enabled = ["default", "ctrlblk"];
@@ -45,8 +44,13 @@ async function getDefaultRulesets() {
     // Note we use i18n.getAcceptLanguages instead of navigator.languages
     // because it returns all languges not just the ui language, see:
     // https://github.com/w3c/webextensions/issues/107#issuecomment-1304420718
-    let acceptLanguages = [... new Set(
-        (await browser.i18n.getAcceptLanguages()).map(lang => lang.split("-")[0]))];
+    let acceptLanguages = [
+        ...new Set(
+            (await browser.i18n.getAcceptLanguages()).map(
+                (lang) => lang.split("-")[0],
+            ),
+        ),
+    ];
 
     for (let [id, details] of rulesetDetails.entries()) {
         for (let lang of (details.lang ?? "").split(" ")) {
@@ -60,41 +64,40 @@ async function getDefaultRulesets() {
 }
 
 async function loadRulesetConfig() {
-    let data = await sessionRead('rulesetConfig');
-    if ( data ) {
+    let data = await sessionRead("rulesetConfig");
+    if (data) {
         rulesetConfig.version = data.version;
         rulesetConfig.enabledRulesets = data.enabledRulesets;
-        rulesetConfig.autoReload = data.autoReload && true || false;
+        rulesetConfig.autoReload = (data.autoReload && true) || false;
         wakeupRun = true;
         return;
     }
 
-    data = await localRead('rulesetConfig');
-    if ( data ) {
+    data = await localRead("rulesetConfig");
+    if (data) {
         rulesetConfig.version = data.version;
         rulesetConfig.enabledRulesets = data.enabledRulesets;
-        rulesetConfig.autoReload = data.autoReload && true || false;
-        sessionWrite('rulesetConfig', rulesetConfig);
+        rulesetConfig.autoReload = (data.autoReload && true) || false;
+        sessionWrite("rulesetConfig", rulesetConfig);
         return;
     }
 
     rulesetConfig.enabledRulesets = await getDefaultRulesets();
-    sessionWrite('rulesetConfig', rulesetConfig);
-    localWrite('rulesetConfig', rulesetConfig);
+    sessionWrite("rulesetConfig", rulesetConfig);
+    localWrite("rulesetConfig", rulesetConfig);
     firstRun = true;
 }
 
 async function saveRulesetConfig() {
-    sessionWrite('rulesetConfig', rulesetConfig);
-    return localWrite('rulesetConfig', rulesetConfig);
+    sessionWrite("rulesetConfig", rulesetConfig);
+    return localWrite("rulesetConfig", rulesetConfig);
 }
-
 
 export async function initRulesetConfig() {
     await loadRulesetConfig();
 
     if (wakeupRun === false) {
-        await setFilteringMode('all-urls', MODE_COMPLETE);
+        await setFilteringMode("all-urls", MODE_COMPLETE);
         await registerInjectables();
     }
     await enableRulesets(rulesetConfig.enabledRulesets);
@@ -171,7 +174,7 @@ export async function getFilterlistDetails() {
     const rulesetDetails = await getRulesetDetails();
     const enabledRulesets = await dnr.getEnabledRulesets();
 
-    for (const [id, rule] of rulesetDetails) {
+    for (const [, rule] of rulesetDetails) {
         if (enabledRulesets.includes(rule.id)) {
             rule.enabled = true;
         } else {
@@ -186,7 +189,7 @@ async function updateEnabledFilterlist(id, enable) {
     let filterlistDetails = await getFilterlistDetails();
     filterlistDetails = new Map(filterlistDetails);
 
-    let filterlist = filterlistDetails.get(id)
+    let filterlist = filterlistDetails.get(id);
     if (filterlist.enabled !== enable) {
         filterlist.enabled = enable;
 
@@ -209,16 +212,16 @@ async function updateEnabledFilterlist(id, enable) {
 
 export async function enableFilterlist(id) {
     await updateEnabledFilterlist(id, true);
-    return true
+    return true;
 }
 
 export async function disableFilterlist(id) {
     await updateEnabledFilterlist(id, false);
-    return true
+    return true;
 }
 
 export async function getConfiguration() {
-    let extension = {version: runtime.getManifest().version};
+    let extension = { version: runtime.getManifest().version };
     let browser = detect();
     let exceptions = await getExceptions();
 
@@ -230,7 +233,7 @@ export async function getConfiguration() {
         meta: {
             browser,
             extension,
-        }
+        },
     };
 }
 
@@ -246,7 +249,7 @@ function filtersMessageHandler(request, sender, sendResponse) {
         args = [];
     }
 
-    if (filters.hasOwnProperty(key)) {
+    if (Object.hasOwn(filters, key)) {
         const messageHandler = filters[key];
         messageHandler(...args).then(sendResponse);
         return true;
@@ -266,6 +269,6 @@ const filters = {
     disableFilterlist,
     filtersMessageHandler,
     getConfiguration,
-}
+};
 
 export default filters;

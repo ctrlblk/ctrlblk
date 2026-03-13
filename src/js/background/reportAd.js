@@ -5,7 +5,7 @@ import { adReportUrl } from "/src/js/consts.js";
 let adReportsCache;
 
 export async function getLocalAdReportIds() {
-    let { adReportIds } = await browser.storage.local.get({"adReportIds": []});
+    let { adReportIds } = await browser.storage.local.get({ adReportIds: [] });
     return adReportIds;
 }
 
@@ -19,7 +19,8 @@ export async function refreshAdReportsCache() {
 export async function getAdReports() {
     // Populate adReportsCache if it's not already populated
     if (adReportsCache === undefined) {
-        let { adReportsSession } = await browser.storage.session.get("adReportsSession");
+        let { adReportsSession } =
+            await browser.storage.session.get("adReportsSession");
         adReportsCache = adReportsSession;
     }
 
@@ -37,7 +38,7 @@ export async function getAdReports() {
         let request = new Request(`${adReportUrl}/${reportId}`, {
             method: "GET",
             headers: {
-                "Content-Type": "application/json;charset=UTF-8"
+                "Content-Type": "application/json;charset=UTF-8",
             },
         });
 
@@ -47,12 +48,11 @@ export async function getAdReports() {
             let report = await response.json();
             adReports.push(report);
         }
-
     }
 
     // Populate cache and session storage
     adReportsCache = adReports;
-    await browser.storage.session.set({adReportsSession: adReports});
+    await browser.storage.session.set({ adReportsSession: adReports });
 
     return adReports;
 }
@@ -76,5 +76,5 @@ export async function getAdReportsByDomains(domains) {
 }
 
 export async function clearLocalAdReportIds() {
-    await browser.storage.local.set({adReportIds: []});
+    await browser.storage.local.set({ adReportIds: [] });
 }

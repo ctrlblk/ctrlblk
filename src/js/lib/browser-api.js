@@ -4,9 +4,10 @@
 */
 
 export const browser =
-    typeof self.browser === 'object' &&
+    typeof self.browser === "object" &&
     self.browser !== null &&
-    (typeof Element === 'undefined' || self.browser instanceof Element === false)
+    (typeof Element === "undefined" ||
+        self.browser instanceof Element === false)
         ? self.browser
         : self.chrome;
 
@@ -20,68 +21,104 @@ export function sendMessage(msg) {
     return new Promise((resolve, reject) => {
         let i = 5;
         const send = () => {
-            runtime.sendMessage(msg).then(response => {
-                resolve(response);
-            }).catch(reason => {
-                i -= 1;
-                if ( i <= 0 ) {
-                    reject(reason);
-                } else {
-                    setTimeout(send, 200);
-                }
-            });
+            runtime
+                .sendMessage(msg)
+                .then((response) => {
+                    resolve(response);
+                })
+                .catch((reason) => {
+                    i -= 1;
+                    if (i <= 0) {
+                        reject(reason);
+                    } else {
+                        setTimeout(send, 200);
+                    }
+                });
         };
         send();
     });
 }
 
 export async function localRead(key) {
-    if ( browser.storage instanceof Object === false ) { return; }
-    if ( browser.storage.local instanceof Object === false ) { return; }
+    if (browser.storage instanceof Object === false) {
+        return;
+    }
+    if (browser.storage.local instanceof Object === false) {
+        return;
+    }
     try {
         const bin = await browser.storage.local.get(key);
-        if ( bin instanceof Object === false ) { return; }
+        if (bin instanceof Object === false) {
+            return;
+        }
         return bin[key] ?? undefined;
-    } catch(ex) {
+    } catch {
+        // Storage unavailable
     }
 }
 
 export async function localWrite(key, value) {
-    if ( browser.storage instanceof Object === false ) { return; }
-    if ( browser.storage.local instanceof Object === false ) { return; }
+    if (browser.storage instanceof Object === false) {
+        return;
+    }
+    if (browser.storage.local instanceof Object === false) {
+        return;
+    }
     return browser.storage.local.set({ [key]: value });
 }
 
 export async function localRemove(key) {
-    if ( browser.storage instanceof Object === false ) { return; }
-    if ( browser.storage.local instanceof Object === false ) { return; }
+    if (browser.storage instanceof Object === false) {
+        return;
+    }
+    if (browser.storage.local instanceof Object === false) {
+        return;
+    }
     return browser.storage.local.remove(key);
 }
 
 export async function sessionRead(key) {
-    if ( browser.storage instanceof Object === false ) { return; }
-    if ( browser.storage.session instanceof Object === false ) { return; }
+    if (browser.storage instanceof Object === false) {
+        return;
+    }
+    if (browser.storage.session instanceof Object === false) {
+        return;
+    }
     try {
         const bin = await browser.storage.session.get(key);
-        if ( bin instanceof Object === false ) { return; }
+        if (bin instanceof Object === false) {
+            return;
+        }
         return bin[key] ?? undefined;
-    } catch(ex) {
+    } catch {
+        // Storage unavailable
     }
 }
 
 export async function sessionWrite(key, value) {
-    if ( browser.storage instanceof Object === false ) { return; }
-    if ( browser.storage.session instanceof Object === false ) { return; }
+    if (browser.storage instanceof Object === false) {
+        return;
+    }
+    if (browser.storage.session instanceof Object === false) {
+        return;
+    }
     return browser.storage.session.set({ [key]: value });
 }
 
 export async function adminRead(key) {
-    if ( browser.storage instanceof Object === false ) { return; }
-    if ( browser.storage.managed instanceof Object === false ) { return; }
+    if (browser.storage instanceof Object === false) {
+        return;
+    }
+    if (browser.storage.managed instanceof Object === false) {
+        return;
+    }
     try {
         const bin = await browser.storage.managed.get(key);
-        if ( bin instanceof Object === false ) { return; }
+        if (bin instanceof Object === false) {
+            return;
+        }
         return bin[key] ?? undefined;
-    } catch(ex) {
+    } catch {
+        // Storage unavailable
     }
 }

@@ -20,12 +20,12 @@ async function insertCSSHandler(request, sender) {
     const tabId = sender?.tab?.id;
     const frameId = sender?.frameId ?? 0;
 
-    if ( typeof tabId === 'number' ) {
+    if (typeof tabId === "number") {
         try {
             await browser.scripting.insertCSS({
                 css: css,
-                origin: 'USER',
-                target: { tabId, frameIds: [ frameId ] }
+                origin: "USER",
+                target: { tabId, frameIds: [frameId] },
             });
         } catch (error) {
             console.log(`Error insertingCSS: (${JSON.stringify(error)})`);
@@ -42,18 +42,19 @@ function onMessage(request, sender, sendResponse) {
         return false;
     }
 
-    if (messageHandlers.hasOwnProperty(what)) {
+    if (Object.hasOwn(messageHandlers, what)) {
         const messageHandler = messageHandlers[what];
-        messageHandler(request, sender).then(sendResponse).catch(error => {
-            console.error(`Message handler '${what}' failed:`, error);
-            sendResponse(false);
-        });
+        messageHandler(request, sender)
+            .then(sendResponse)
+            .catch((error) => {
+                console.error(`Message handler '${what}' failed:`, error);
+                sendResponse(false);
+            });
         return true;
     }
 }
 
 export async function getUpdateUrl({ details, config, adReportIds }) {
-
     let data = {
         version: "0.1",
 
@@ -67,13 +68,13 @@ export async function getUpdateUrl({ details, config, adReportIds }) {
         },
 
         ...config,
-    }
+    };
 
     // Send data to the update server and open update page if desired
     let request = new Request(updateUrl, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json;charset=UTF-8"
+            "Content-Type": "application/json;charset=UTF-8",
         },
         body: JSON.stringify(data),
     });
@@ -86,7 +87,7 @@ export async function getUpdateUrl({ details, config, adReportIds }) {
 
     return {
         open_update_page: false,
-    }
+    };
 }
 
 async function onInstalledHandler(details) {
@@ -97,11 +98,15 @@ async function onInstalledHandler(details) {
     let adReportIds = await getLocalAdReportIds();
     await clearLocalAdReportIds();
 
-    let { open_update_page, update_url } = await getUpdateUrl({ details, config, adReportIds });
+    let { open_update_page, update_url } = await getUpdateUrl({
+        details,
+        config,
+        adReportIds,
+    });
 
     // open update page?
     if (open_update_page) {
-        browser.tabs.create({url: update_url});
+        browser.tabs.create({ url: update_url });
     }
 }
 
@@ -109,14 +114,14 @@ async function start() {
     // Register onInstalled early in order to not miss it
     runtime.onInstalled.addListener(onInstalledHandler);
 
-    let [firstRun, wakeupRun] = await filters.initRulesetConfig();
+    let [, wakeupRun] = await filters.initRulesetConfig();
 
     runtime.onMessage.addListener(filters.filtersMessageHandler);
     runtime.onMessage.addListener(onMessage);
 
-    await browser.sidePanel.setPanelBehavior({openPanelOnActionClick: true});
+    await browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 
-    if ( wakeupRun === false && dnr.setExtensionActionOptions ) {
+    if (wakeupRun === false && dnr.setExtensionActionOptions) {
         dnr.setExtensionActionOptions({ displayActionCountAsBadgeText: true });
     }
 }

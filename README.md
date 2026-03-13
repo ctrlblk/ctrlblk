@@ -12,7 +12,7 @@ Prerequisites:
 
 - [nodejs](https://nodejs.org/en) >= v21.2.0
 - [pnpm](https://pnpm.io/)
-To build CtrlBlk:
+  To build CtrlBlk:
 
 ```
 $ git clone https://github.com/ctrlblk/ctrlblck.git

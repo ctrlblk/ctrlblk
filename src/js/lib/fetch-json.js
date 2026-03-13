@@ -4,9 +4,9 @@
 */
 
 export function fetchJSON(path) {
-    return fetch(`${path}.json`).then(response =>
-        response.json()
-    ).catch(reason => {
-        console.info(reason);
-    });
+    return fetch(`${path}.json`)
+        .then((response) => response.json())
+        .catch((reason) => {
+            console.info(reason);
+        });
 }

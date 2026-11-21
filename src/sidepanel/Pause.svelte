@@ -8,8 +8,6 @@
     import {
         PlaySolid,
         PauseSolid,
-        CheckOutline,
-        CloseOutline,
     } from 'flowbite-svelte-icons';
 
     import { onMount } from 'svelte';
@@ -23,8 +21,6 @@
     let currentTabHostname = "";
     let currentTabExempt = false;
 
-    let currentState = "PlayPause";
-
     async function clickPause() {
         // Add exception
         if (!$exceptions.includes(currentTabHostname)) {
@@ -34,8 +30,6 @@
         // Reload page
         let [currentTab] = await browser.tabs.query({active: true, currentWindow: true});
         browser.tabs.reload(currentTab.id);
-
-        currentState = "Ask";
     }
 
     async function clickPlay() {
@@ -45,24 +39,6 @@
         // Reload page
         let [currentTab] = await browser.tabs.query({active: true, currentWindow: true});
         browser.tabs.reload(currentTab.id);
-
-        currentState = "PlayPause";
-    }
-
-    async function clickItHelped() {
-        // Keep the exception
-        currentState = "PlayPause";
-    }
-
-    async function clickDidntHelp() {
-        // Remove exception
-        exceptions.update(value => value.filter(e => e !== currentTabHostname));
-
-        // Reload page
-        let [currentTab] = await browser.tabs.query({active: true, currentWindow: true});
-        browser.tabs.reload(currentTab.id);
-
-        currentState = "PlayPause";
     }
 
 
@@ -101,14 +77,9 @@
             currentTabHostname = "";
         }
 
-        // Update currentTabExempt & currentState if url has changed
-        if (previousTabId === undefined) {
+        // Update currentTabExempt if url has changed
+        if (previousTabId === undefined || previousTabHostname !== currentTabHostname) {
             currentTabExempt = $exceptions?.includes(currentTabHostname) || false;
-        } else {
-            if (previousTabHostname !== currentTabHostname) {
-                currentTabExempt = $exceptions?.includes(currentTabHostname) || false;
-                currentState = "PlayPause";
-            }
         }
 
         // disable on internal pages like chrome:// and about://
@@ -139,51 +110,29 @@
 </script>
 
 <Heading tag="h4">
-    {#if currentState === "PlayPause" && !currentTabExempt }
-        Pause blocking on <Secondary class="ms-2">{currentTabHostname}</Secondary>?
-    {:else if currentState === "PlayPause" && currentTabExempt }
+    {#if currentTabExempt }
         Restart blocking on <Secondary class="ms-2">{currentTabHostname}</Secondary>?
-    {:else if currentState === "Ask" }
-        Did it help?
+    {:else}
+        Pause blocking on <Secondary class="ms-2">{currentTabHostname}</Secondary>?
     {/if}
 </Heading>
 
 <div class="flex flex-col space-y-2 py-2">
-    {#if currentState === "PlayPause" && !currentTabExempt }
-        <p>Problem with the page (no access, popups or similar)? Try <i>Pause</i> to see if it helps!</p>
-    {:else if currentState === "PlayPause" && currentTabExempt }
+    {#if currentTabExempt }
         <p>Blocking is paused. Click <i>Play</i> to restart blocking!</p>
-    {:else if currentState === "Ask" }
-        <p>If it did (or if you want to disable blocking on this page) we'll keep this exception. Otherwhise we'll remove it again to make sure you remain protected on this page.</p>
+    {:else}
+        <p>Problem with the page (no access, popups or similar)? Click <i>Pause</i> to stop blocking on this site.</p>
     {/if}
 </div>
 
-<div class="grid grid-cols-2 py-4 space-x-2">
-    {#if currentState === "PlayPause" && !currentTabExempt }
-
-        <div class="text-right px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2" on:click={clickPause}>
-                <PauseSolid class="w-10 h-10" />
-            </Button>
-        </div>
-    {:else if currentState === "PlayPause" && currentTabExempt }
-
-        <div class="text-right px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2" on:click={clickPlay}>
-                <PlaySolid class="w-10 h-10" />
-            </Button>
-        </div>
-    {:else if currentState === "Ask" }
-        <div class="text-right px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  on:click={clickItHelped}>
-                <CheckOutline class="w-10 h-10" />
-            </Button>
-        </div>
-        <div class="px-2">
-            <Button disabled={disabled} pill={true} outline={true} class="!p-2"  on:click={clickDidntHelp}>
-                <CloseOutline class="w-10 h-10" />
-            </Button>
-        </div>
+<div class="flex justify-center py-4">
+    {#if currentTabExempt }
+        <Button disabled={disabled} pill={true} outline={true} class="!p-2" on:click={clickPlay}>
+            <PlaySolid class="w-10 h-10" />
+        </Button>
+    {:else}
+        <Button disabled={disabled} pill={true} outline={true} class="!p-2" on:click={clickPause}>
+            <PauseSolid class="w-10 h-10" />
+        </Button>
     {/if}
 </div>
-

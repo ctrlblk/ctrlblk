@@ -13,7 +13,7 @@ jobs:
             - name: Enable pnpm via corepack
               run: corepack enable
             - name: Setup node
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v5
               with:
                 node-version: 21
             - name: Build extension
@@ -24,7 +24,7 @@ jobs:
                 pnpm install
                 pnpm run build-release
             - name: Upload build
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v6
               with:
                   name: ctrlblock-release-${{ github.sha }}
                   path: dist/
@@ -32,7 +32,7 @@ jobs:
         runs-on: ubuntu-latest
         needs: build
         steps:
-        - uses: actions/download-artifact@v4
+        - uses: actions/download-artifact@v7
           with:
             name: ctrlblock-release-${{ github.sha }}
             path: dist/

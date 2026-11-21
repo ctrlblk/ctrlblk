@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@ctrlblk/ctrlblk-filters':
         specifier: github:ctrlblk/ctrlblk-filters#v1
-        version: https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/86076a2d003597dbb840dea635e752cc52607ffe
+        version: https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/6b1bf14200cfaedff55a0dcfa51eb15bc608fe56
       date-fns:
         specifier: ^3.3.1
         version: 3.6.0
@@ -101,8 +101,8 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
-  '@ctrlblk/ctrlblk-filters@https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/86076a2d003597dbb840dea635e752cc52607ffe':
-    resolution: {tarball: https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/86076a2d003597dbb840dea635e752cc52607ffe}
+  '@ctrlblk/ctrlblk-filters@https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/6b1bf14200cfaedff55a0dcfa51eb15bc608fe56':
+    resolution: {tarball: https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/6b1bf14200cfaedff55a0dcfa51eb15bc608fe56}
     version: 0.1.0
 
   '@esbuild/aix-ppc64@0.21.5':
@@ -1837,7 +1837,7 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
 
-  '@ctrlblk/ctrlblk-filters@https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/86076a2d003597dbb840dea635e752cc52607ffe': {}
+  '@ctrlblk/ctrlblk-filters@https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/6b1bf14200cfaedff55a0dcfa51eb15bc608fe56': {}
 
   '@esbuild/aix-ppc64@0.21.5':
     optional: true

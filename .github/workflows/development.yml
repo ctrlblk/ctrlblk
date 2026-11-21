@@ -23,7 +23,6 @@ jobs:
             - name: Build extension
               run: |
                 set -x
-                export CTRLBLOCK_DEPLOY_TOKEN=${{ secrets.CTRLBLOCK_DEPLOY_TOKEN }}
                 export GIT_SHA=$(git rev-parse --short HEAD)
                 pnpm install
                 pnpm run build

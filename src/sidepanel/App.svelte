@@ -15,11 +15,6 @@
     import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
 
-    import { UNPACKED } from "/src/js/consts.js";
-
-    // XXX: Non background page using background page code
-    import { getAdReports } from "/src/js/background/reportAd.js";
-
     import {
         getExceptions,
         addException,
@@ -34,11 +29,8 @@
     import Pause from "./Pause.svelte"
     import Exceptions from "./Exceptions.svelte";
     import Filterlists from "./Filterlists.svelte"
-    import UpdatePage from './UpdatePage.svelte';
 
     let exceptions = writable();
-
-    let adReports = writable([]);
 
     async function exceptionsChangedFilterHandler(value) {
         // abort if exceptions hasn't been inititialized yet
@@ -64,8 +56,6 @@
 
     onMount(async () => {
         exceptions.set(await getExceptions());
-
-        adReports.set(await getAdReports());
     });
 </script>
 
@@ -86,12 +76,6 @@
     <Card style="max-width:100%;">
         <Filterlists />
     </Card>
-
-    {#if UNPACKED}
-        <Card style="max-width:100%;">
-            <UpdatePage />
-        </Card>
-    {/if}
 </div>
 
 <BottomNav position="sticky" classInner="max-w-sm grid-cols-2">

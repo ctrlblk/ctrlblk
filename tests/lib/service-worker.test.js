@@ -7,7 +7,6 @@ import fs from 'node:fs/promises';
 
 const swPath = new URL('../../src/js/background/serviceWorker.js', import.meta.url);
 const filtersPath = new URL('../../src/js/background/filters.js', import.meta.url);
-const reportAdPath = new URL('../../src/js/background/reportAd.js', import.meta.url);
 
 describe('serviceWorker.js', () => {
     let src;
@@ -150,26 +149,22 @@ describe('filters.js', () => {
     });
 });
 
-describe('reportAd.js', () => {
-    let src;
-    async function getSrc() {
-        if (!src) { src = await fs.readFile(reportAdPath, 'utf8'); }
-        return src;
-    }
-
-    it('should not contain uBO references', async () => {
-        const s = await getSrc();
-        assert.ok(!s.includes('uBlock Origin Lite'));
-        assert.ok(!s.includes('uBOLite'));
+describe('ad reports removal', () => {
+    it('serviceWorker.js should not contact the CtrlBlk API', async () => {
+        const s = await fs.readFile(swPath, 'utf8');
+        assert.ok(!s.includes('fetch('), 'service worker should not make network requests');
+        assert.ok(!/api\.ctrlblk/.test(s), 'should not reference api.ctrlblk.*');
     });
 
-    it('should export getLocalAdReportIds', async () => {
-        const s = await getSrc();
-        assert.match(s, /export\s+(async\s+)?function\s+getLocalAdReportIds/);
+    it('onInstalled should clean up leftover ad report data', async () => {
+        const s = await fs.readFile(swPath, 'utf8');
+        assert.ok(s.includes('storage.local.remove("adReportIds")'),
+            'should remove adReportIds from local storage');
     });
 
-    it('should export clearLocalAdReportIds', async () => {
-        const s = await getSrc();
-        assert.match(s, /export\s+(async\s+)?function\s+clearLocalAdReportIds/);
+    it('reportAd.js modules should be gone', async () => {
+        for (const rel of ['../../src/js/background/reportAd.js', '../../src/js/reportAd.js']) {
+            await assert.rejects(fs.access(new URL(rel, import.meta.url)));
+        }
     });
 });

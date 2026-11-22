@@ -12,3 +12,4 @@
 !/.claude/
 /.claude/*
 !/.claude/agent-pipeline.json
+!/.claude/CLAUDE.md

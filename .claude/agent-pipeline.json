@@ -1,0 +1,10 @@
+{
+  "worktreeSetup": ["pnpm install --frozen-lockfile"],
+  "verify": [
+    "pnpm lint",
+    "pnpm run build",
+    "pnpm test:scriptlets",
+    "pnpm test:filter",
+    "pnpm test:youtube"
+  ]
+}

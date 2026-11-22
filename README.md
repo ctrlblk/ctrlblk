@@ -33,6 +33,28 @@ To build a release version intended to be uploaded to the Chrome Web Store use:
 
 `$ pnpm run build-release`
 
+## Run the tests
+
+```
+$ pnpm test:scriptlets
+$ pnpm test:filter
+$ pnpm test:youtube
+```
+
+`test:filter` and `test:youtube` run the extension in Playwright's Chromium, in headless mode, so they open no window and need no display. Install that Chromium once with:
+
+`$ pnpm exec playwright install chromium`
+
+To watch the browser while debugging, add `--headed`, for example:
+
+`$ pnpm test:filter --headed`
+
+CI runs `test:scriptlets` and `test:filter` on every push. `test:youtube` loads the live youtube.com, so it only runs locally. It watches a fixed video that got a pre-roll ad without the extension when it was chosen. To check that the video still gets one without the extension, run:
+
+`$ YOUTUBE_CHECK_AD=1 pnpm test:youtube -g "still gets an ad"`
+
+If that fails, replace `VIDEO_ID` in `tests/youtube/specs/youtube-ads.spec.js` with a video that gets an ad.
+
 ## CI Secrets
 
 ### Chrome Web Store Publish API

@@ -10,7 +10,9 @@ on:
 
 jobs:
     build:
-        runs-on: ubuntu-latest
+        # Playwright 1.58.2 can't install Chromium on Ubuntu 26.04 (ubuntu-latest).
+        # Back to ubuntu-latest once Playwright is upgraded.
+        runs-on: ubuntu-24.04
         steps:
             - name: Checkout repository
               uses: actions/checkout@main
@@ -31,3 +33,11 @@ jobs:
               with:
                   name: ctrlblock-development-${{ github.sha }}
                   path: dist/
+            # After the upload: the filter suite rebuilds dist/ with
+            # --filter-test, which must not end up in the artifact.
+            - name: Install Playwright Chromium
+              run: pnpm exec playwright install --with-deps chromium
+            - name: Run scriptlet tests
+              run: pnpm test:scriptlets
+            - name: Run filter tests
+              run: pnpm test:filter

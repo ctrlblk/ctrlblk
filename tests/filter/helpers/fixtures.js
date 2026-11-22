@@ -12,9 +12,10 @@ let sharedExtensionId = null;
  */
 export const test = base.extend({
   // Shared context — created once per worker, reused for all tests
-  extensionContext: [async ({}, use) => {
+  extensionContext: [async ({ headless }, use) => {
     if (!sharedContext) {
-      const result = await launchBrowserWithExtension();
+      // `headless` is Playwright's built-in option: false with --headed.
+      const result = await launchBrowserWithExtension({ headless });
       sharedContext = result.context;
       sharedServiceWorker = result.serviceWorker;
       sharedExtensionId = result.extensionId;

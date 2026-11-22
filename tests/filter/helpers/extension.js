@@ -7,11 +7,15 @@ const extensionPath = join(__dirname, '..', '..', '..', 'dist');
 
 /**
  * Launch a browser with the CtrlBlk extension loaded.
+ * Runs in Chromium's new headless mode unless `headless` is false.
+ * Playwright's default headless shell can't load extensions; the `chromium`
+ * channel can.
  * Returns { context, extensionId, serviceWorker }.
  */
-export async function launchBrowserWithExtension() {
+export async function launchBrowserWithExtension({ headless = true } = {}) {
   const context = await chromium.launchPersistentContext('', {
-    headless: false,
+    headless,
+    channel: 'chromium',
     args: [
       `--disable-extensions-except=${extensionPath}`,
       `--load-extension=${extensionPath}`,

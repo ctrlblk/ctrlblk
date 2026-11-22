@@ -12,10 +12,9 @@
         CloseCircleSolid,
     } from "flowbite-svelte-icons";
 
-    export let exceptions;
+    let { exceptions } = $props();
 
-    let filteredExceptions = [];
-    let searchTerm = "";
+    let searchTerm = $state("");
 
     function removeException(event) {
         let exception = event.target.closest("tr").querySelector("td").textContent;
@@ -28,11 +27,9 @@
             );
     }
 
-    $: {
-        if ($exceptions !== undefined) {
-            filteredExceptions = filterExceptions($exceptions, searchTerm);
-        }
-    }
+    let filteredExceptions = $derived(
+        $exceptions === undefined ? [] : filterExceptions($exceptions, searchTerm)
+    );
 </script>
 
 
@@ -45,9 +42,9 @@
     {#if filteredExceptions.length > 0}
         {#each filteredExceptions as exception}
             <TableBodyRow>
-                <TableBodyCell>{exception}</TableBodyCell>
+                <TableBodyCell class="text-gray-900 dark:text-white">{exception}</TableBodyCell>
                 <TableBodyCell class="text-right w-5">
-                    <Button pill={true} outline={true} class="!p-1" on:click={removeException}>
+                    <Button pill={true} outline={true} class="!p-1 hover:bg-primary-700" onclick={removeException}>
                         <CloseCircleSolid />
                     </Button>
                 </TableBodyCell>
@@ -55,7 +52,7 @@
         {/each}
     {:else}
         <TableBodyRow>
-            <TableBodyCell>No exceptions</TableBodyCell>
+            <TableBodyCell class="text-gray-900 dark:text-white">No exceptions</TableBodyCell>
         </TableBodyRow>
     {/if}
 

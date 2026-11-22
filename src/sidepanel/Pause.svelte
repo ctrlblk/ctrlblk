@@ -14,12 +14,12 @@
 
     import { browser } from "/src/js/lib/browser-api.js";
 
-    export let exceptions;
+    let { exceptions } = $props();
 
-    let disabled = false;
+    let disabled = $state(false);
 
-    let currentTabHostname = "";
-    let currentTabExempt = false;
+    let currentTabHostname = $state("");
+    let currentTabExempt = $state(false);
 
     async function clickPause() {
         // Add exception
@@ -109,7 +109,7 @@
     });
 </script>
 
-<Heading tag="h4">
+<Heading tag="h4" class="leading-8">
     {#if currentTabExempt }
         Restart blocking on <Secondary class="ms-2">{currentTabHostname}</Secondary>?
     {:else}
@@ -127,11 +127,11 @@
 
 <div class="flex justify-center py-4">
     {#if currentTabExempt }
-        <Button disabled={disabled} pill={true} outline={true} class="!p-2" on:click={clickPlay}>
+        <Button disabled={disabled} pill={true} outline={true} class="!p-2 hover:bg-primary-700" onclick={clickPlay}>
             <PlaySolid class="w-10 h-10" />
         </Button>
     {:else}
-        <Button disabled={disabled} pill={true} outline={true} class="!p-2" on:click={clickPause}>
+        <Button disabled={disabled} pill={true} outline={true} class="!p-2 hover:bg-primary-700" onclick={clickPause}>
             <PauseSolid class="w-10 h-10" />
         </Button>
     {/if}

@@ -7,15 +7,15 @@
         AngleUpOutline,
     } from 'flowbite-svelte-icons';
 
-    export let state = "closed";
+    let { state = $bindable("closed"), label, content } = $props();
 
     function toggle(event) {
         state = state === "closed" ? "open" : "closed";
     }
 </script>
 
-<A on:click={toggle}>
-    <slot name="label"></slot>
+<A onclick={toggle}>
+    {@render label?.()}
     {#if state === "closed"}
         <AngleDownOutline />
     {:else}
@@ -25,6 +25,6 @@
 
 {#if state === "open"}
     <div transition:slide>
-        <slot name="content"></slot>
+        {@render content?.()}
     </div>
 {/if}

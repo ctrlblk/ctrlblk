@@ -10,10 +10,12 @@
 
     import filters from "/src/js/filters.js";
 
-    export let rulesetGroups = new Map();
+    // An array of [groupName, rulesetDetails] pairs, not a Map: $state makes
+    // arrays deeply reactive, so the headers follow the checkboxes.
+    let rulesetGroups = $state([]);
 
     function groupRulesets(rulesetDetails) {
-        return new Map([
+        return [
             [
                 "Default",
                 rulesetDetails.filter(([id, ruleset]) =>
@@ -32,7 +34,7 @@
                 'Regional',
                 rulesetDetails.filter(([id, ruleset]) => typeof ruleset.lang === 'string'),
             ],
-        ].filter((e) => e[1].length > 0));
+        ].filter((e) => e[1].length > 0);
     }
 
     onMount(async () => {
@@ -41,13 +43,11 @@
 
     });
 
-    const updateRuleset = (e) => {        
-        let { value, checked } = e.target;
-
+    const updateRuleset = (id, checked) => {
         if (checked) {
-            filters.enableFilterlist(value);
+            filters.enableFilterlist(id);
         } else {
-            filters.disableFilterlist(value);
+            filters.disableFilterlist(id);
 
         }
     };
@@ -59,7 +59,8 @@
 <Accordion flush>
     {#each rulesetGroups as [groupName, rulesetDetails]}
         <AccordionItem>
-            <span slot="header">
+            {#snippet header()}
+            <span>
                 {groupName}
 
                 {#if rulesetDetails.filter(([id, rule]) => rule.enabled).length > 0}
@@ -71,10 +72,12 @@
                 </span>
                 {/if}
             </span>
+            {/snippet}
 
             {#each rulesetDetails as [id, rule]}
                 <div class="px-4">
-                    <Checkbox value={id} bind:checked={rule.enabled} on:click={updateRuleset} class="font-light">
+                    <!-- No value prop: with one and no group, Checkbox forces checked to false -->
+                    <Checkbox bind:checked={rule.enabled} onclick={(e) => updateRuleset(id, e.target.checked)} classes={{ div: "font-light text-gray-900 dark:text-gray-300" }}>
                         {rule.name}
                     </Checkbox>
                 </div>

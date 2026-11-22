@@ -1,6 +1,5 @@
 <script>
     import {
-        A,
         Button,
         Heading,
         TableSearch,
@@ -11,14 +10,9 @@
 
     import {
         CloseCircleSolid,
-        LinkOutline,
     } from "flowbite-svelte-icons";
 
-    // XXX: Code from background page
-    import { getAdReportsByDomains } from "/src/js/background/reportAd.js";
-
     export let exceptions;
-    let adReports = new Map();
 
     let filteredExceptions = [];
     let searchTerm = "";
@@ -28,28 +22,15 @@
         exceptions.update(value => value.filter(e => e !== exception));
     }
 
-    function filterAndMapExceptions(excptns, srchTrm) {
+    function filterExceptions(excptns, srchTrm) {
         return excptns.filter(
                 exception => exception.toLowerCase().indexOf(srchTrm.toLowerCase()) !== -1
-            ).map(
-                exception => [exception, adReports.get(exception)]
             );
     }
 
-    exceptions.subscribe(async value => {
-        // abort if exceptions hasn't been inititialized yet
-        if (value === undefined) {
-            return;
-        }
-
-        adReports = await getAdReportsByDomains(value);
-
-        filteredExceptions = filterAndMapExceptions(value, searchTerm);
-    });
-
     $: {
         if ($exceptions !== undefined) {
-            filteredExceptions = filterAndMapExceptions($exceptions, searchTerm);
+            filteredExceptions = filterExceptions($exceptions, searchTerm);
         }
     }
 </script>
@@ -62,26 +43,9 @@
     <TableBody class="divide-y">
     
     {#if filteredExceptions.length > 0}
-        {#each filteredExceptions as [exception, adReports]}
+        {#each filteredExceptions as exception}
             <TableBodyRow>
-                {#if adReports && adReports.length > 0}
-                    <TableBodyCell>{exception}</TableBodyCell>
-                {:else}
-                    <TableBodyCell colspan="2">{exception}</TableBodyCell>
-                {/if}
-
-                {#if adReports && adReports.length > 0}
-                    <TableBodyCell class="text-right whitespace-nowrap">
-                        { adReports.length > 1 ? "(" : ""}
-                        {#each adReports as adReport, index}
-                            <A href="{adReport.github.url}" target="_blank" class="text-gray-700">
-                                #{adReport.github.number}
-                                <LinkOutline class="w-4 h-4" />
-                            </A>{ index == adReports.length-1 ? "" : ", "}
-                        {/each}
-                        { adReports.length > 1 ? ")" : ""}
-                    </TableBodyCell>
-                {/if}
+                <TableBodyCell>{exception}</TableBodyCell>
                 <TableBodyCell class="text-right w-5">
                     <Button pill={true} outline={true} class="!p-1" on:click={removeException}>
                         <CloseCircleSolid />

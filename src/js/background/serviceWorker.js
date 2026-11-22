@@ -3,12 +3,7 @@
 import { browser, runtime, dnr } from "/src/js/lib/browser-api.js";
 
 import filters from "/src/js/background/filters.js";
-import {
-    getLocalAdReportIds,
-    clearLocalAdReportIds,
-} from "/src/js/background/reportAd.js";
-
-import { updateUrl } from "/src/js/consts.js";
+import { removeAdReportData } from "/src/js/background/adReportCleanup.js";
 
 const messageHandlers = {
     insertCSS: insertCSSHandler,
@@ -52,57 +47,8 @@ function onMessage(request, sender, sendResponse) {
     }
 }
 
-export async function getUpdateUrl({ details, config, adReportIds }) {
-
-    let data = {
-        version: "0.1",
-
-        installed_reason: {
-            reason: details.reason,
-            previous_version: details.previousVersion,
-        },
-
-        ad_reports: {
-            ad_reports: adReportIds,
-        },
-
-        ...config,
-    }
-
-    // Send data to the update server and open update page if desired
-    let request = new Request(updateUrl, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-        },
-        body: JSON.stringify(data),
-    });
-
-    let response = await fetch(request);
-
-    if (response.ok) {
-        return await response.json();
-    }
-
-    return {
-        open_update_page: false,
-    }
-}
-
 async function onInstalledHandler(details) {
-    // Collect and assemble data to be sent to the update server
-    let config = await filters.getConfiguration();
-
-    // Retrieve and clear local ad reports
-    let adReportIds = await getLocalAdReportIds();
-    await clearLocalAdReportIds();
-
-    let { open_update_page, update_url } = await getUpdateUrl({ details, config, adReportIds });
-
-    // open update page?
-    if (open_update_page) {
-        browser.tabs.create({url: update_url});
-    }
+    return removeAdReportData(details, browser.storage);
 }
 
 async function start() {

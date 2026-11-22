@@ -9,3 +9,6 @@
 
 # hidden files
 .*
+!/.claude/
+/.claude/*
+!/.claude/agent-pipeline.json

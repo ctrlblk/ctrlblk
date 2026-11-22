@@ -10,7 +10,9 @@ on:
 
 jobs:
     build:
-        runs-on: ubuntu-latest
+        # Playwright 1.58.2 can't install Chromium on Ubuntu 26.04 (ubuntu-latest).
+        # Back to ubuntu-latest once Playwright is upgraded.
+        runs-on: ubuntu-24.04
         steps:
             - name: Checkout repository
               uses: actions/checkout@main

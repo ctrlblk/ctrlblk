@@ -3,8 +3,6 @@
     Hostname manipulation utilities for WebExtension match patterns and filtering.
 */
 
-import { browser } from './browser-api.js';
-
 export function parsedURLromOrigin(origin) {
     try {
         return new URL(origin);

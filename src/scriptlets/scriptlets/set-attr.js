@@ -9,7 +9,6 @@ function setAttr(selector = '', attr = '', value = '') {
     if ( selector === '' || attr === '' ) { return; }
     const safe = safeSelf();
     const logPrefix = safe.makeLogPrefix('set-attr', selector, attr, value);
-    const extraArgs = safe.getExtraArgs(Array.from(arguments), 3);
 
     // Validate value
     let resolvedValue = value;

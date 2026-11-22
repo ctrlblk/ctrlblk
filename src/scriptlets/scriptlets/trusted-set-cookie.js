@@ -9,7 +9,6 @@ export default {
 function trustedSetCookie(name = '', value = '', offsetExpiresSec = '', path = '') {
     if ( name === '' ) { return; }
     const safe = safeSelf();
-    const logPrefix = safe.makeLogPrefix('trusted-set-cookie', name, value, offsetExpiresSec, path);
     const extraArgs = safe.getExtraArgs(Array.from(arguments), 4);
 
     // Process value placeholders
@@ -25,7 +24,7 @@ function trustedSetCookie(name = '', value = '', offsetExpiresSec = '', path = '
     // Parse offsetExpiresSec to an expires string
     let expires = '';
     if ( offsetExpiresSec !== '' ) {
-        let seconds = 0;
+        let seconds;
         if ( /^\d+$/.test(offsetExpiresSec) ) {
             seconds = parseInt(offsetExpiresSec, 10);
         } else if ( offsetExpiresSec === '1day' ) {

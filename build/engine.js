@@ -95,12 +95,12 @@ const hashFromStr = (type, s) => {
 // ============================================================================
 
 const rePlainSelector = /^[#.][\w\\-]+/;
-const rePlainSelectorEx = /^[^#.\[(]+([#.][\w-]+)|([#.][\w-]+)$/;
+const rePlainSelectorEx = /^[^#.[(]+([#.][\w-]+)|([#.][\w-]+)$/;
 const rePlainSelectorEscaped = /^[#.](?:\\[0-9A-Fa-f]+ |\\.|\w|-)+/;
 const reEscapeSequence = /\\([0-9A-Fa-f]+ |.)/g;
 
 const keyFromSelector = selector => {
-    let key = '';
+    let key;
     let matches = rePlainSelector.exec(selector);
     if (matches) {
         key = matches[0];
@@ -150,35 +150,9 @@ const typeNameMap = new Map([
     ['document', 'main_frame'], ['doc', 'main_frame'],
 ]);
 
-const allResourceTypes = [
-    'stylesheet', 'image', 'object', 'script', 'xmlhttprequest',
-    'sub_frame', 'font', 'media', 'websocket', 'ping', 'other',
-];
-
 // ============================================================================
 // Extended filter separator detection
 // ============================================================================
-
-// Procedural pseudo-classes that need special compilation (not native CSS)
-const proceduralPseudoClasses = new Set([
-    'has-text',
-    'matches-path',
-    'matches-css', 'matches-css-before', 'matches-css-after',
-    'matches-attr',
-    'matches-media',
-    'matches-prop',
-    'min-text-length',
-    'not-text',
-    'others',
-    'upward',
-    'watch-attr',
-    'xpath',
-    'nth-ancestor',
-    'remove',
-    'remove-attr',
-    'remove-class',
-    'style',
-]);
 
 // Find extended filter separator in a line. Returns { index, separator, exception }
 // or null if not an extended filter.
@@ -222,6 +196,7 @@ function findExtendedSeparator(line) {
 // Uses Node.js url.domainToASCII() which mirrors the browser URL API behavior.
 function toPunycode(hn) {
     // Fast path: ASCII-only
+    // eslint-disable-next-line no-control-regex -- ASCII range check
     if (/^[\x00-\x7f]*$/.test(hn)) return hn;
     const ascii = domainToASCII(hn);
     // domainToASCII returns empty string on error
@@ -232,6 +207,7 @@ function toPunycode(hn) {
 // This mirrors normalizeHostnameValue which replaces * with __asterisk__
 // before punycode conversion, then replaces back afterward.
 function toPunycodeWithWildcards(hn) {
+    // eslint-disable-next-line no-control-regex -- ASCII range check
     if (/^[\x00-\x7f]*$/.test(hn)) return hn;
     const replaced = hn.replace(/\*/g, '__asterisk__');
     const ascii = domainToASCII(replaced);
@@ -243,8 +219,10 @@ function toPunycodeWithWildcards(hn) {
 // in the path part. Mirrors normalizePattern behavior.
 // The reHostnamePatternPart regex matches hostname-valid chars from the start:
 // alphanumeric, -, ., _, *, %, and any Unicode char (stops at /, ^, |, etc.)
+/* eslint-disable no-control-regex -- ASCII range checks */
 const reHostnamePatternPart = /^[^\x00-\x24\x26-\x29\x2B\x2C\x2F\x3A-\x40\x5B-\x5E\x60\x7B-\x7F]+/;
 const reHasUnicodeChar = /[^\x00-\x7F]/;
+/* eslint-enable no-control-regex */
 
 function normalizeUrlFilter(urlFilter) {
     // Fast path: no Unicode chars
@@ -351,7 +329,7 @@ function parseDomainList(domainStr) {
         // Validate: hostname chars only (letters, digits, dots, hyphens, underscores, wildcards)
         // reBadHostnameChars rejects [\x00-\x24\x26-\x29\x2b\x2c\x2f\x3b-\x40\x5c\x5e\x60\x7b-\x7f]
         // If any hostname has bad chars, the entire filter is rejected (matches hasError() check)
-        const bad = /[^a-zA-Z0-9._*\-]/.test(domain);
+        const bad = /[^a-zA-Z0-9._*-]/.test(domain);
         if (bad) {
             hasError = true;
         }
@@ -1165,7 +1143,7 @@ function compileProceduralArgs(name, args, nativeCssHas) {
             return parsed;
         }
         // Plain CSS selector - returned as-is for :not() (matches compileArgumentAst)
-        const compiled = compileNotArg(args, nativeCssHas);
+        const compiled = compileNotArg(args);
         return compiled;
     }
     case 'has-text':
@@ -1224,7 +1202,7 @@ function compileProceduralArgs(name, args, nativeCssHas) {
 }
 
 // Compile :not() argument - astCompile returns string or object
-function compileNotArg(args, nativeCssHas) {
+function compileNotArg(args) {
     let normalized = normalizeCssSelector(args);
     return normalized;
 }
@@ -1237,7 +1215,7 @@ function unquoteString(s) {
     if (!/^['"]/.test(s)) return { s, i: end };
     const quote = s.charCodeAt(0);
     const out = [];
-    let i = 1, c = 0;
+    let i = 1, c;
     for (;;) {
         if (i >= end) break;
         c = s.charCodeAt(i);
@@ -1308,7 +1286,7 @@ function compileCssDeclarationArg(name, arg) {
 // Parses "attr-name" or "attr-name"="value" or "/attr-pattern/"="/value-pattern/"
 function compileMatchAttrArg(arg) {
     if (arg === '') return arg;
-    let attr = '', value = '';
+    let attr, value = '';
     const r = unquoteString(arg);
     if (r.i === arg.length) {
         // Entire arg was one quoted (or unquoted) string
@@ -1336,49 +1314,6 @@ function compileMatchAttrArg(arg) {
         }
     }
     return { attr, value };
-}
-
-// ============================================================================
-// Parse inline CSS filter (#$# separator)
-// Format: selector { style-declarations }
-// ============================================================================
-
-function parseInlineCss(content) {
-    const braceIdx = content.lastIndexOf('{');
-    if (braceIdx === -1) return null;
-
-    let selector = content.slice(0, braceIdx).trim();
-    let style = content.slice(braceIdx + 1);
-    if (style.endsWith('}')) style = style.slice(0, -1);
-    style = style.trim();
-
-    if (!selector || !style) return null;
-
-    // Normalize the CSS selector
-    selector = normalizeCssSelector(selector);
-    if (selector === null) return null;
-
-    // Special: `remove: true` → element removal action
-    if (/^\s*remove:\s*true[; ]*$/.test(style)) {
-        return {
-            selector,
-            compiled: JSON.stringify({ selector, action: ['remove', ''] }),
-            isElementHiding: false,
-        };
-    }
-
-    // Optimization: `display: none !important` is equivalent to element hiding
-    if (/^\s*display\s*:\s*none\s*!important\s*;?\s*$/.test(style)) {
-        return { selector, isElementHiding: true };
-    }
-
-    // Return as declarative CSS rule with cssable flag
-    return {
-        selector,
-        style,
-        compiled: JSON.stringify({ selector, action: ['style', style], cssable: true }),
-        isElementHiding: false,
-    };
 }
 
 // Check if a hostname in domain=/to=/denyallow= is "bad" (invalid wildcard).
@@ -1605,7 +1540,7 @@ function parseNetworkOptions(optionsStr) {
         // $mp4 is an alias for $redirect=noopmp4-1s,media
         case 'mp4':
             opts._mp4Alias = true;
-            if (!neg) opts.types.push('media');
+            if (!negated) opts.types.push('media');
             break;
         // strict1p/strict3p can't be implemented in DNR —
         // FilterStrictParty.dnrFromCompiled explicitly rejects these.
@@ -2060,7 +1995,6 @@ function networkFilterToDNR(pattern, options, exception, extensionPaths) {
 
     // Parse pattern
     let urlFilter = pattern;
-    let isRegex = false;
 
     // Skip patterns with whitespace (classified as malformed hosts entries
     // via AST_TYPE_NONE and silently ignores them — they don't count as filters).
@@ -2091,7 +2025,6 @@ function networkFilterToDNR(pattern, options, exception, extensionPaths) {
             // Type multiplier handled by general error multiplier at end of function
         }
         rule.condition.regexFilter = normalized;
-        isRegex = true;
     } else {
         // Lowercase non-regex patterns (matching normalizePattern behavior)
         urlFilter = urlFilter.toLowerCase();
@@ -3116,7 +3049,7 @@ export async function processFilterLists(lists, options = {}) {
             //   "    Dutch supplement for the Easylist filters..."
             // which after trim() become "Dutch supplement for..." and match this pattern.
             if (/\s/.test(line) && !line.includes('$') && !line.startsWith('@@')) {
-                const hostsSinkMatch = /^[\w%.:[\]\-]+\s+/.exec(line);
+                const hostsSinkMatch = /^[\w%.:[\]-]+\s+/.exec(line);
                 if (hostsSinkMatch) {
                     const remainder = line.slice(hostsSinkMatch[0].length);
                     if (!/^(?:[\da-z][\da-z_.-]*\.)*[\da-z][\da-z-]*[\da-z]$/.test(remainder)) {

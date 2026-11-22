@@ -33,7 +33,7 @@ export async function disableFilterlist(id) {
     return await sendMessage({ key: "disableFilterlist", args: [id]});
 }
 
-export async function getConfiguration(id) {
+export async function getConfiguration() {
     return await sendMessage({ key: "getConfiguration"});
 }
 

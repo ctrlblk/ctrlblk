@@ -14,9 +14,8 @@ function addEventListenerDefuser(type = '', pattern = '') {
     const elemSelector = extraArgs.elements || undefined;
     const runWhen = extraArgs.runAt;
     const logAll = type === '' && pattern === '';
-    if ( shouldDebug(extraArgs) ) { debugger; } // jshint ignore:line
+    if ( shouldDebug(extraArgs) ) { debugger; } /* eslint-disable-line no-debugger */ // jshint ignore:line
     const targetAddEventListener = EventTarget.prototype.addEventListener;
-    const targetRemoveEventListener = EventTarget.prototype.removeEventListener;
     const trapListener = function(context, type, handler) {
         if ( logAll ) {
             safe.log_(logPrefix, `${type}\n${handler}`);

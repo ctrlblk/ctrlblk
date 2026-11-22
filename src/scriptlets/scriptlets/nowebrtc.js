@@ -8,7 +8,7 @@ function noWebrtc() {
         'RTCPeerConnection',
         'webkitRTCPeerConnection',
     ];
-    const StubRTC = function(config) {
+    const StubRTC = function() {
         console.info('nowebrtc: blocked RTCPeerConnection construction');
     };
     StubRTC.prototype = {

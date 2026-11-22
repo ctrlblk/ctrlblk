@@ -37,7 +37,7 @@ function onMessage(request, sender, sendResponse) {
         return false;
     }
 
-    if (messageHandlers.hasOwnProperty(what)) {
+    if (Object.hasOwn(messageHandlers, what)) {
         const messageHandler = messageHandlers[what];
         messageHandler(request, sender).then(sendResponse).catch(error => {
             console.error(`Message handler '${what}' failed:`, error);
@@ -55,7 +55,7 @@ async function start() {
     // Register onInstalled early in order to not miss it
     runtime.onInstalled.addListener(onInstalledHandler);
 
-    let [firstRun, wakeupRun] = await filters.initRulesetConfig();
+    let [, wakeupRun] = await filters.initRulesetConfig();
 
     runtime.onMessage.addListener(filters.filtersMessageHandler);
     runtime.onMessage.addListener(onMessage);

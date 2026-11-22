@@ -62,7 +62,7 @@ const ctrlblk_classesFromNode = (node, out) => {
     const s = node.getAttribute('class');
     if ( typeof s !== 'string' ) { return; }
     const len = s.length;
-    for ( let beg = 0, end = 0; beg < len; beg += 1 ) {
+    for ( let beg = 0, end; beg < len; beg += 1 ) {
         end = s.indexOf(' ', beg);
         if ( end === beg ) { continue; }
         if ( end === -1 ) { end = len; }

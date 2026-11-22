@@ -59,10 +59,6 @@ function generateRulesets({ filterTest = false } = {}) {
     execSync(`node build/generate-rulesets.js ${args.join(' ')}`);
 }
 
-function compileCss() {
-    execSync("pnpm run tailwindcss");
-}
-
 function copyImages() {
     cpSync(`images/`, "dist/images", { recursive: true });
 }
@@ -71,7 +67,6 @@ export function buildCtrlBlk(mode, manifest, { filterTest = false } = {}) {
     async function closeBundle() {
         copyAssets();
         generateRulesets({ filterTest });
-        compileCss();
         copyImages();
     }
 

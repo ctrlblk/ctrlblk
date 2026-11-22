@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import webExtension from "@samrum/vite-plugin-web-extension";
+import tailwindcss from "@tailwindcss/postcss";
 
 import {
     generateManifestContents,
@@ -26,6 +27,14 @@ export default defineConfig(({mode}) => {
             }),
             buildCtrlBlk(mode, manifest, { filterTest }),
         ],
+        css: {
+            // Tailwind runs as a PostCSS plugin, because @tailwindcss/vite skips
+            // .pcss files. Setting PostCSS inline also stops Vite from picking up
+            // a PostCSS config from a parent folder.
+            postcss: {
+                plugins: [tailwindcss()],
+            },
+        },
         define: {
             __FILTER_TEST__: JSON.stringify(filterTest),
         },

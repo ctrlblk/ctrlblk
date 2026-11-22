@@ -24,6 +24,8 @@ import matchObjectProperties from './helpers/match-object-properties.fn.js';
 import jsonPruneFetchResponseHelper from './helpers/json-prune-fetch-response.fn.js';
 import replaceFetchResponseHelper from './helpers/replace-fetch-response.fn.js';
 import proxyApply from './helpers/proxy-apply.fn.js';
+import jsonpath from './helpers/jsonpath.fn.js';
+import editInboundObject from './helpers/edit-inbound-object.fn.js';
 
 // Scriptlets
 import abortCurrentScript from './scriptlets/abort-current-script.js';
@@ -84,9 +86,11 @@ import trustedPruneOutboundObject from './scriptlets/trusted-prune-outbound-obje
 import trustedReplaceArgument from './scriptlets/trusted-replace-argument.js';
 import trustedReplaceOutboundText from './scriptlets/trusted-replace-outbound-text.js';
 import trustedSuppressNativeMethod from './scriptlets/trusted-suppress-native-method.js';
+import trustedEditInboundObject from './scriptlets/trusted-edit-inbound-object.js';
+import trustedPreventDomBypass from './scriptlets/trusted-prevent-dom-bypass.js';
 
 export const builtinScriptlets = [
-    // Helpers (23)
+    // Helpers (25)
     safeSelf,
     getExceptionToken,
     shouldDebug,
@@ -110,7 +114,9 @@ export const builtinScriptlets = [
     jsonPruneFetchResponseHelper,
     replaceFetchResponseHelper,
     proxyApply,
-    // User-facing scriptlets (58)
+    jsonpath,
+    editInboundObject,
+    // User-facing scriptlets (60)
     abortCurrentScript,
     abortOnPropertyRead,
     abortOnPropertyWrite,
@@ -169,4 +175,6 @@ export const builtinScriptlets = [
     trustedReplaceArgument,
     trustedReplaceOutboundText,
     trustedSuppressNativeMethod,
+    trustedEditInboundObject,
+    trustedPreventDomBypass,
 ];

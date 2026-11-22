@@ -5,6 +5,7 @@ import { ArgumentParser } from 'argparse';
 import { rulesets, addTestRuleset } from './rulesets/rulesets.js';
 import { processFilterLists } from './engine.js';
 import { builtinScriptlets } from '../src/scriptlets/index.js';
+import { resolveScriptletName, scriptletAliases } from './scriptlet-names.js';
 
 // ============================================================================
 // Utility functions
@@ -382,10 +383,12 @@ async function generateCssProcedural(details, specificCosmetic) {
 const resourceDetails = new Map();
 const resourceAliases = new Map();
 let scriptletFiles = new Map();
+// Scriptlet name -> number of filters dropped because no scriptlet has that name
+const missingScriptlets = new Map();
 
 function initScriptlets() {
     for (const scriptlet of builtinScriptlets) {
-        const { name, aliases, fn } = scriptlet;
+        const { name, fn } = scriptlet;
         const entry = {
             name: fn.name,
             code: fn.toString(),
@@ -394,15 +397,23 @@ function initScriptlets() {
             requiresTrust: scriptlet.requiresTrust === true,
         };
         resourceDetails.set(name, entry);
-        if (!Array.isArray(aliases)) continue;
-        for (const alias of aliases) {
-            resourceAliases.set(alias, name);
-        }
+    }
+    for (const [alias, name] of scriptletAliases(builtinScriptlets)) {
+        resourceAliases.set(alias, name);
     }
 }
 
 function resetScriptlets() {
     scriptletFiles.clear();
+    missingScriptlets.clear();
+}
+
+// Report each scriptlet the ruleset's filters use that doesn't exist, once,
+// with the number of filters dropped for it.
+function reportMissingScriptlets(rulesetId) {
+    for (const [name, count] of missingScriptlets) {
+        console.log(`Missing scriptlet ${name} in ${rulesetId}: ${count} filter(s) dropped`);
+    }
 }
 
 function createScriptletCoreCode(scriptletToken) {
@@ -422,15 +433,13 @@ function createScriptletCoreCode(scriptletToken) {
 }
 
 function compileScriptlet(details) {
-    if (details.args[0].endsWith('.js') === false) {
-        details.args[0] += '.js';
-    }
-    if (resourceAliases.has(details.args[0])) {
-        details.args[0] = resourceAliases.get(details.args[0]);
-    }
+    details.args[0] = resolveScriptletName(details.args[0], resourceAliases);
     const scriptletToken = details.args[0];
     const resourceEntry = resourceDetails.get(scriptletToken);
-    if (resourceEntry === undefined) return;
+    if (resourceEntry === undefined) {
+        missingScriptlets.set(scriptletToken, (missingScriptlets.get(scriptletToken) ?? 0) + 1);
+        return;
+    }
     if (resourceEntry.requiresTrust && details.trustedSource !== true) {
         console.log(`Rejecting ${scriptletToken}: source is not trusted`);
         return;
@@ -543,6 +552,7 @@ async function generateScriptlet(details, rulesetDir, rulesetId, mapin) {
     for (const details of mapin.values()) {
         compileScriptlet(details);
     }
+    reportMissingScriptlets(rulesetId);
     const stats = await commitScriptlets(
         rulesetId,
         `${rulesetDir}/scripting/scriptlet`

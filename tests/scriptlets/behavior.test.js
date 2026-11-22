@@ -488,3 +488,149 @@ describe('object-find-owner.fn', () => {
         assert.equal(objectFindOwner({ ad: 1 }, 'ad'), true);
     });
 });
+
+// ============================================================================
+
+// The nine trusted-edit-inbound-object queries of the default list
+// (@ctrlblk/ctrlblk-filters/dist/default.txt, lines 36705 to 36713), with the
+// filter syntax's `\,` unescaped.
+const YOUTUBE_EDIT_INBOUND_QUERIES = [
+    '[?.attestationRequest][?.context.client.userAgent*="channel"].context.client[?.clientName=="WEB"]+={"clientScreen":"CHANNEL"}',
+    '[?.attestationRequest][?.context.client.userAgent*="yahi"]+={"params":"YAHI"}',
+    '[?.attestationRequest][?.context.client.userAgent*="inline"].playbackContext.contentPlaybackContext+={"isInlinePlaybackNoAd":true}',
+    '[?.attestationRequest][?.context.client.userAgent*="oaeb"]+={"params":"oAEBogYBLg"}',
+    '[?.attestationRequest][?.context.client.userAgent=/adunit|channel|inline|yahi|oaeb|eafg|yaf4/].playbackContext.contentPlaybackContext.referer=repl({"regex":"(?:#reloadxhr)?$","replacement":"#reloadxhr"})',
+    '[?.createCommentParams].context.client.userAgent=repl({"regex":"/; (adunit|channel|inline|yahi|oaeb|eafg|yaf4)\\b/","replacement":""})',
+    '[?.serializedThirdPartyEmbedConfig][?.context.client.userAgent*="channel"].context.client[?.clientName=="WEB_EMBEDDED_PLAYER"]+={"clientScreen":"CHANNEL"}',
+    '[?.serializedThirdPartyEmbedConfig][?.context.client.userAgent*="eafg"]+={"params":"eAFgAQ"}',
+    '[?.context.thirdParty.embeddedPlayerContext][?.context.client.userAgent=/channel|eafg|yaf4/].playbackContext.contentPlaybackContext.referer=repl({"regex":"(?:#reloadxhr)?$","replacement":"#reloadxhr"})',
+];
+
+describe('jsonpath.fn', () => {
+    it('should compile each YouTube trusted-edit-inbound-object query', () => {
+        const entry = byName.get('jsonpath.fn');
+        assert.ok(entry, 'helper should exist');
+        const JSONPath = entry.fn;
+        for ( const query of YOUTUBE_EDIT_INBOUND_QUERIES ) {
+            assert.equal(JSONPath.create(query).valid, true, `query should compile: ${query}`);
+        }
+    });
+});
+
+// ============================================================================
+
+describe('trusted-edit-inbound-object', () => {
+    // Run the scriptlet on JSON.stringify with `query`, then return what
+    // JSON.stringify makes of each object in `objects`, parsed back.
+    // The sandbox gets a JSON object of its own, so the proxy stays in it.
+    function stringifyWith(query, objects) {
+        assert.ok(byName.get('trusted-edit-inbound-object.js'), 'scriptlet should exist');
+        const sandbox = makeSandbox({
+            JSON: { parse: JSON.parse, stringify: JSON.stringify },
+            structuredClone,
+            objects,
+        });
+        const ctx = vm.createContext(sandbox);
+        const depsCode = collectDeps('trusted-edit-inbound-object.js');
+        const script = `
+            const scriptletGlobals = {};
+            ${depsCode}
+            trustedEditInboundObject('JSON.stringify', '0', ${JSON.stringify(query)});
+            objects.map(o => JSON.stringify(o));
+        `;
+        return vm.runInContext(script, ctx).map(s => JSON.parse(s));
+    }
+
+    const playerRequest = userAgent => ({
+        attestationRequest: {},
+        context: { client: { clientName: 'WEB', userAgent } },
+        playbackContext: {
+            contentPlaybackContext: { referer: 'https://www.youtube.com/watch?v=KBj5zrHSliQ' },
+        },
+    });
+
+    it('should merge clientScreen into a marked WEB client', () => {
+        const [ out ] = stringifyWith(YOUTUBE_EDIT_INBOUND_QUERIES[0], [
+            playerRequest('Mozilla/5.0 (X11; channel'),
+        ]);
+        assert.equal(out.context.client.clientScreen, 'CHANNEL');
+        assert.equal(out.context.client.clientName, 'WEB', 'other fields should stay');
+    });
+
+    it('should leave an object without the marker unchanged', () => {
+        const before = playerRequest('Mozilla/5.0 (X11; Linux x86_64)');
+        const [ out ] = stringifyWith(YOUTUBE_EDIT_INBOUND_QUERIES[0], [ before ]);
+        assert.deepEqual(out, before);
+    });
+
+    it('should not modify the object passed to JSON.stringify', () => {
+        const before = playerRequest('Mozilla/5.0 (X11; channel');
+        stringifyWith(YOUTUBE_EDIT_INBOUND_QUERIES[0], [ before ]);
+        assert.equal(before.context.client.clientScreen, undefined);
+    });
+
+    it('should append #reloadxhr to the referer once', () => {
+        const first = playerRequest('Mozilla/5.0 (X11; yahi');
+        const again = playerRequest('Mozilla/5.0 (X11; yahi');
+        again.playbackContext.contentPlaybackContext.referer += '#reloadxhr';
+        const [ a, b ] = stringifyWith(YOUTUBE_EDIT_INBOUND_QUERIES[4], [ first, again ]);
+        const expected = 'https://www.youtube.com/watch?v=KBj5zrHSliQ#reloadxhr';
+        assert.equal(a.playbackContext.contentPlaybackContext.referer, expected);
+        assert.equal(b.playbackContext.contentPlaybackContext.referer, expected);
+    });
+});
+
+// ============================================================================
+
+describe('trusted-prevent-dom-bypass', () => {
+    // Append a fake iframe for each window in `frameWindows`, with the
+    // scriptlet installed on Node.prototype.appendChild. Returns the
+    // sandbox's own fetch.
+    function appendWith(targetProp, frameWindows) {
+        assert.ok(byName.get('trusted-prevent-dom-bypass.js'), 'scriptlet should exist');
+        class HTMLElement {}
+        const parentFetch = function fetch() {};
+        const sandbox = makeSandbox({
+            HTMLElement,
+            Node: { prototype: { appendChild(e) { return e; } } },
+            location: { href: 'https://www.youtube.com/' },
+            fetch: parentFetch,
+            elems: [],
+        });
+        for ( const contentWindow of frameWindows ) {
+            const elem = new HTMLElement();
+            elem.contentWindow = contentWindow;
+            sandbox.elems.push(elem);
+        }
+        const ctx = vm.createContext(sandbox);
+        const depsCode = collectDeps('trusted-prevent-dom-bypass.js');
+        const script = `
+            const scriptletGlobals = {};
+            ${depsCode}
+            trustedPreventDomBypass('Node.prototype.appendChild', ${JSON.stringify(targetProp)});
+            for ( const elem of elems ) { Node.prototype.appendChild(elem); }
+        `;
+        vm.runInContext(script, ctx);
+        return parentFetch;
+    }
+
+    // A window-like object, as an iframe's contentWindow.
+    const frameWindow = href => ({
+        [Symbol.toStringTag]: 'Window',
+        location: { href },
+        fetch: function frameFetch() {},
+    });
+
+    it('should give a blank frame the parent fetch', () => {
+        const frame = frameWindow('about:blank');
+        const parentFetch = appendWith('fetch', [ frame ]);
+        assert.equal(frame.fetch, parentFetch);
+    });
+
+    it('should leave a frame at another URL alone', () => {
+        const frame = frameWindow('https://example.com/');
+        const ownFetch = frame.fetch;
+        appendWith('fetch', [ frame ]);
+        assert.equal(frame.fetch, ownFetch);
+    });
+});

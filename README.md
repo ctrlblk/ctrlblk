@@ -52,11 +52,11 @@ To watch the browser while debugging, add `--headed`, for example:
 
 `$ pnpm test:filter --headed`
 
-CI runs `test:scriptlets` and `test:filter` on every push. `test:youtube` loads the live youtube.com, so it only runs locally. It watches a fixed video that got a pre-roll ad without the extension when it was chosen. To check that the video still gets one without the extension, run:
+CI runs `test:scriptlets` and `test:filter` on every push. `test:youtube` loads the live youtube.com, so it only runs locally. It opens a video in two ways, each time a fixed video that got a pre-roll ad without the extension when it was chosen: `VIDEO_ID` by loading its watch page, and `HOME_VIDEO_ID` from the home page, the way a click on a thumbnail opens it. To check that both videos still get one without the extension, run:
 
 `$ YOUTUBE_CHECK_AD=1 pnpm test:youtube -g "still gets an ad"`
 
-If that fails, replace `VIDEO_ID` in `tests/youtube/specs/youtube-ads.spec.js` with a video that gets an ad.
+If a check fails, replace the video it names, `VIDEO_ID` or `HOME_VIDEO_ID` in `tests/youtube/specs/youtube-ads.spec.js`, with a video that gets an ad when opened that way.
 
 ## CI Secrets
 

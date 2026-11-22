@@ -10,9 +10,9 @@ import { builtinScriptlets } from '../../src/scriptlets/index.js';
 const byName = new Map(builtinScriptlets.map(s => [s.name, s]));
 
 // Expected counts (verified against reference implementation)
-const EXPECTED_TOTAL = 81;
-const EXPECTED_HELPERS = 23;
-const EXPECTED_SCRIPTLETS = 58;
+const EXPECTED_TOTAL = 85;
+const EXPECTED_HELPERS = 25;
+const EXPECTED_SCRIPTLETS = 60;
 
 // ============================================================================
 // Level 1 — Structural validation

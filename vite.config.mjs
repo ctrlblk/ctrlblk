@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
-import webExtension from "@samrum/vite-plugin-web-extension";
+import { webExtension } from "./build/web-extension.mjs";
 import tailwindcss from "@tailwindcss/postcss";
 
 import {
@@ -21,10 +21,7 @@ export default defineConfig(({mode}) => {
     return {
         plugins: [
             svelte(),
-            webExtension({
-                manifest: manifest,
-                optimizeWebAccessibleResources: false,
-            }),
+            webExtension({ manifest }),
             buildCtrlBlk(mode, manifest, { filterTest }),
         ],
         css: {

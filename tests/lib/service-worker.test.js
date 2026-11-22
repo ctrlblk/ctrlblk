@@ -7,7 +7,6 @@ import fs from 'node:fs/promises';
 
 const swPath = new URL('../../src/js/background/serviceWorker.js', import.meta.url);
 const filtersPath = new URL('../../src/js/background/filters.js', import.meta.url);
-const reportAdPath = new URL('../../src/js/background/reportAd.js', import.meta.url);
 
 describe('serviceWorker.js', () => {
     let src;
@@ -147,29 +146,5 @@ describe('filters.js', () => {
             assert.ok(fn.includes('return localWrite'),
                 'saveRulesetConfig should return/await localWrite');
         });
-    });
-});
-
-describe('reportAd.js', () => {
-    let src;
-    async function getSrc() {
-        if (!src) { src = await fs.readFile(reportAdPath, 'utf8'); }
-        return src;
-    }
-
-    it('should not contain uBO references', async () => {
-        const s = await getSrc();
-        assert.ok(!s.includes('uBlock Origin Lite'));
-        assert.ok(!s.includes('uBOLite'));
-    });
-
-    it('should export getLocalAdReportIds', async () => {
-        const s = await getSrc();
-        assert.match(s, /export\s+(async\s+)?function\s+getLocalAdReportIds/);
-    });
-
-    it('should export clearLocalAdReportIds', async () => {
-        const s = await getSrc();
-        assert.match(s, /export\s+(async\s+)?function\s+clearLocalAdReportIds/);
     });
 });

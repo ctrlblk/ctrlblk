@@ -8,7 +8,6 @@ function xmlPrune(selector = '', selectorCheck = '', urlPattern = '') {
     if ( selector === '' ) { return; }
     const safe = safeSelf();
     const logPrefix = safe.makeLogPrefix('xml-prune', selector, selectorCheck, urlPattern);
-    const extraArgs = safe.getExtraArgs(Array.from(arguments), 3);
     const urlDetails = safe.initPattern(urlPattern);
     const checkDetails = safe.initPattern(selectorCheck);
 

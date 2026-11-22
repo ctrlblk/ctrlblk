@@ -10,8 +10,11 @@ To install CtrlBlk head over to [CtrlBlk's Chrome Web Store page](https://chrome
 
 Prerequisites:
 
-- [nodejs](https://nodejs.org/en) >= v21.2.0
+- [nodejs](https://nodejs.org/en) ^20.19.0, ^22.13.0 or >= 24
 - [pnpm](https://pnpm.io/)
+
+CI builds on Node 24.
+
 To build CtrlBlk:
 
 ```

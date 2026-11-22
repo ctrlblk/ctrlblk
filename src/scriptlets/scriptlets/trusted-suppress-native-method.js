@@ -12,7 +12,6 @@ function trustedSuppressNativeMethod(methodPath = '', signature = '', how = '', 
     if ( methodPath === '' ) { return; }
     const safe = safeSelf();
     const logPrefix = safe.makeLogPrefix('trusted-suppress-native-method', methodPath, signature, how);
-    const extraArgs = safe.getExtraArgs(Array.from(arguments), 4);
 
     // Log mode: when signature is empty, log all calls
     const logMode = signature === '';

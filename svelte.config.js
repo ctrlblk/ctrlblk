@@ -1,13 +1,18 @@
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import adapter from '@sveltejs/adapter-auto';
 
-/** @type {import('@sveltejs/kit').Config} */
+/** @type {import('@sveltejs/vite-plugin-svelte').SvelteConfig} */
 const config = {
-	kit: {
-		adapter: adapter()
-	},
+	preprocess: [vitePreprocess()],
 
-	preprocess: [vitePreprocess({})]
+	vitePlugin: {
+		// Our own components compile in runes mode, so any Svelte 4 syntax left
+		// in them fails to compile. Libraries compile as they ship.
+		dynamicCompileOptions({ filename }) {
+			if (!filename.includes('node_modules')) {
+				return { runes: true };
+			}
+		}
+	}
 };
 
 export default config;

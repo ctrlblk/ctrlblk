@@ -4,6 +4,7 @@
     "pnpm lint",
     "pnpm run build",
     "pnpm test:scriptlets",
+    "pnpm test:build",
     "pnpm test:filter",
     "pnpm test:youtube"
   ]

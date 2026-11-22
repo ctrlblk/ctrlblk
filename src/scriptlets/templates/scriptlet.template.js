@@ -26,6 +26,7 @@
 // Start of code to inject
 const ctrlblk_$scriptletName$ = function() {
 
+// eslint-disable-next-line no-unused-vars -- used by the scriptlet code substituted for $scriptletName$
 const scriptletGlobals = {}; // jshint ignore: line
 
 const argsList = self.$argsList$;

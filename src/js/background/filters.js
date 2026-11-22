@@ -171,7 +171,7 @@ export async function getFilterlistDetails() {
     const rulesetDetails = await getRulesetDetails();
     const enabledRulesets = await dnr.getEnabledRulesets();
 
-    for (const [id, rule] of rulesetDetails) {
+    for (const [, rule] of rulesetDetails) {
         if (enabledRulesets.includes(rule.id)) {
             rule.enabled = true;
         } else {
@@ -246,7 +246,7 @@ function filtersMessageHandler(request, sender, sendResponse) {
         args = [];
     }
 
-    if (filters.hasOwnProperty(key)) {
+    if (Object.hasOwn(filters, key)) {
         const messageHandler = filters[key];
         messageHandler(...args).then(sendResponse);
         return true;

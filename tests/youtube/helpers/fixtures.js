@@ -3,7 +3,6 @@ import { launchBrowserWithExtension } from './extension.js';
 
 let sharedContext = null;
 let sharedServiceWorker = null;
-let sharedExtensionId = null;
 
 export const test = base.extend({
   extensionContext: [async ({ headless }, use) => {
@@ -12,11 +11,11 @@ export const test = base.extend({
       const result = await launchBrowserWithExtension({ headless });
       sharedContext = result.context;
       sharedServiceWorker = result.serviceWorker;
-      sharedExtensionId = result.extensionId;
     }
     await use(sharedContext);
   }, { scope: 'test' }],
 
+  // eslint-disable-next-line no-unused-vars -- fixture dependency
   serviceWorker: [async ({ extensionContext }, use) => {
     await use(sharedServiceWorker);
   }, { scope: 'test' }],

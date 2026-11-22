@@ -1,7 +1,7 @@
 // Unit tests for src/js/lib/browser-api.js
 // Run with: node --test tests/lib/browser-api.test.js
 
-import { describe, it, mock } from 'node:test';
+import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 

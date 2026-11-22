@@ -1,4 +1,28 @@
-/* Write your global styles here, in PostCSS syntax */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Global styles and the Tailwind 4 config */
+@import "tailwindcss";
+
+@plugin "flowbite/plugin";
+
+/* src/ is found automatically; the component libraries are not */
+@source "../node_modules/flowbite-svelte/dist";
+@source "../node_modules/flowbite-svelte-icons/dist";
+
+/*
+ * Keep dark: on a .dark class, as the v3 flowbite plugin did (darkMode: 'class').
+ * Nothing sets that class, so the side panel stays light, as before.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    /* zinc */
+    --color-primary-50: #fafafa;
+    --color-primary-100: #f4f4f5;
+    --color-primary-200: #e4e4e7;
+    --color-primary-300: #d4d4d8;
+    --color-primary-400: #a1a1aa;
+    --color-primary-500: #71717a;
+    --color-primary-600: #52525b;
+    --color-primary-700: #3f3f46;
+    --color-primary-800: #27272a;
+    --color-primary-900: #18181b;
+}

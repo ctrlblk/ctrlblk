@@ -67,7 +67,7 @@ function safeReplace(text, pattern, replacement, count = 1) {
     return out;
 }
 
-function isRegexSupported({ regex, isCaseSensitive }) {
+function isRegexSupported({ regex }) {
     if (regex !== (new RegExp(regex).toString())) {
         return { isSupported: false, reason: 'syntaxError' };
     }
@@ -227,7 +227,7 @@ async function generateFourPieceScriptlet(scriptlet, mapin, flatArgsList) {
         selectorsByHostnames.push([matches, excludes, selectors]);
     }
 
-    let argsList = selectorsByHostnames.map(([m, e, selectors]) => selectors);
+    let argsList = selectorsByHostnames.map(([, , selectors]) => selectors);
 
     let hostnamesMap = new Map();
     let entitiesMap = new Map();
@@ -309,11 +309,11 @@ function splitSpecificCosmetic(filters) {
 }
 
 async function generateCssSpecific(details, specificCosmetic) {
-    let [declarativeCosmetic, proceduralCosmetic] = splitSpecificCosmetic(specificCosmetic);
+    let [declarativeCosmetic] = splitSpecificCosmetic(specificCosmetic);
 
     declarativeCosmetic = removeRemoteHostedCodeFilters(
         declarativeCosmetic,
-        (key, value) => key
+        (key) => key
     );
 
     let [count, src] = await generateFourPieceScriptlet(
@@ -326,7 +326,7 @@ async function generateCssSpecific(details, specificCosmetic) {
 }
 
 async function generateCssDeclarative(details, specificCosmetic) {
-    let [declarativeCosmetic, proceduralCosmetic] = splitSpecificCosmetic(specificCosmetic);
+    let [, proceduralCosmetic] = splitSpecificCosmetic(specificCosmetic);
 
     let proceduralDeclarative = new Map();
     for (let [jsonSelector, details] of proceduralCosmetic) {
@@ -339,7 +339,7 @@ async function generateCssDeclarative(details, specificCosmetic) {
 
     proceduralDeclarative = removeRemoteHostedCodeFilters(
         proceduralDeclarative,
-        (key, value) => JSON.parse(key).selector
+        (key) => JSON.parse(key).selector
     );
 
     let [count, src] = await generateFourPieceScriptlet(
@@ -351,7 +351,7 @@ async function generateCssDeclarative(details, specificCosmetic) {
 }
 
 async function generateCssProcedural(details, specificCosmetic) {
-    let [declarativeCosmetic, proceduralCosmetic] = splitSpecificCosmetic(specificCosmetic);
+    let [, proceduralCosmetic] = splitSpecificCosmetic(specificCosmetic);
 
     let proceduralProcedural = new Map();
     for (let [jsonSelector, details] of proceduralCosmetic) {
@@ -363,7 +363,7 @@ async function generateCssProcedural(details, specificCosmetic) {
 
     proceduralProcedural = removeRemoteHostedCodeFilters(
         proceduralProcedural,
-        (key, value) => JSON.parse(key).selector
+        (key) => JSON.parse(key).selector
     );
 
     let [count, src] = await generateFourPieceScriptlet(

@@ -465,3 +465,26 @@ describe('set-cookie', () => {
             `Cookie should contain testCookie=1, got: ${setCookieValue}`);
     });
 });
+
+// ============================================================================
+
+describe('object-find-owner.fn', () => {
+    const objectFindOwner = byName.get('object-find-owner.fn').fn;
+
+    it('should find a key on an object with a null prototype', () => {
+        const o = Object.create(null);
+        o.ad = 1;
+        assert.equal(objectFindOwner(o, 'ad'), true);
+    });
+
+    it('should prune a key on an object with a null prototype', () => {
+        const o = Object.create(null);
+        o.ad = 1;
+        assert.equal(objectFindOwner(o, 'ad', true), true);
+        assert.equal('ad' in o, false, 'ad should be removed');
+    });
+
+    it('should still find a key on a normal object', () => {
+        assert.equal(objectFindOwner({ ad: 1 }, 'ad'), true);
+    });
+});

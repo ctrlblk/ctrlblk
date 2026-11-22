@@ -61,7 +61,7 @@
 
 <!-- Full-height column so the bottom nav sits at the bottom even when content is short -->
 <div class="flex flex-col min-h-screen">
-    <Navbar>
+    <Navbar class="bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200">
         <NavBrand href="/">
             <img src="/images/logo/128.png" class="me-3 h-6 sm:h-9" alt="CtrlBlock Logo" />
             <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">CtrlBlock</span>
@@ -69,22 +69,22 @@
     </Navbar>
 
     <div class="mx-4 space-y-4 flex-grow">
-        <Card style="max-width:100%;">
+        <Card class="p-4 sm:p-6 text-gray-500 dark:text-gray-400" style="max-width:100%;">
             <Pause {exceptions} />
         </Card>
-        <Card style="max-width:100%;">
+        <Card class="p-4 sm:p-6 text-gray-500 dark:text-gray-400" style="max-width:100%;">
             <Exceptions {exceptions}/>
         </Card>
-        <Card style="max-width:100%;">
+        <Card class="p-4 sm:p-6 text-gray-500 dark:text-gray-400" style="max-width:100%;">
             <Filterlists />
         </Card>
     </div>
 
-    <BottomNav position="sticky" classInner="max-w-sm grid-cols-2">
-        <BottomNavItem btnName="Website" href="{ctrlblkHomepageUrl}" target="_blank">
+    <BottomNav position="sticky" classes={{ inner: "max-w-sm grid-cols-2" }}>
+        <BottomNavItem btnName="Website" href={ctrlblkHomepageUrl} target="_blank">
             <LinkOutline class="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" />
         </BottomNavItem>
-        <BottomNavItem btnName="Contact" href="{ctrlblkContactUrl}" target="_blank">
+        <BottomNavItem btnName="Contact" href={ctrlblkContactUrl} target="_blank">
             <MailBoxOutline class="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" />
         </BottomNavItem>
     </BottomNav>

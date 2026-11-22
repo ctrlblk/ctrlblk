@@ -31,3 +31,11 @@ jobs:
               with:
                   name: ctrlblock-development-${{ github.sha }}
                   path: dist/
+            # After the upload: the filter suite rebuilds dist/ with
+            # --filter-test, which must not end up in the artifact.
+            - name: Install Playwright Chromium
+              run: pnpm exec playwright install --with-deps chromium
+            - name: Run scriptlet tests
+              run: pnpm test:scriptlets
+            - name: Run filter tests
+              run: pnpm test:filter

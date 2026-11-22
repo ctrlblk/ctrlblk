@@ -19,7 +19,7 @@ jobs:
             - name: Setup node
               uses: actions/setup-node@v5
               with:
-                node-version: 21
+                node-version: 24
             - name: Build extension
               run: |
                 set -x

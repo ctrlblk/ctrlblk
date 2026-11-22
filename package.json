@@ -12,7 +12,8 @@
         "generate-rulesets": "node build/generate-rulesets.js",
         "test:filter": "playwright test --config tests/filter/playwright.config.js",
         "test:youtube": "playwright test --config tests/youtube/playwright.config.js",
-        "test:scriptlets": "node --test tests/scriptlets/compare.test.js"
+        "test:scriptlets": "node --test tests/scriptlets/compare.test.js",
+        "test:build": "node --test tests/build/"
     },
     "dependencies": {
         "@ctrlblk/ctrlblk-filters": "github:ctrlblk/ctrlblk-filters#v1",
@@ -20,14 +21,12 @@
         "del": "^6.1.0",
         "detect-browser": "^5.3.0",
         "punycode.js": "^2.3.1",
-        "semver": "^7.6.0",
-        "vite": "^5.0.13"
+        "semver": "^7.6.0"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
         "@playwright/test": "^1.58.2",
-        "@samrum/vite-plugin-web-extension": "^5.1.0",
-        "@sveltejs/vite-plugin-svelte": "^4.0.4",
+        "@sveltejs/vite-plugin-svelte": "^7.3.1",
         "@tailwindcss/postcss": "^4.3.5",
         "argparse": "^2.0.1",
         "eslint": "^10.15.0",
@@ -40,6 +39,7 @@
         "globals": "^17.14.0",
         "prettier": "^3.10.1",
         "svelte": "^5.59.1",
-        "tailwindcss": "^4.3.5"
+        "tailwindcss": "^4.3.5",
+        "vite": "^8.3.8"
     }
 }

@@ -7,7 +7,6 @@ import fs from 'node:fs/promises';
 
 const swPath = new URL('../../src/js/background/serviceWorker.js', import.meta.url);
 const filtersPath = new URL('../../src/js/background/filters.js', import.meta.url);
-const reportAdPath = new URL('../../src/js/background/reportAd.js', import.meta.url);
 
 describe('serviceWorker.js', () => {
     let src;
@@ -150,26 +149,46 @@ describe('filters.js', () => {
     });
 });
 
-describe('reportAd.js', () => {
-    let src;
-    async function getSrc() {
-        if (!src) { src = await fs.readFile(reportAdPath, 'utf8'); }
-        return src;
-    }
-
-    it('should not contain uBO references', async () => {
-        const s = await getSrc();
-        assert.ok(!s.includes('uBlock Origin Lite'));
-        assert.ok(!s.includes('uBOLite'));
+describe('ad reports removal', () => {
+    it('serviceWorker.js should not contact the CtrlBlk API', async () => {
+        const s = await fs.readFile(swPath, 'utf8');
+        assert.ok(!s.includes('fetch('), 'service worker should not make network requests');
+        assert.ok(!/api\.ctrlblk/.test(s), 'should not reference api.ctrlblk.*');
     });
 
-    it('should export getLocalAdReportIds', async () => {
-        const s = await getSrc();
-        assert.match(s, /export\s+(async\s+)?function\s+getLocalAdReportIds/);
+    it('onInstalled should clean up leftover ad report data', async () => {
+        const s = await fs.readFile(swPath, 'utf8');
+        assert.match(s,
+            /import\s*\{\s*removeAdReportData\s*\}\s*from\s*["']\/src\/js\/background\/adReportCleanup\.js["']/,
+            'should import removeAdReportData');
+        const start = s.indexOf('async function onInstalledHandler');
+        assert.ok(start !== -1, 'should define onInstalledHandler');
+        const fn = s.slice(start, s.indexOf('\n}', start));
+        assert.ok(fn.includes('removeAdReportData(details, browser.storage)'),
+            'onInstalledHandler should call removeAdReportData');
+        assert.ok(s.includes('runtime.onInstalled.addListener(onInstalledHandler)'),
+            'onInstalledHandler should be registered');
     });
 
-    it('should export clearLocalAdReportIds', async () => {
-        const s = await getSrc();
-        assert.match(s, /export\s+(async\s+)?function\s+clearLocalAdReportIds/);
+    it('reportAd.js modules should be gone', async () => {
+        for (const rel of ['../../src/js/background/reportAd.js', '../../src/js/reportAd.js']) {
+            await assert.rejects(fs.access(new URL(rel, import.meta.url)));
+        }
+    });
+
+    it('no source file should reference the report or update endpoints or screenshots', async () => {
+        const srcDir = new URL('../../src/', import.meta.url);
+        const entries = await fs.readdir(srcDir, { recursive: true, withFileTypes: true });
+        const needles = ['adreports', 'updatePageUrl', 'captureVisibleTab', 'api.${baseUrl}'];
+        const hits = [];
+        for (const entry of entries) {
+            if (!entry.isFile()) { continue; }
+            const path = `${entry.parentPath ?? entry.path}/${entry.name}`;
+            const s = await fs.readFile(path, 'utf8');
+            for (const needle of needles) {
+                if (s.includes(needle)) { hits.push(`${path}: ${needle}`); }
+            }
+        }
+        assert.deepEqual(hits, []);
     });
 });

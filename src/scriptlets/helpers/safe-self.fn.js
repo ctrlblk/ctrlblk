@@ -31,6 +31,8 @@ function safeSelf() {
         addEventListener: self.EventTarget.prototype.addEventListener,
         removeEventListener: self.EventTarget.prototype.removeEventListener,
         fetch: self.fetch,
+        // Called with `self` as `this`: the native throws on any other.
+        structuredClone: Function.prototype.call.bind(self.structuredClone, self),
         JSON: self.JSON,
         JSON_parseFn: self.JSON.parse,
         JSON_stringifyFn: self.JSON.stringify,

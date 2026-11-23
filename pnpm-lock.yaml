@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@ctrlblk/ctrlblk-filters':
         specifier: github:ctrlblk/ctrlblk-filters#v1
-        version: https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/6b1bf14200cfaedff55a0dcfa51eb15bc608fe56
+        version: https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/58538871599ea5dc14bcbf88fde9563469bdf395
       detect-browser:
         specifier: ^5.3.0
         version: 5.3.0
@@ -85,8 +85,8 @@ packages:
   '@cacheable/utils@2.5.0':
     resolution: {integrity: sha512-buipgOVDkkPXNR5+xBpDw7Zk2n1EvU7qBJCNUcL7rhQ//kfpOXPAvQ511Os0vpLYJ1pZnvudNytkQt2hst3wqA==}
 
-  '@ctrlblk/ctrlblk-filters@https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/6b1bf14200cfaedff55a0dcfa51eb15bc608fe56':
-    resolution: {tarball: https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/6b1bf14200cfaedff55a0dcfa51eb15bc608fe56}
+  '@ctrlblk/ctrlblk-filters@https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/58538871599ea5dc14bcbf88fde9563469bdf395':
+    resolution: {tarball: https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/58538871599ea5dc14bcbf88fde9563469bdf395}
     version: 0.1.0
 
   '@emnapi/core@2.0.0-beta.2':
@@ -1529,7 +1529,7 @@ snapshots:
       hashery: 1.5.1
       keyv: 5.6.0
 
-  '@ctrlblk/ctrlblk-filters@https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/6b1bf14200cfaedff55a0dcfa51eb15bc608fe56': {}
+  '@ctrlblk/ctrlblk-filters@https://codeload.github.com/ctrlblk/ctrlblk-filters/tar.gz/58538871599ea5dc14bcbf88fde9563469bdf395': {}
 
   '@emnapi/core@2.0.0-beta.2':
     dependencies:
